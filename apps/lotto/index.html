@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>로또번호 생성기</title>
-    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-lotto-random-modes" />
+    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-saved-lotto" />
   </head>
   <body class="mini-app">
     <main class="mini-app-panel lotto-panel">
@@ -65,6 +65,11 @@
         <button class="primary-button" type="button" id="full-random-button">완전랜덤</button>
         <button class="primary-button" type="button" id="condition-random-button">조건랜덤</button>
       </div>
+
+      <section class="saved-lotto" aria-label="저장한 번호">
+        <p class="selected-title">SAVED</p>
+        <div class="saved-list" id="saved-list"></div>
+      </section>
     </main>
     <script>
       const output = document.querySelector("#numbers");
@@ -79,6 +84,9 @@
       const copyButton = document.querySelector("#copy-button");
       const saveButton = document.querySelector("#save-button");
       const saveStatus = document.querySelector("#save-status");
+      const savedList = document.querySelector("#saved-list");
+      const savedStorageKey = "ashosho-lotto-selections";
+      const legacySavedStorageKey = "ashosho-lotto-selection";
 
       const state = {
         draws: [],
@@ -86,6 +94,7 @@
         hotNumbers: [],
         coldNumbers: [],
         selected: new Set(),
+        savedSelections: [],
       };
 
       function fillSelect(select, min, max, selectedValue, suffix = "") {
@@ -160,11 +169,43 @@
         saveButton.disabled = numbers.length === 0;
       }
 
+      function renderSavedSelections() {
+        if (state.savedSelections.length === 0) {
+          savedList.innerHTML = `<p class="saved-empty">-</p>`;
+          return;
+        }
+
+        savedList.innerHTML = state.savedSelections
+          .map((item) => {
+            const savedAt = new Date(item.date).toLocaleString("ko-KR", {
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            return `
+              <div class="saved-item">
+                <div>
+                  <p class="saved-numbers">${item.numbers.join(", ")}</p>
+                  <p class="saved-meta">${savedAt} · 최근 ${item.period}주</p>
+                </div>
+                <button class="trash-button" type="button" data-id="${item.id}" aria-label="저장한 번호 삭제">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-2 6h10l-.7 11H7.7L7 9Zm3 2v7h2v-7h-2Zm4 0v7h2v-7h-2Z"></path>
+                  </svg>
+                </button>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
       function render() {
         renderStatTable(hotTable, state.hotNumbers);
         renderStatTable(coldTable, state.coldNumbers);
         renderBoard();
         renderSelected();
+        renderSavedSelections();
       }
 
       function pickRandom(source, count) {
@@ -240,22 +281,52 @@
 
       saveButton.addEventListener("click", () => {
         const saved = {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
           date: new Date().toISOString(),
           period: state.period,
           numbers: [...state.selected].sort((a, b) => a - b),
         };
         try {
-          localStorage.setItem("ashosho-lotto-selection", JSON.stringify(saved));
+          state.savedSelections.push(saved);
+          localStorage.setItem(savedStorageKey, JSON.stringify(state.savedSelections));
+          renderSavedSelections();
           saveStatus.textContent = "Saved";
         } catch {
           saveStatus.textContent = "Save failed";
         }
       });
 
+      savedList.addEventListener("click", (event) => {
+        const button = event.target.closest(".trash-button");
+        if (!button) return;
+        state.savedSelections = state.savedSelections.filter((item) => item.id !== button.dataset.id);
+        localStorage.setItem(savedStorageKey, JSON.stringify(state.savedSelections));
+        renderSavedSelections();
+      });
+
+      function loadSavedSelections() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(savedStorageKey) || "[]");
+          if (Array.isArray(saved)) {
+            state.savedSelections = saved;
+          }
+
+          const legacySaved = JSON.parse(localStorage.getItem(legacySavedStorageKey) || "null");
+          if (legacySaved?.numbers?.length && state.savedSelections.length === 0) {
+            state.savedSelections = [{ id: "legacy", ...legacySaved }];
+            localStorage.setItem(savedStorageKey, JSON.stringify(state.savedSelections));
+            localStorage.removeItem(legacySavedStorageKey);
+          }
+        } catch {
+          state.savedSelections = [];
+        }
+      }
+
       async function init() {
         fillSelect(periodSelect, 1, 52, 52, "주");
         fillSelect(hotCountSelect, 0, 6, 3, "개");
         updateColdCountOutput();
+        loadSavedSelections();
 
         const response = await fetch("lotto-history.json?v=20260516");
         const history = await response.json();
