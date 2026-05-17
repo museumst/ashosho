@@ -216,6 +216,15 @@
         598: "파푸아뉴기니", 882: "사모아",
       };
 
+      // 해외 영토로 인해 자동 centroid가 틀어지는 나라의 좌표 수동 지정 [lon, lat]
+      const CENTROIDS = {
+        250: [2.5, 46.5],    // 프랑스 (프랑스령 기아나로 인해 centroid가 대서양으로 치우침)
+        840: [-98, 38],      // 미국 (알래스카·하와이로 인해 치우침)
+        578: [15, 65],       // 노르웨이 (스발바르 제도로 인해 치우침)
+        620: [-8, 39.5],     // 포르투갈 (아조레스·마데이라로 인해 치우침)
+        528: [5.3, 52.4],    // 네덜란드 (카리브 영토로 인해 치우침)
+      };
+
       const state = {
         quizMode: false,
         rotation: [-127, -35],
@@ -385,7 +394,7 @@
             .attr('stroke-width', strokeW)
             .style('font-size', fontSize + 'px')
             .each(function(d) {
-              const centroid = d3.geoCentroid(d);
+              const centroid = CENTROIDS[+d.id] || d3.geoCentroid(d);
               const pos = proj(centroid);
               const area = pathGen.area(d);
               const visible = pos !== null && area > areaThreshold;
