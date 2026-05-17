@@ -4,7 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>조선왕조 가계도</title>
-    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-kings-only-tree" />
+    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-svg" />
+    <style>
+      .joseon-scroll {
+        margin-top: 22px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 12px;
+      }
+      #joseon-svg {
+        display: block;
+        margin: 0 auto;
+      }
+      .tree-line {
+        stroke: #9dbdb8;
+        stroke-width: 1.5;
+        fill: none;
+      }
+    </style>
   </head>
   <body class="mini-app joseon-app">
     <main class="mini-app-panel joseon-panel">
@@ -14,137 +31,192 @@
       <p class="joseon-mnemonic">태정태세문단세 예성연중인명선 광인효현숙경영 정순헌철고순</p>
       <p class="joseon-guide">왕만 표시했습니다. 왕이 아닌 중간 인물은 생략했으므로 일부 선은 직접 부자 관계가 아니라 왕실 계통 연결입니다.</p>
 
-      <section class="joseon-tree" aria-label="조선 왕조 왕 중심 가계도">
-        <div id="joseon-tree"></div>
-      </section>
+      <div class="joseon-scroll" role="img" aria-label="조선 왕조 왕 중심 가계도">
+        <svg id="joseon-svg"></svg>
+      </div>
     </main>
 
     <script>
       const kings = [
         {
-          order: 1,
-          name: "태조",
+          order: 1, name: "태조",
           children: [
             { order: 2, name: "정종" },
             {
-              order: 3,
-              name: "태종",
-              children: [
-                {
-                  order: 4,
-                  name: "세종",
-                  children: [
-                    {
-                      order: 5,
-                      name: "문종",
-                      children: [{ order: 6, name: "단종" }],
-                    },
-                    {
-                      order: 7,
-                      name: "세조",
-                      children: [
-                        { order: 8, name: "예종" },
-                        {
-                          order: 9,
-                          name: "성종",
-                          children: [
-                            { order: 10, name: "연산군" },
-                            {
-                              order: 11,
-                              name: "중종",
-                              children: [
-                                { order: 12, name: "인종" },
-                                { order: 13, name: "명종" },
-                                {
-                                  order: 14,
-                                  name: "선조",
-                                  children: [
-                                    { order: 15, name: "광해군" },
-                                    {
-                                      order: 16,
-                                      name: "인조",
-                                      children: [
-                                        {
-                                          order: 17,
-                                          name: "효종",
-                                          children: [
-                                            {
-                                              order: 18,
-                                              name: "현종",
-                                              children: [
-                                                {
-                                                  order: 19,
-                                                  name: "숙종",
-                                                  children: [
-                                                    { order: 20, name: "경종" },
-                                                    {
-                                                      order: 21,
-                                                      name: "영조",
-                                                      children: [
-                                                        {
-                                                          order: 22,
-                                                          name: "정조",
-                                                          children: [
-                                                            {
-                                                              order: 23,
-                                                              name: "순조",
-                                                              children: [{ order: 24, name: "헌종" }],
-                                                            },
-                                                          ],
-                                                        },
-                                                        { order: 25, name: "철종" },
-                                                      ],
-                                                    },
-                                                  ],
-                                                },
-                                              ],
-                                            },
-                                          ],
-                                        },
-                                        {
-                                          order: 26,
-                                          name: "고종",
-                                          children: [{ order: 27, name: "순종" }],
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                },
-                              ],
-                            },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
+              order: 3, name: "태종",
+              children: [{
+                order: 4, name: "세종",
+                children: [
+                  {
+                    order: 5, name: "문종",
+                    children: [{ order: 6, name: "단종" }],
+                  },
+                  {
+                    order: 7, name: "세조",
+                    children: [
+                      { order: 8, name: "예종" },
+                      {
+                        order: 9, name: "성종",
+                        children: [
+                          { order: 10, name: "연산군" },
+                          {
+                            order: 11, name: "중종",
+                            children: [
+                              { order: 12, name: "인종" },
+                              { order: 13, name: "명종" },
+                              {
+                                order: 14, name: "선조",
+                                children: [
+                                  { order: 15, name: "광해군" },
+                                  {
+                                    order: 16, name: "인조",
+                                    children: [
+                                      {
+                                        order: 17, name: "효종",
+                                        children: [{
+                                          order: 18, name: "현종",
+                                          children: [{
+                                            order: 19, name: "숙종",
+                                            children: [
+                                              { order: 20, name: "경종" },
+                                              {
+                                                order: 21, name: "영조",
+                                                children: [
+                                                  {
+                                                    order: 22, name: "정조",
+                                                    children: [{
+                                                      order: 23, name: "순조",
+                                                      children: [{ order: 24, name: "헌종" }],
+                                                    }],
+                                                  },
+                                                  { order: 25, name: "철종" },
+                                                ],
+                                              },
+                                            ],
+                                          }],
+                                        }],
+                                      },
+                                      {
+                                        order: 26, name: "고종",
+                                        children: [{ order: 27, name: "순종" }],
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              }],
             },
           ],
         },
       ];
 
-      const tree = document.querySelector("#joseon-tree");
+      const BW = 72;   // box width
+      const BH = 44;   // box height
+      const GX = 10;   // horizontal gap between siblings
+      const GY = 52;   // vertical gap between levels
+      const PAD = 20;  // outer padding
 
-      function renderKing(king) {
-        const children = king.children || [];
-
-        return `
-          <li class="family-node ${children.length > 0 ? "has-children" : ""}">
-            <article class="king-card is-king">
-              <span class="king-order">${king.order}</span>
-              <h3>${king.name}</h3>
-            </article>
-            ${
-              children.length
-                ? `<ol class="family-children">${children.map((child) => renderKing(child)).join("")}</ol>`
-                : ""
-            }
-          </li>
-        `;
+      function measure(node) {
+        const ch = node.children || [];
+        if (!ch.length) { node.sw = BW + GX; return; }
+        ch.forEach(measure);
+        node.sw = ch.reduce((s, c) => s + c.sw, 0);
       }
 
-      tree.innerHTML = `<ol class="family-tree">${kings.map((king) => renderKing(king)).join("")}</ol>`;
+      function place(node, x0, depth) {
+        node.depth = depth;
+        const ch = node.children || [];
+        if (!ch.length) { node.cx = x0 + (BW + GX) / 2; return; }
+        let x = x0;
+        ch.forEach(c => { place(c, x, depth + 1); x += c.sw; });
+        node.cx = (ch[0].cx + ch[ch.length - 1].cx) / 2;
+      }
+
+      function collect(node, nodes, edges) {
+        nodes.push(node);
+        (node.children || []).forEach(c => {
+          edges.push([node, c]);
+          collect(c, nodes, edges);
+        });
+      }
+
+      measure(kings[0]);
+      place(kings[0], PAD, 0);
+
+      const nodes = [], edges = [];
+      collect(kings[0], nodes, edges);
+
+      const maxDepth = Math.max(...nodes.map(n => n.depth));
+      const svgW = kings[0].sw + PAD * 2 - GX;
+      const svgH = (maxDepth + 1) * (BH + GY) - GY + PAD * 2;
+
+      const svg = document.getElementById('joseon-svg');
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+      svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+
+      const rowY = d => PAD + d * (BH + GY);
+
+      // Group: lines behind boxes
+      const lineG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      svg.appendChild(lineG);
+      const nodeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      svg.appendChild(nodeG);
+
+      edges.forEach(([p, c]) => {
+        const x1 = p.cx, y1 = rowY(p.depth) + BH;
+        const x2 = c.cx, y2 = rowY(c.depth);
+        const my = (y1 + y2) / 2;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', `M${x1},${y1} V${my} H${x2} V${y2}`);
+        path.setAttribute('class', 'tree-line');
+        lineG.appendChild(path);
+      });
+
+      nodes.forEach(n => {
+        const x = n.cx - BW / 2;
+        const y = rowY(n.depth);
+
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', BW);
+        rect.setAttribute('height', BH);
+        rect.setAttribute('rx', 6);
+        rect.setAttribute('fill', '#2a6b5e');
+        nodeG.appendChild(rect);
+
+        const order = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        order.setAttribute('x', n.cx);
+        order.setAttribute('y', y + BH * 0.36);
+        order.setAttribute('text-anchor', 'middle');
+        order.setAttribute('dominant-baseline', 'middle');
+        order.setAttribute('fill', 'rgba(255,255,255,0.75)');
+        order.setAttribute('font-size', '12');
+        order.setAttribute('font-weight', '400');
+        order.setAttribute('font-family', 'system-ui, sans-serif');
+        order.textContent = `${n.order}대`;
+        nodeG.appendChild(order);
+
+        const name = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        name.setAttribute('x', n.cx);
+        name.setAttribute('y', y + BH * 0.72);
+        name.setAttribute('text-anchor', 'middle');
+        name.setAttribute('dominant-baseline', 'middle');
+        name.setAttribute('fill', '#ffffff');
+        name.setAttribute('font-size', '14');
+        name.setAttribute('font-weight', '400');
+        name.setAttribute('font-family', 'system-ui, sans-serif');
+        name.textContent = n.name;
+        nodeG.appendChild(name);
+      });
     </script>
   </body>
 </html>
