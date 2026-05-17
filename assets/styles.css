@@ -341,60 +341,63 @@ h1 {
   word-break: keep-all;
 }
 
+.joseon-guide {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
 .joseon-tree {
   margin: 22px 0 0;
 }
 
-.joseon-segment {
-  margin: 0;
-}
-
-.joseon-segment + .joseon-segment {
-  margin-top: 28px;
-}
-
-.joseon-segment h2 {
-  margin: 0 0 12px;
-  color: var(--accent);
-  font-size: 0.92rem;
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.king-list {
+.family-tree,
+.family-children {
   position: relative;
   display: grid;
-  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.king-list::before {
+.family-tree {
+  gap: 18px;
+}
+
+.family-children {
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 22px;
+}
+
+.family-children::before {
   content: "";
   position: absolute;
   top: 0;
-  bottom: 0;
-  left: 17px;
+  left: 50%;
   width: 2px;
-  border-radius: 999px;
+  height: 22px;
   background: var(--line);
+  transform: translateX(-50%);
 }
 
-.king-node {
+.family-node {
   position: relative;
-  padding-left: calc(34px + var(--depth) * 12px);
+  display: grid;
+  justify-items: stretch;
 }
 
-.king-node::before {
+.family-children > .family-node::before {
   content: "";
   position: absolute;
-  top: 28px;
-  left: 17px;
-  width: calc(18px + var(--depth) * 12px);
-  height: 2px;
-  border-radius: 999px;
+  top: -22px;
+  left: 50%;
+  width: 2px;
+  height: 22px;
   background: var(--line);
+  transform: translateX(-50%);
 }
 
 .king-card {
@@ -409,6 +412,10 @@ h1 {
   background: var(--surface);
 }
 
+.king-card.is-ancestor {
+  background: var(--surface-strong);
+}
+
 .king-order {
   display: grid;
   width: 42px;
@@ -419,6 +426,10 @@ h1 {
   color: #fff;
   font-size: 0.96rem;
   font-weight: 900;
+}
+
+.king-order.is-ancestor {
+  background: #6b7280;
 }
 
 .king-copy {
