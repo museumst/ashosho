@@ -4,8 +4,47 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>조선왕조 가계도</title>
-    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-v3" />
+    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-v4" />
     <style>
+      .joseon-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .joseon-header h1 { margin: 0; }
+
+      .btn-quiz {
+        flex-shrink: 0;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 2px solid #2a6b5e;
+        background: transparent;
+        color: #2a6b5e;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        white-space: nowrap;
+      }
+      .btn-quiz.active {
+        background: #2a6b5e;
+        color: white;
+      }
+      .btn-quiz.active:hover { background: #1e5045; }
+      .btn-quiz:not(.active):hover { background: #e8f4f2; }
+
+      .joseon-score {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--muted);
+        display: none;
+        margin-top: 8px;
+      }
+      .joseon-score.visible { display: block; }
+      .joseon-score .score-correct { color: #2a6b5e; }
+      .joseon-score .score-wrong { color: #d63c3c; }
+
       .joseon-scroll {
         margin-top: 22px;
         overflow-x: auto;
@@ -14,6 +53,7 @@
       }
       #joseon-svg { display: block; margin: 0 auto; }
       .tree-line { stroke: #9dbdb8; stroke-width: 1.5; fill: none; }
+
       .joseon-legend {
         display: flex;
         gap: 20px;
@@ -23,17 +63,80 @@
         font-weight: 600;
       }
       .legend-item { display: flex; align-items: center; gap: 6px; }
-      .legend-box {
-        width: 18px; height: 14px; border-radius: 3px; flex-shrink: 0;
-      }
+      .legend-box { width: 18px; height: 14px; border-radius: 3px; flex-shrink: 0; }
       .legend-box.king { background: #2a6b5e; }
       .legend-box.nonking { background: white; border: 1.5px solid #2a6b5e; }
+
+      /* 퀴즈 하단 패널 */
+      .quiz-panel {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: var(--surface, white);
+        border-top: 1px solid #d0dbd8;
+        border-radius: 16px 16px 0 0;
+        padding: 20px 20px 32px;
+        box-shadow: 0 -6px 28px rgba(0,0,0,0.12);
+        transform: translateY(100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 200;
+        max-width: 560px;
+        margin: 0 auto;
+      }
+      .quiz-panel.open { transform: translateY(0); }
+
+      .quiz-panel-handle {
+        width: 36px; height: 4px;
+        background: #ccc;
+        border-radius: 2px;
+        margin: 0 auto 16px;
+      }
+      .quiz-question {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--muted, #888);
+        margin: 0 0 12px;
+        text-align: center;
+        letter-spacing: 0.02em;
+      }
+      .quiz-hint {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--text, #1a1a1a);
+        margin: 0 0 16px;
+        text-align: center;
+      }
+      .quiz-choices {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .quiz-choice {
+        padding: 14px 8px;
+        border-radius: 10px;
+        border: 2px solid #d0dbd8;
+        background: white;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1a3a32;
+        cursor: pointer;
+        transition: border-color 0.12s, background 0.12s;
+      }
+      .quiz-choice:hover { border-color: #2a6b5e; background: #e8f4f2; }
+      .quiz-choice.correct { border-color: #2a6b5e; background: #d4ede8; color: #1a4a3a; }
+      .quiz-choice.wrong { border-color: #d63c3c; background: #fde8e8; color: #7a1a1a; }
+      .quiz-choice:disabled { cursor: default; }
+
+      /* SVG 퀴즈 모드: 클릭 가능한 왕 박스 */
+      .quiz-mode .king-clickable { cursor: pointer; }
     </style>
   </head>
   <body class="mini-app joseon-app">
     <main class="mini-app-panel joseon-panel">
       <p class="eyebrow">History</p>
-      <h1>조선왕조 가계도</h1>
+      <div class="joseon-header">
+        <h1>조선왕조 가계도</h1>
+        <button class="btn-quiz" id="btn-quiz">퀴즈</button>
+      </div>
 
       <p class="joseon-mnemonic">태정태세문단세 예성연중인명선 광인효현숙경영 정순헌철고순</p>
       <p class="joseon-guide">왕위에 오르지 않은 중간 인물은 흰색 박스로 표시했습니다. 이들은 직계 부자 관계를 명확히 하기 위해 포함되었습니다.</p>
@@ -42,14 +145,22 @@
         <div class="legend-item"><div class="legend-box king"></div> 왕</div>
         <div class="legend-item"><div class="legend-box nonking"></div> 왕이 아닌 중간 인물</div>
       </div>
+      <p class="joseon-score" id="joseon-score"></p>
 
       <div class="joseon-scroll" role="img" aria-label="조선 왕조 가계도">
         <svg id="joseon-svg"></svg>
       </div>
     </main>
 
+    <!-- 퀴즈 하단 패널 -->
+    <div class="quiz-panel" id="quiz-panel" role="dialog" aria-modal="true" aria-label="퀴즈">
+      <div class="quiz-panel-handle"></div>
+      <p class="quiz-question">이 왕은 누구일까요?</p>
+      <p class="quiz-hint" id="quiz-hint"></p>
+      <div class="quiz-choices" id="quiz-choices"></div>
+    </div>
+
     <script>
-      // isKing: false → 흰색 박스 (비왕 중간 인물)
       const kings = [
         { order: 1, name: "태조", isKing: true, children: [
           { order: 2, name: "정종", isKing: true },
@@ -116,11 +227,7 @@
         ]}
       ];
 
-      const BW = 76;   // box width
-      const BH = 42;   // box height
-      const GX = 10;   // horizontal gap
-      const GY = 46;   // vertical gap
-      const PAD = 20;
+      const BW = 76, BH = 42, GX = 10, GY = 46, PAD = 20;
 
       function measure(node) {
         const ch = node.children || [];
@@ -128,7 +235,6 @@
         ch.forEach(measure);
         node.sw = ch.reduce((s, c) => s + c.sw, 0);
       }
-
       function place(node, x0, depth) {
         node.depth = depth;
         const ch = node.children || [];
@@ -137,13 +243,9 @@
         ch.forEach(c => { place(c, x, depth + 1); x += c.sw; });
         node.cx = (ch[0].cx + ch[ch.length - 1].cx) / 2;
       }
-
       function collect(node, nodes, edges) {
         nodes.push(node);
-        (node.children || []).forEach(c => {
-          edges.push([node, c]);
-          collect(c, nodes, edges);
-        });
+        (node.children || []).forEach(c => { edges.push([node, c]); collect(c, nodes, edges); });
       }
 
       measure(kings[0]);
@@ -151,6 +253,7 @@
 
       const nodes = [], edges = [];
       collect(kings[0], nodes, edges);
+      const kingNodes = nodes.filter(n => n.isKing !== false);
 
       const maxDepth = Math.max(...nodes.map(n => n.depth));
       const svgW = kings[0].sw + PAD * 2 - GX;
@@ -162,68 +265,183 @@
       svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
 
       const rowY = d => PAD + d * (BH + GY);
-
       const lineG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       svg.appendChild(lineG);
       const nodeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       svg.appendChild(nodeG);
 
+      const NS = 'http://www.w3.org/2000/svg';
+      function svgEl(tag, attrs) {
+        const el = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+        return el;
+      }
+
       edges.forEach(([p, c]) => {
         const x1 = p.cx, y1 = rowY(p.depth) + BH;
         const x2 = c.cx, y2 = rowY(c.depth);
         const my = (y1 + y2) / 2;
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', `M${x1},${y1} V${my} H${x2} V${y2}`);
-        path.setAttribute('class', 'tree-line');
-        lineG.appendChild(path);
+        lineG.appendChild(svgEl('path', { d: `M${x1},${y1} V${my} H${x2} V${y2}`, class: 'tree-line' }));
       });
 
       nodes.forEach(n => {
-        const x = n.cx - BW / 2;
-        const y = rowY(n.depth);
+        const x = n.cx - BW / 2, y = rowY(n.depth);
         const isKing = n.isKing !== false;
 
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', x);
-        rect.setAttribute('y', y);
-        rect.setAttribute('width', BW);
-        rect.setAttribute('height', BH);
-        rect.setAttribute('rx', 6);
-        if (isKing) {
-          rect.setAttribute('fill', '#2a6b5e');
-          rect.setAttribute('stroke', 'none');
-        } else {
-          rect.setAttribute('fill', 'white');
-          rect.setAttribute('stroke', '#2a6b5e');
-          rect.setAttribute('stroke-width', '1.5');
-        }
+        const rect = svgEl('rect', {
+          x, y, width: BW, height: BH, rx: 6,
+          fill: isKing ? '#2a6b5e' : 'white',
+          ...(isKing ? {} : { stroke: '#2a6b5e', 'stroke-width': '1.5' })
+        });
         nodeG.appendChild(rect);
+        n._rect = rect;
 
         if (isKing) {
-          const orderT = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          orderT.setAttribute('x', n.cx);
-          orderT.setAttribute('y', y + BH * 0.35);
-          orderT.setAttribute('text-anchor', 'middle');
-          orderT.setAttribute('dominant-baseline', 'middle');
-          orderT.setAttribute('fill', 'rgba(255,255,255,0.75)');
-          orderT.setAttribute('font-size', '12');
-          orderT.setAttribute('font-weight', '400');
-          orderT.setAttribute('font-family', 'system-ui, sans-serif');
+          const orderT = svgEl('text', {
+            x: n.cx, y: y + BH * 0.35,
+            'text-anchor': 'middle', 'dominant-baseline': 'middle',
+            fill: 'rgba(255,255,255,0.75)', 'font-size': '12',
+            'font-weight': '400', 'font-family': 'system-ui, sans-serif',
+            'pointer-events': 'none'
+          });
           orderT.textContent = `${n.order}대`;
           nodeG.appendChild(orderT);
+          n._orderT = orderT;
         }
 
-        const nameT = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        nameT.setAttribute('x', n.cx);
-        nameT.setAttribute('y', isKing ? y + BH * 0.72 : y + BH * 0.54);
-        nameT.setAttribute('text-anchor', 'middle');
-        nameT.setAttribute('dominant-baseline', 'middle');
-        nameT.setAttribute('fill', isKing ? '#ffffff' : '#1a4a40');
-        nameT.setAttribute('font-size', '13');
-        nameT.setAttribute('font-weight', '400');
-        nameT.setAttribute('font-family', 'system-ui, sans-serif');
+        const nameT = svgEl('text', {
+          x: n.cx, y: isKing ? y + BH * 0.72 : y + BH * 0.54,
+          'text-anchor': 'middle', 'dominant-baseline': 'middle',
+          fill: isKing ? '#ffffff' : '#1a4a40',
+          'font-size': '13', 'font-weight': '400',
+          'font-family': 'system-ui, sans-serif',
+          'pointer-events': 'none'
+        });
         nameT.textContent = n.name;
         nodeG.appendChild(nameT);
+        n._nameT = nameT;
+      });
+
+      // ── 퀴즈 로직 ──────────────────────────────────────
+
+      let quizMode = false;
+      let activeNode = null;
+      let answered = 0, correct = 0;
+
+      const btnQuiz = document.getElementById('btn-quiz');
+      const panel = document.getElementById('quiz-panel');
+      const hintEl = document.getElementById('quiz-hint');
+      const choicesEl = document.getElementById('quiz-choices');
+      const scoreEl = document.getElementById('joseon-score');
+
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function setQuizMode(on) {
+        quizMode = on;
+        btnQuiz.textContent = on ? '퀴즈 종료' : '퀴즈';
+        btnQuiz.classList.toggle('active', on);
+        closePanel();
+
+        if (on) {
+          answered = 0; correct = 0;
+          updateScore();
+          scoreEl.classList.add('visible');
+          kingNodes.forEach(n => {
+            n._quizState = 'unanswered';
+            n._rect.setAttribute('fill', '#2a6b5e');
+            n._rect.setAttribute('stroke', 'none');
+            n._rect.classList.add('king-clickable');
+            if (n._orderT) n._orderT.setAttribute('visibility', 'hidden');
+            n._nameT.setAttribute('visibility', 'hidden');
+          });
+        } else {
+          scoreEl.classList.remove('visible');
+          kingNodes.forEach(n => {
+            n._quizState = null;
+            n._rect.setAttribute('fill', '#2a6b5e');
+            n._rect.setAttribute('stroke', 'none');
+            n._rect.classList.remove('king-clickable');
+            if (n._orderT) n._orderT.setAttribute('visibility', 'visible');
+            n._nameT.setAttribute('visibility', 'visible');
+          });
+        }
+      }
+
+      function updateScore() {
+        const wrong = answered - correct;
+        scoreEl.innerHTML =
+          `맞춤: <span class="score-correct">${correct}</span> &nbsp; 틀림: <span class="score-wrong">${wrong}</span> &nbsp; / 27`;
+      }
+
+      function openPanel(node) {
+        activeNode = node;
+        hintEl.textContent = `${node.order}대 왕`;
+
+        const others = shuffle(kingNodes.filter(k => k !== node)).slice(0, 3);
+        const choices = shuffle([node, ...others]);
+
+        choicesEl.innerHTML = '';
+        choices.forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-choice';
+          btn.textContent = c.name;
+          btn.addEventListener('click', () => onChoose(c === node, node, btn));
+          choicesEl.appendChild(btn);
+        });
+
+        panel.classList.add('open');
+      }
+
+      function closePanel() {
+        panel.classList.remove('open');
+        activeNode = null;
+      }
+
+      function onChoose(isCorrect, node, btn) {
+        choicesEl.querySelectorAll('.quiz-choice').forEach(b => {
+          b.disabled = true;
+          if (b.textContent === node.name) b.classList.add('correct');
+        });
+        if (!isCorrect) btn.classList.add('wrong');
+
+        node._quizState = isCorrect ? 'correct' : 'wrong';
+        node._rect.setAttribute('fill', isCorrect ? '#2a6b5e' : '#d63c3c');
+        node._rect.setAttribute('stroke', isCorrect ? 'none' : 'none');
+        if (node._orderT) node._orderT.setAttribute('visibility', 'visible');
+        node._nameT.setAttribute('visibility', 'visible');
+
+        answered++;
+        if (isCorrect) correct++;
+        updateScore();
+
+        setTimeout(closePanel, 900);
+      }
+
+      // 왕 박스 클릭
+      nodeG.addEventListener('click', e => {
+        if (!quizMode) return;
+        const rect = e.target.closest('rect');
+        if (!rect) return;
+        const node = kingNodes.find(n => n._rect === rect);
+        if (!node || node._quizState !== 'unanswered') return;
+        e.stopPropagation();
+        openPanel(node);
+      });
+
+      btnQuiz.addEventListener('click', () => setQuizMode(!quizMode));
+
+      // 패널 바깥 클릭 시 닫기
+      document.addEventListener('click', e => {
+        if (quizMode && panel.classList.contains('open') &&
+            !panel.contains(e.target) && e.target !== btnQuiz) {
+          closePanel();
+        }
       });
     </script>
   </body>
