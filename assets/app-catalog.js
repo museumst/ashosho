@@ -32,6 +32,17 @@ const apps = [
     statusLabel: "실행 가능",
     tags: ["puzzle", "game", "logic"],
   },
+  {
+    title: "조선왕조 가계도",
+    description: "조선 왕의 순서와 혈통 관계를 스마트폰에서 세로로 읽기 쉽게 정리한 가계도입니다.",
+    category: "study",
+    categoryLabel: "학습",
+    thumbnail: "joseon",
+    app_url: "apps/joseon/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["history", "joseon", "memory"],
+  },
 ];
 
 const appNameList = document.querySelector("#app-name-list");

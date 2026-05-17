@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>조선왕조 가계도</title>
+    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-tree" />
+  </head>
+  <body class="mini-app joseon-app">
+    <main class="mini-app-panel joseon-panel">
+      <p class="eyebrow">History</p>
+      <h1>조선왕조 가계도</h1>
+
+      <p class="joseon-mnemonic">태정태세문단세 예성연중인명선 광인효현숙경영 정순헌철고순</p>
+
+      <section class="joseon-tree" aria-label="조선 왕조 왕위 계승과 혈통 관계">
+        <div id="joseon-tree"></div>
+      </section>
+    </main>
+
+    <script>
+      const segments = [
+        {
+          title: "창업과 세종 직계",
+          kings: [
+            {
+              order: 1,
+              name: "태조",
+              personal: "이성계",
+              reign: "1392-1398",
+              relation: "조선 개국 군주",
+              note: "조선을 세운 왕입니다.",
+              depth: 0,
+            },
+            {
+              order: 2,
+              name: "정종",
+              personal: "이방과",
+              reign: "1398-1400",
+              relation: "태조의 아들",
+              note: "태종의 형입니다.",
+              depth: 1,
+            },
+            {
+              order: 3,
+              name: "태종",
+              personal: "이방원",
+              reign: "1400-1418",
+              relation: "태조의 아들",
+              note: "세종의 아버지입니다.",
+              depth: 1,
+            },
+            {
+              order: 4,
+              name: "세종",
+              personal: "이도",
+              reign: "1418-1450",
+              relation: "태종의 아들",
+              note: "문종과 세조의 아버지입니다.",
+              depth: 2,
+            },
+            {
+              order: 5,
+              name: "문종",
+              personal: "이향",
+              reign: "1450-1452",
+              relation: "세종의 아들",
+              note: "단종의 아버지입니다.",
+              depth: 3,
+            },
+            {
+              order: 6,
+              name: "단종",
+              personal: "이홍위",
+              reign: "1452-1455",
+              relation: "문종의 아들",
+              note: "숙부 세조에게 왕위를 빼앗겼습니다.",
+              depth: 4,
+            },
+          ],
+        },
+        {
+          title: "세조계와 성종계",
+          kings: [
+            {
+              order: 7,
+              name: "세조",
+              personal: "이유",
+              reign: "1455-1468",
+              relation: "세종의 아들",
+              note: "단종의 숙부입니다.",
+              depth: 3,
+            },
+            {
+              order: 8,
+              name: "예종",
+              personal: "이황",
+              reign: "1468-1469",
+              relation: "세조의 아들",
+              note: "재위 기간이 짧았습니다.",
+              depth: 4,
+            },
+            {
+              order: 9,
+              name: "성종",
+              personal: "이혈",
+              reign: "1469-1494",
+              relation: "세조의 손자",
+              note: "덕종의 아들이며 예종의 조카입니다.",
+              depth: 4,
+            },
+            {
+              order: 10,
+              name: "연산군",
+              personal: "이융",
+              reign: "1494-1506",
+              relation: "성종의 아들",
+              note: "중종의 이복형입니다.",
+              depth: 5,
+            },
+            {
+              order: 11,
+              name: "중종",
+              personal: "이역",
+              reign: "1506-1544",
+              relation: "성종의 아들",
+              note: "반정으로 왕위에 올랐습니다.",
+              depth: 5,
+            },
+            {
+              order: 12,
+              name: "인종",
+              personal: "이호",
+              reign: "1544-1545",
+              relation: "중종의 아들",
+              note: "명종의 이복형입니다.",
+              depth: 6,
+            },
+            {
+              order: 13,
+              name: "명종",
+              personal: "이환",
+              reign: "1545-1567",
+              relation: "중종의 아들",
+              note: "인종의 이복동생입니다.",
+              depth: 6,
+            },
+            {
+              order: 14,
+              name: "선조",
+              personal: "이연",
+              reign: "1567-1608",
+              relation: "중종의 손자",
+              note: "덕흥대원군의 아들입니다.",
+              depth: 6,
+            },
+          ],
+        },
+        {
+          title: "선조계와 숙종계",
+          kings: [
+            {
+              order: 15,
+              name: "광해군",
+              personal: "이혼",
+              reign: "1608-1623",
+              relation: "선조의 아들",
+              note: "인조의 숙부 항렬입니다.",
+              depth: 7,
+            },
+            {
+              order: 16,
+              name: "인조",
+              personal: "이종",
+              reign: "1623-1649",
+              relation: "선조의 손자",
+              note: "반정으로 왕위에 올랐습니다.",
+              depth: 7,
+            },
+            {
+              order: 17,
+              name: "효종",
+              personal: "이호",
+              reign: "1649-1659",
+              relation: "인조의 아들",
+              note: "현종의 아버지입니다.",
+              depth: 8,
+            },
+            {
+              order: 18,
+              name: "현종",
+              personal: "이연",
+              reign: "1659-1674",
+              relation: "효종의 아들",
+              note: "숙종의 아버지입니다.",
+              depth: 9,
+            },
+            {
+              order: 19,
+              name: "숙종",
+              personal: "이순",
+              reign: "1674-1720",
+              relation: "현종의 아들",
+              note: "경종과 영조의 아버지입니다.",
+              depth: 10,
+            },
+            {
+              order: 20,
+              name: "경종",
+              personal: "이윤",
+              reign: "1720-1724",
+              relation: "숙종의 아들",
+              note: "영조의 이복형입니다.",
+              depth: 11,
+            },
+            {
+              order: 21,
+              name: "영조",
+              personal: "이금",
+              reign: "1724-1776",
+              relation: "숙종의 아들",
+              note: "정조의 할아버지입니다.",
+              depth: 11,
+            },
+          ],
+        },
+        {
+          title: "후기 왕실",
+          kings: [
+            {
+              order: 22,
+              name: "정조",
+              personal: "이산",
+              reign: "1776-1800",
+              relation: "영조의 손자",
+              note: "사도세자의 아들입니다.",
+              depth: 12,
+            },
+            {
+              order: 23,
+              name: "순조",
+              personal: "이공",
+              reign: "1800-1834",
+              relation: "정조의 아들",
+              note: "헌종의 할아버지입니다.",
+              depth: 13,
+            },
+            {
+              order: 24,
+              name: "헌종",
+              personal: "이환",
+              reign: "1834-1849",
+              relation: "순조의 손자",
+              note: "효명세자의 아들입니다.",
+              depth: 14,
+            },
+            {
+              order: 25,
+              name: "철종",
+              personal: "이변",
+              reign: "1849-1863",
+              relation: "왕실 방계",
+              note: "강화도에서 왕위에 올랐습니다.",
+              depth: 12,
+            },
+            {
+              order: 26,
+              name: "고종",
+              personal: "이재황",
+              reign: "1863-1907",
+              relation: "왕실 방계",
+              note: "흥선대원군의 아들입니다.",
+              depth: 12,
+            },
+            {
+              order: 27,
+              name: "순종",
+              personal: "이척",
+              reign: "1907-1910",
+              relation: "고종의 아들",
+              note: "조선 왕조의 마지막 군주입니다.",
+              depth: 13,
+            },
+          ],
+        },
+      ];
+
+      const tree = document.querySelector("#joseon-tree");
+
+      tree.innerHTML = segments
+        .map(
+          (segment) => `
+            <section class="joseon-segment">
+              <h2>${segment.title}</h2>
+              <ol class="king-list">
+                ${segment.kings
+                  .map(
+                    (king) => `
+                      <li class="king-node" style="--depth: ${Math.min(king.depth, 6)}">
+                        <article class="king-card">
+                          <span class="king-order">${king.order}</span>
+                          <div class="king-copy">
+                            <div class="king-main">
+                              <h3>${king.name}</h3>
+                              <span>${king.personal}</span>
+                            </div>
+                            <p class="king-reign">재위 ${king.reign}</p>
+                            <p class="king-relation">${king.relation}</p>
+                            <p class="king-note">${king.note}</p>
+                          </div>
+                        </article>
+                      </li>
+                    `
+                  )
+                  .join("")}
+              </ol>
+            </section>
+          `
+        )
+        .join("");
+    </script>
+  </body>
+</html>
