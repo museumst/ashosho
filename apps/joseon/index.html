@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>조선왕조 가계도</title>
-    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-v4" />
+    <link rel="stylesheet" href="../../assets/styles.css?v=20260517-joseon-v5" />
     <style>
       .joseon-header {
         display: flex;
@@ -27,54 +27,41 @@
         transition: background 0.15s, color 0.15s;
         white-space: nowrap;
       }
-      .btn-quiz.active {
-        background: #2a6b5e;
-        color: white;
-      }
+      .btn-quiz.active { background: #2a6b5e; color: white; }
       .btn-quiz.active:hover { background: #1e5045; }
       .btn-quiz:not(.active):hover { background: #e8f4f2; }
 
       .joseon-score {
-        font-size: 0.88rem;
-        font-weight: 700;
-        color: var(--muted);
-        display: none;
-        margin-top: 8px;
+        font-size: 0.88rem; font-weight: 700;
+        color: var(--muted); display: none; margin-top: 8px;
       }
       .joseon-score.visible { display: block; }
       .joseon-score .score-correct { color: #2a6b5e; }
       .joseon-score .score-wrong { color: #d63c3c; }
 
       .joseon-scroll {
-        margin-top: 22px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 12px;
+        margin-top: 22px; overflow-x: auto;
+        -webkit-overflow-scrolling: touch; padding-bottom: 12px;
       }
       #joseon-svg { display: block; margin: 0 auto; }
       .tree-line { stroke: #9dbdb8; stroke-width: 1.5; fill: none; }
 
       .joseon-legend {
-        display: flex;
-        gap: 20px;
-        margin-top: 14px;
-        font-size: 0.88rem;
-        color: var(--muted);
-        font-weight: 600;
+        display: flex; gap: 20px; margin-top: 14px;
+        font-size: 0.88rem; color: var(--muted); font-weight: 600;
       }
       .legend-item { display: flex; align-items: center; gap: 6px; }
       .legend-box { width: 18px; height: 14px; border-radius: 3px; flex-shrink: 0; }
       .legend-box.king { background: #2a6b5e; }
       .legend-box.nonking { background: white; border: 1.5px solid #2a6b5e; }
 
-      /* 퀴즈 하단 패널 */
-      .quiz-panel {
+      /* 공통 하단 패널 */
+      .bottom-panel {
         position: fixed;
         bottom: 0; left: 0; right: 0;
         background: var(--surface, white);
         border-top: 1px solid #d0dbd8;
         border-radius: 16px 16px 0 0;
-        padding: 20px 20px 32px;
         box-shadow: 0 -6px 28px rgba(0,0,0,0.12);
         transform: translateY(100%);
         transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
@@ -82,52 +69,78 @@
         max-width: 560px;
         margin: 0 auto;
       }
-      .quiz-panel.open { transform: translateY(0); }
+      .bottom-panel.open { transform: translateY(0); }
 
-      .quiz-panel-handle {
-        width: 36px; height: 4px;
-        background: #ccc;
-        border-radius: 2px;
-        margin: 0 auto 16px;
+      .panel-handle {
+        width: 36px; height: 4px; background: #ccc;
+        border-radius: 2px; margin: 16px auto 0;
       }
+
+      /* 정보 패널 */
+      .info-panel { padding: 0 20px 32px; }
+      .info-header {
+        display: flex; align-items: baseline; gap: 10px;
+        padding: 16px 0 14px;
+        border-bottom: 1px solid #e8edec;
+        margin-bottom: 14px;
+      }
+      .info-order {
+        font-size: 0.82rem; font-weight: 700;
+        color: #2a6b5e; background: #e8f4f2;
+        padding: 2px 8px; border-radius: 20px;
+        white-space: nowrap;
+      }
+      .info-name {
+        font-size: 1.2rem; font-weight: 800;
+        color: var(--text, #1a1a1a); margin: 0;
+      }
+      .info-years {
+        font-size: 0.82rem; font-weight: 600;
+        color: var(--muted, #888); margin-left: auto;
+        white-space: nowrap;
+      }
+      .info-events { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+      .info-events li {
+        display: flex; gap: 10px; align-items: flex-start;
+        font-size: 0.92rem; line-height: 1.55; color: var(--text, #1a1a1a);
+      }
+      .info-events li::before {
+        content: '';
+        flex-shrink: 0;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: #2a6b5e;
+        margin-top: 7px;
+      }
+      .info-empty {
+        font-size: 0.9rem; color: var(--muted, #888);
+        font-style: italic; padding: 4px 0;
+      }
+
+      /* 퀴즈 패널 */
+      .quiz-panel { padding: 20px 20px 32px; }
       .quiz-question {
-        font-size: 0.88rem;
-        font-weight: 700;
-        color: var(--muted, #888);
-        margin: 0 0 12px;
-        text-align: center;
-        letter-spacing: 0.02em;
+        font-size: 0.88rem; font-weight: 700;
+        color: var(--muted, #888); margin: 0 0 12px;
+        text-align: center; letter-spacing: 0.02em;
       }
       .quiz-hint {
-        font-size: 1rem;
-        font-weight: 800;
-        color: var(--text, #1a1a1a);
-        margin: 0 0 16px;
-        text-align: center;
+        font-size: 1rem; font-weight: 800;
+        color: var(--text, #1a1a1a); margin: 0 0 16px; text-align: center;
       }
-      .quiz-choices {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
+      .quiz-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
       .quiz-choice {
-        padding: 14px 8px;
-        border-radius: 10px;
-        border: 2px solid #d0dbd8;
-        background: white;
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #1a3a32;
-        cursor: pointer;
-        transition: border-color 0.12s, background 0.12s;
+        padding: 14px 8px; border-radius: 10px;
+        border: 2px solid #d0dbd8; background: white;
+        font-size: 1.05rem; font-weight: 700; color: #1a3a32;
+        cursor: pointer; transition: border-color 0.12s, background 0.12s;
       }
       .quiz-choice:hover { border-color: #2a6b5e; background: #e8f4f2; }
       .quiz-choice.correct { border-color: #2a6b5e; background: #d4ede8; color: #1a4a3a; }
       .quiz-choice.wrong { border-color: #d63c3c; background: #fde8e8; color: #7a1a1a; }
       .quiz-choice:disabled { cursor: default; }
 
-      /* SVG 퀴즈 모드: 클릭 가능한 왕 박스 */
-      .quiz-mode .king-clickable { cursor: pointer; }
+      #joseon-svg .king-rect { cursor: pointer; }
     </style>
   </head>
   <body class="mini-app joseon-app">
@@ -139,10 +152,10 @@
       </div>
 
       <p class="joseon-mnemonic">태정태세문단세 예성연중인명선 광인효현숙경영 정순헌철고순</p>
-      <p class="joseon-guide">왕위에 오르지 않은 중간 인물은 흰색 박스로 표시했습니다. 이들은 직계 부자 관계를 명확히 하기 위해 포함되었습니다.</p>
+      <p class="joseon-guide">왕위에 오르지 않은 중간 인물은 흰색 박스로 표시했습니다. 왕 이름을 클릭하면 주요 사건을 볼 수 있습니다.</p>
 
       <div class="joseon-legend">
-        <div class="legend-item"><div class="legend-box king"></div> 왕</div>
+        <div class="legend-item"><div class="legend-box king"></div> 왕 (클릭하면 주요 사건)</div>
         <div class="legend-item"><div class="legend-box nonking"></div> 왕이 아닌 중간 인물</div>
       </div>
       <p class="joseon-score" id="joseon-score"></p>
@@ -152,59 +165,117 @@
       </div>
     </main>
 
-    <!-- 퀴즈 하단 패널 -->
-    <div class="quiz-panel" id="quiz-panel" role="dialog" aria-modal="true" aria-label="퀴즈">
-      <div class="quiz-panel-handle"></div>
-      <p class="quiz-question">이 왕은 누구일까요?</p>
-      <p class="quiz-hint" id="quiz-hint"></p>
-      <div class="quiz-choices" id="quiz-choices"></div>
+    <!-- 정보 패널 -->
+    <div class="bottom-panel" id="info-panel" role="dialog" aria-modal="true" aria-label="왕 정보">
+      <div class="panel-handle"></div>
+      <div class="info-panel">
+        <div class="info-header">
+          <span class="info-order" id="info-order"></span>
+          <p class="info-name" id="info-name"></p>
+          <span class="info-years" id="info-years"></span>
+        </div>
+        <ul class="info-events" id="info-events"></ul>
+      </div>
+    </div>
+
+    <!-- 퀴즈 패널 -->
+    <div class="bottom-panel" id="quiz-panel" role="dialog" aria-modal="true" aria-label="퀴즈">
+      <div class="panel-handle"></div>
+      <div class="quiz-panel">
+        <p class="quiz-question">이 왕은 누구일까요?</p>
+        <p class="quiz-hint" id="quiz-hint"></p>
+        <div class="quiz-choices" id="quiz-choices"></div>
+      </div>
     </div>
 
     <script>
       const kings = [
-        { order: 1, name: "태조", isKing: true, children: [
-          { order: 2, name: "정종", isKing: true },
-          { order: 3, name: "태종", isKing: true, children: [
-            { order: 4, name: "세종", isKing: true, children: [
-              { order: 5, name: "문종", isKing: true, children: [
-                { order: 6, name: "단종", isKing: true }
+        { order: 1, name: "태조", isKing: true, years: "1392~1398",
+          events: ["조선 건국 (1392)", "위화도 회군(1388) 후 고려를 무너뜨리고 새 왕조 세움", "한양 천도 (1394)", "경복궁 창건 (1395)"],
+          children: [
+          { order: 2, name: "정종", isKing: true, years: "1398~1400",
+            events: ["1차 왕자의 난 여파로 즉위", "별다른 치적 없이 태종에게 왕위 양위"] },
+          { order: 3, name: "태종", isKing: true, years: "1400~1418",
+            events: ["1·2차 왕자의 난으로 왕위 쟁취", "사병 혁파로 왕권 강화", "의정부·사간원 설치", "호패법 시행", "조선 통치 기틀 마련"],
+            children: [
+            { order: 4, name: "세종", isKing: true, years: "1418~1450",
+              events: ["훈민정음(한글) 창제 (1443~1446)", "장영실 발탁, 측우기·해시계 등 과학기구 개발", "4군 6진 개척으로 북방 국경 확장", "조선 최고의 성군으로 평가"],
+              children: [
+              { order: 5, name: "문종", isKing: true, years: "1450~1452",
+                events: ["재위 2년 만에 사망", "세종 때 편찬 사업을 이어받아 문치(文治) 유지"],
+                children: [
+                { order: 6, name: "단종", isKing: true, years: "1452~1455",
+                  events: ["12세의 어린 나이로 즉위", "계유정난(1453)으로 숙부 수양대군에게 실권 빼앗김", "1455년 폐위, 영월에서 사사(賜死)"] }
               ]},
-              { order: 7, name: "세조", isKing: true, children: [
-                { order: 8, name: "예종", isKing: true },
+              { order: 7, name: "세조", isKing: true, years: "1455~1468",
+                events: ["계유정난(1453)으로 단종을 폐위하고 즉위", "왕권 강화와 집권 기반 마련", "경국대전 편찬 착수"],
+                children: [
+                { order: 8, name: "예종", isKing: true, years: "1468~1469",
+                  events: ["재위 1년여 만에 사망", "별다른 치적 없음"] },
                 { name: "덕종", isKing: false, children: [
-                  { order: 9, name: "성종", isKing: true, children: [
-                    { order: 10, name: "연산군", isKing: true },
-                    { order: 11, name: "중종", isKing: true, children: [
-                      { order: 12, name: "인종", isKing: true },
-                      { order: 13, name: "명종", isKing: true },
+                  { order: 9, name: "성종", isKing: true, years: "1469~1494",
+                    events: ["경국대전 완성(1485) — 조선 법전 체계화", "성리학 기반 정치 안정", "홍문관 설치로 학문 진흥"],
+                    children: [
+                    { order: 10, name: "연산군", isKing: true, years: "1494~1506",
+                      events: ["무오사화(1498) — 사림파 대규모 숙청", "갑자사화(1504) — 폭정 극에 달함", "중종반정(1506)으로 폐위"] },
+                    { order: 11, name: "중종", isKing: true, years: "1506~1544",
+                      events: ["중종반정으로 즉위", "조광조 등 사림파 등용 후 기묘사화(1519)로 숙청", "신권 강화 시대"],
+                      children: [
+                      { order: 12, name: "인종", isKing: true, years: "1544~1545",
+                        events: ["재위 8~9개월 만에 사망", "조선 왕 중 가장 단명한 재위"] },
+                      { order: 13, name: "명종", isKing: true, years: "1545~1567",
+                        events: ["어머니 문정왕후 수렴청정", "을사사화(1545)", "임꺽정의 난(1559~1562)"] },
                       { name: "덕흥대원군", isKing: false, children: [
-                        { order: 14, name: "선조", isKing: true, children: [
-                          { order: 15, name: "광해군", isKing: true },
+                        { order: 14, name: "선조", isKing: true, years: "1567~1608",
+                          events: ["임진왜란 발발(1592) — 일본의 조선 침략", "이순신 장군 활약, 의병 봉기", "명나라 원군 지원으로 전란 수습", "정유재란(1597)", "전란 초기 대처 미흡으로 평가 엇갈림"],
+                          children: [
+                          { order: 15, name: "광해군", isKing: true, years: "1608~1623",
+                            events: ["임진왜란 후 복구 사업 주도", "대동법 시행(경기도)으로 세금 개혁", "명·후금 사이 중립 외교", "인조반정(1623)으로 폐위"] },
                           { name: "정원대원군", isKing: false, children: [
-                            { order: 16, name: "인조", isKing: true, children: [
-                              { order: 17, name: "효종", isKing: true, children: [
-                                { order: 18, name: "현종", isKing: true, children: [
-                                  { order: 19, name: "숙종", isKing: true, children: [
-                                    { order: 20, name: "경종", isKing: true },
-                                    { order: 21, name: "영조", isKing: true, children: [
+                            { order: 16, name: "인조", isKing: true, years: "1623~1649",
+                              events: ["인조반정으로 즉위", "정묘호란(1627) — 후금 침입, 형제 관계 맺음", "병자호란(1636) — 청에 굴욕적 항복(삼전도의 굴욕)", "소현세자 볼모로 청에 인질"],
+                              children: [
+                              { order: 17, name: "효종", isKing: true, years: "1649~1659",
+                                events: ["북벌론 추진 — 청에 대한 군사적 복수 천명", "군사력 강화 노력, 실제 북벌은 이루어지지 못함"],
+                                children: [
+                                { order: 18, name: "현종", isKing: true, years: "1659~1674",
+                                  events: ["예송논쟁(1659·1674) — 복제(服制) 문제로 남인·서인 대립", "붕당 정치 심화"],
+                                  children: [
+                                  { order: 19, name: "숙종", isKing: true, years: "1674~1720",
+                                    events: ["환국 정치 — 서인·남인 번갈아 집권", "장희빈 사건(1689)", "탕평책 시초 마련", "강력한 왕권 행사"],
+                                    children: [
+                                    { order: 20, name: "경종", isKing: true, years: "1720~1724",
+                                      events: ["재위 4년, 당쟁 속 단명", "신임사화(1721~1722) — 노론 대규모 숙청"] },
+                                    { order: 21, name: "영조", isKing: true, years: "1724~1776",
+                                      events: ["탕평책 본격 시행 — 붕당 폐해 억제", "임오화변(1762) — 아들 사도세자를 뒤주에 가둬 죽임", "균역법 시행으로 세금 부담 경감", "최장 재위(52년)"],
+                                      children: [
                                       { name: "사도세자", isKing: false, children: [
-                                        { order: 22, name: "정조", isKing: true, children: [
-                                          { order: 23, name: "순조", isKing: true, children: [
+                                        { order: 22, name: "정조", isKing: true, years: "1776~1800",
+                                          events: ["규장각 설치 — 학문·인재 진흥", "수원 화성 건설(1794~1796)", "실학 장려, 통공정책으로 상업 활성화", "강력한 왕권과 개혁 정치"],
+                                          children: [
+                                          { order: 23, name: "순조", isKing: true, years: "1800~1834",
+                                            events: ["세도정치 시작 — 안동 김씨 등 외척 정치 독점", "홍경래의 난(1811)", "삼정의 문란 심화"],
+                                            children: [
                                             { name: "효명세자", isKing: false, children: [
-                                              { order: 24, name: "헌종", isKing: true }
+                                              { order: 24, name: "헌종", isKing: true, years: "1834~1849",
+                                                events: ["세도정치 지속", "어린 나이 즉위 후 23세로 요절", "후사 없이 사망"] }
                                             ]}
                                           ]}
                                         ]},
                                         { name: "은언군", isKing: false, children: [
                                           { name: "전계대원군", isKing: false, children: [
-                                            { order: 25, name: "철종", isKing: true }
+                                            { order: 25, name: "철종", isKing: true, years: "1849~1863",
+                                              events: ["강화도에서 농사짓다 왕으로 옹립", "세도정치 극심 — 안동 김씨 전횡", "임술농민봉기(1862)", "33세로 사망"] }
                                           ]}
                                         ]},
                                         { name: "은신군", isKing: false, children: [
                                           { name: "남연군", isKing: false, children: [
                                             { name: "흥선대원군", isKing: false, children: [
-                                              { order: 26, name: "고종", isKing: true, children: [
-                                                { order: 27, name: "순종", isKing: true }
+                                              { order: 26, name: "고종", isKing: true, years: "1863~1907",
+                                                events: ["흥선대원군 집권(1864~1873) — 서원 철폐, 경복궁 중건", "을미사변(1895) — 명성황후 시해", "아관파천(1896) — 러시아 공사관 피신", "대한제국 선포(1897) — 황제 즉위", "을사늑약(1905)으로 외교권 박탈", "강제 퇴위(1907)"],
+                                                children: [
+                                                { order: 27, name: "순종", isKing: true, years: "1907~1910",
+                                                  events: ["고종 강제 퇴위 후 즉위", "한일병합조약(1910) — 조선 멸망", "실권 없는 마지막 왕"] }
                                               ]}
                                             ]}
                                           ]}
@@ -291,7 +362,7 @@
         const rect = svgEl('rect', {
           x, y, width: BW, height: BH, rx: 6,
           fill: isKing ? '#2a6b5e' : 'white',
-          ...(isKing ? {} : { stroke: '#2a6b5e', 'stroke-width': '1.5' })
+          ...(isKing ? { class: 'king-rect' } : { stroke: '#2a6b5e', 'stroke-width': '1.5' })
         });
         nodeG.appendChild(rect);
         n._rect = rect;
@@ -322,17 +393,39 @@
         n._nameT = nameT;
       });
 
-      // ── 퀴즈 로직 ──────────────────────────────────────
+      // ── 공통 패널 유틸 ───────────────────────────────────
+
+      const infoPanel  = document.getElementById('info-panel');
+      const quizPanel  = document.getElementById('quiz-panel');
+      const btnQuiz    = document.getElementById('btn-quiz');
+      const scoreEl    = document.getElementById('joseon-score');
+      const hintEl     = document.getElementById('quiz-hint');
+      const choicesEl  = document.getElementById('quiz-choices');
+
+      function closeAll() {
+        infoPanel.classList.remove('open');
+        quizPanel.classList.remove('open');
+      }
+
+      // ── 정보 패널 ────────────────────────────────────────
+
+      function openInfoPanel(node) {
+        document.getElementById('info-order').textContent = `${node.order}대`;
+        document.getElementById('info-name').textContent = node.name;
+        document.getElementById('info-years').textContent = node.years || '';
+        const eventsEl = document.getElementById('info-events');
+        if (node.events && node.events.length) {
+          eventsEl.innerHTML = node.events.map(e => `<li>${e}</li>`).join('');
+        } else {
+          eventsEl.innerHTML = `<li><span class="info-empty">주요 기록 없음</span></li>`;
+        }
+        infoPanel.classList.add('open');
+      }
+
+      // ── 퀴즈 로직 ────────────────────────────────────────
 
       let quizMode = false;
-      let activeNode = null;
       let answered = 0, correct = 0;
-
-      const btnQuiz = document.getElementById('btn-quiz');
-      const panel = document.getElementById('quiz-panel');
-      const hintEl = document.getElementById('quiz-hint');
-      const choicesEl = document.getElementById('quiz-choices');
-      const scoreEl = document.getElementById('joseon-score');
 
       function shuffle(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
@@ -346,7 +439,7 @@
         quizMode = on;
         btnQuiz.textContent = on ? '퀴즈 종료' : '퀴즈';
         btnQuiz.classList.toggle('active', on);
-        closePanel();
+        closeAll();
 
         if (on) {
           answered = 0; correct = 0;
@@ -356,7 +449,6 @@
             n._quizState = 'unanswered';
             n._rect.setAttribute('fill', '#2a6b5e');
             n._rect.setAttribute('stroke', 'none');
-            n._rect.classList.add('king-clickable');
             if (n._orderT) n._orderT.setAttribute('visibility', 'hidden');
             n._nameT.setAttribute('visibility', 'hidden');
           });
@@ -366,7 +458,6 @@
             n._quizState = null;
             n._rect.setAttribute('fill', '#2a6b5e');
             n._rect.setAttribute('stroke', 'none');
-            n._rect.classList.remove('king-clickable');
             if (n._orderT) n._orderT.setAttribute('visibility', 'visible');
             n._nameT.setAttribute('visibility', 'visible');
           });
@@ -379,13 +470,10 @@
           `맞춤: <span class="score-correct">${correct}</span> &nbsp; 틀림: <span class="score-wrong">${wrong}</span> &nbsp; / 27`;
       }
 
-      function openPanel(node) {
-        activeNode = node;
+      function openQuizPanel(node) {
         hintEl.textContent = `${node.order}대 왕`;
-
         const others = shuffle(kingNodes.filter(k => k !== node)).slice(0, 3);
         const choices = shuffle([node, ...others]);
-
         choicesEl.innerHTML = '';
         choices.forEach(c => {
           const btn = document.createElement('button');
@@ -394,13 +482,7 @@
           btn.addEventListener('click', () => onChoose(c === node, node, btn));
           choicesEl.appendChild(btn);
         });
-
-        panel.classList.add('open');
-      }
-
-      function closePanel() {
-        panel.classList.remove('open');
-        activeNode = null;
+        quizPanel.classList.add('open');
       }
 
       function onChoose(isCorrect, node, btn) {
@@ -409,38 +491,38 @@
           if (b.textContent === node.name) b.classList.add('correct');
         });
         if (!isCorrect) btn.classList.add('wrong');
-
         node._quizState = isCorrect ? 'correct' : 'wrong';
         node._rect.setAttribute('fill', isCorrect ? '#2a6b5e' : '#d63c3c');
-        node._rect.setAttribute('stroke', isCorrect ? 'none' : 'none');
         if (node._orderT) node._orderT.setAttribute('visibility', 'visible');
         node._nameT.setAttribute('visibility', 'visible');
-
         answered++;
         if (isCorrect) correct++;
         updateScore();
-
-        setTimeout(closePanel, 900);
+        setTimeout(closeAll, 900);
       }
 
-      // 왕 박스 클릭
+      // ── 클릭 이벤트 ──────────────────────────────────────
+
       nodeG.addEventListener('click', e => {
-        if (!quizMode) return;
-        const rect = e.target.closest('rect');
+        const rect = e.target.closest('rect.king-rect');
         if (!rect) return;
         const node = kingNodes.find(n => n._rect === rect);
-        if (!node || node._quizState !== 'unanswered') return;
+        if (!node) return;
         e.stopPropagation();
-        openPanel(node);
+
+        if (quizMode) {
+          if (node._quizState !== 'unanswered') return;
+          openQuizPanel(node);
+        } else {
+          openInfoPanel(node);
+        }
       });
 
       btnQuiz.addEventListener('click', () => setQuizMode(!quizMode));
 
-      // 패널 바깥 클릭 시 닫기
       document.addEventListener('click', e => {
-        if (quizMode && panel.classList.contains('open') &&
-            !panel.contains(e.target) && e.target !== btnQuiz) {
-          closePanel();
+        if (!infoPanel.contains(e.target) && !quizPanel.contains(e.target) && e.target !== btnQuiz) {
+          closeAll();
         }
       });
     </script>
