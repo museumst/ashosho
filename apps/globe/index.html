@@ -240,6 +240,7 @@
       let dragMoved = false;
       let pinchDist = null;
       let hoveredId = null;
+      const activePointers = new Map();
 
       async function init() {
         const w = window.innerWidth;
@@ -270,6 +271,7 @@
           d3.drag()
             .on('start', () => { dragMoved = false; hoveredId = null; })
             .on('drag', (ev) => {
+              if (activePointers.size >= 2) return; // 핀치 중엔 드래그 무시
               dragMoved = true;
               const sens = 0.4 * (baseScale / state.scale);
               const [λ, φ] = proj.rotate();
@@ -293,30 +295,34 @@
           draw();
         }, { passive: false });
 
-        // Pinch-to-zoom (touch)
-        svgEl.addEventListener('touchstart', (e) => {
-          if (e.touches.length === 2) {
-            pinchDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
+        // Pinch-to-zoom (Pointer Events — touch/mouse 모두 동작)
+        svgEl.addEventListener('pointerdown', (e) => {
+          if (e.pointerType === 'touch') {
+            activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          }
+        });
+
+        svgEl.addEventListener('pointermove', (e) => {
+          if (e.pointerType !== 'touch' || !activePointers.has(e.pointerId)) return;
+          activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (activePointers.size === 2) {
+            const [p1, p2] = activePointers.values();
+            const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            if (pinchDist !== null) {
+              state.scale = Math.max(baseScale, Math.min(baseScale * 8, state.scale * (dist / pinchDist)));
+              proj.scale(state.scale);
+              draw();
+            }
+            pinchDist = dist;
           }
         }, { passive: true });
 
-        svgEl.addEventListener('touchmove', (e) => {
-          if (e.touches.length !== 2 || pinchDist === null) return;
-          e.preventDefault();
-          const newDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          state.scale = Math.max(baseScale, Math.min(baseScale * 8, state.scale * (newDist / pinchDist)));
-          proj.scale(state.scale);
-          pinchDist = newDist;
-          draw();
-        }, { passive: false });
-
-        svgEl.addEventListener('touchend', () => { pinchDist = null; });
+        const onPointerEnd = (e) => {
+          activePointers.delete(e.pointerId);
+          if (activePointers.size < 2) pinchDist = null;
+        };
+        svgEl.addEventListener('pointerup', onPointerEnd);
+        svgEl.addEventListener('pointercancel', onPointerEnd);
 
         document.addEventListener('click', (e) => {
           if (!e.target.closest('#quiz-panel') && !e.target.closest('#globe-svg')) {
