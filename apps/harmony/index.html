@@ -48,6 +48,8 @@
         cursor: pointer;
         font-size: 1.15rem;
         font-weight: 900;
+        touch-action: manipulation;
+        user-select: none;
         transition:
           background 0.12s ease,
           border-color 0.12s ease,
@@ -57,7 +59,8 @@
 
       .chord-button:hover,
       .chord-button:focus-visible,
-      .chord-button.is-active {
+      .chord-button.is-active,
+      .chord-button.is-playing {
         border-color: var(--accent);
         background: #dff3ef;
         color: var(--accent-strong);
@@ -86,6 +89,8 @@
         border-right: 1px solid #cbd5d1;
         cursor: pointer;
         font: inherit;
+        touch-action: none;
+        user-select: none;
       }
 
       .key.white {
@@ -264,54 +269,184 @@
       const notesOutput = document.querySelector("#notes");
       const statusOutput = document.querySelector("#status");
       let audioContext;
+      let masterInput;
       let selectedChord = chords[0];
-      let pressTimer;
+      const activeSources = new Map();
+      const activeVoices = new Map();
+      const releaseTimers = new Map();
 
       function getAudioContext() {
         if (!audioContext) {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (!AudioContextClass) return null;
           audioContext = new AudioContextClass();
+
+          const compressor = audioContext.createDynamicsCompressor();
+          compressor.threshold.setValueAtTime(-24, audioContext.currentTime);
+          compressor.knee.setValueAtTime(24, audioContext.currentTime);
+          compressor.ratio.setValueAtTime(8, audioContext.currentTime);
+          compressor.attack.setValueAtTime(0.006, audioContext.currentTime);
+          compressor.release.setValueAtTime(0.18, audioContext.currentTime);
+
+          const delay = audioContext.createDelay();
+          const feedback = audioContext.createGain();
+          const wet = audioContext.createGain();
+          masterInput = audioContext.createGain();
+
+          delay.delayTime.setValueAtTime(0.14, audioContext.currentTime);
+          feedback.gain.setValueAtTime(0.18, audioContext.currentTime);
+          wet.gain.setValueAtTime(0.12, audioContext.currentTime);
+          masterInput.gain.setValueAtTime(0.68, audioContext.currentTime);
+
+          masterInput.connect(compressor);
+          masterInput.connect(delay);
+          delay.connect(feedback);
+          feedback.connect(delay);
+          delay.connect(wet);
+          wet.connect(compressor);
+          compressor.connect(audioContext.destination);
         }
         return audioContext;
       }
 
-      function playTone(frequency, startTime, duration) {
+      function startNote(note) {
+        if (activeVoices.has(note)) return;
         const context = getAudioContext();
-        const oscillator = context.createOscillator();
-        const gain = context.createGain();
+        if (!context || !noteFrequency[note]) return;
 
-        oscillator.type = "sine";
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-        gain.gain.setValueAtTime(0.0001, startTime);
-        gain.gain.exponentialRampToValueAtTime(0.18, startTime + 0.025);
-        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+        const now = context.currentTime;
+        const frequency = noteFrequency[note];
+        const filter = context.createBiquadFilter();
+        const envelope = context.createGain();
+        const bodyGain = context.createGain();
+        const warmGain = context.createGain();
+        const edgeGain = context.createGain();
+        const body = context.createOscillator();
+        const warm = context.createOscillator();
+        const edge = context.createOscillator();
 
-        oscillator.connect(gain);
-        gain.connect(context.destination);
-        oscillator.start(startTime);
-        oscillator.stop(startTime + duration + 0.02);
+        filter.type = "lowpass";
+        filter.Q.setValueAtTime(0.9, now);
+        filter.frequency.setValueAtTime(Math.min(4200, frequency * 8), now);
+        filter.frequency.exponentialRampToValueAtTime(Math.min(2600, frequency * 4.2), now + 0.32);
+
+        envelope.gain.setValueAtTime(0.0001, now);
+        envelope.gain.exponentialRampToValueAtTime(0.18, now + 0.028);
+        envelope.gain.exponentialRampToValueAtTime(0.115, now + 0.42);
+
+        body.type = "triangle";
+        body.frequency.setValueAtTime(frequency, now);
+        body.detune.setValueAtTime(-4, now);
+        bodyGain.gain.setValueAtTime(0.72, now);
+
+        warm.type = "sine";
+        warm.frequency.setValueAtTime(frequency, now);
+        warm.detune.setValueAtTime(5, now);
+        warmGain.gain.setValueAtTime(0.52, now);
+
+        edge.type = "sawtooth";
+        edge.frequency.setValueAtTime(frequency * 2, now);
+        edge.detune.setValueAtTime(2, now);
+        edgeGain.gain.setValueAtTime(0.045, now);
+
+        body.connect(bodyGain);
+        warm.connect(warmGain);
+        edge.connect(edgeGain);
+        bodyGain.connect(envelope);
+        warmGain.connect(envelope);
+        edgeGain.connect(envelope);
+        envelope.connect(filter);
+        filter.connect(masterInput);
+
+        body.start(now);
+        warm.start(now);
+        edge.start(now);
+        activeVoices.set(note, { oscillators: [body, warm, edge], envelope, filter });
       }
 
-      function setPressed(notes) {
-        clearTimeout(pressTimer);
+      function stopNote(note) {
+        const voice = activeVoices.get(note);
+        if (!voice || !audioContext) return;
+
+        const now = audioContext.currentTime;
+        voice.envelope.gain.cancelScheduledValues(now);
+        voice.envelope.gain.setTargetAtTime(0.0001, now, 0.22);
+        voice.filter.frequency.cancelScheduledValues(now);
+        voice.filter.frequency.setTargetAtTime(620, now, 0.2);
+        voice.oscillators.forEach((oscillator) => oscillator.stop(now + 0.95));
+        activeVoices.delete(note);
+      }
+
+      function updatePressedKeys(notes) {
         document.querySelectorAll(".key").forEach((key) => {
           key.classList.toggle("is-pressed", notes.includes(key.dataset.note));
         });
-        pressTimer = setTimeout(() => {
-          document.querySelectorAll(".key.is-pressed").forEach((key) => key.classList.remove("is-pressed"));
-        }, 520);
+        document.querySelectorAll(".chord-button").forEach((button) => {
+          const isPlaying = [...activeSources.values()].some(
+            (source) => source.chordName === button.dataset.chord
+          );
+          button.classList.toggle("is-playing", isPlaying);
+        });
       }
 
-      async function playNotes(notes) {
-        setPressed(notes);
+      async function resumeAudio() {
         const context = getAudioContext();
-        if (!context) return;
+        if (!context) return false;
         if (context.state === "suspended") {
           await context.resume();
         }
-        const startTime = context.currentTime + 0.02;
-        notes.forEach((note) => playTone(noteFrequency[note], startTime, 0.75));
+        return true;
+      }
+
+      function getHeldNotes() {
+        return [...new Set([...activeSources.values()].flatMap((source) => source.notes))];
+      }
+
+      function syncHeldNotes() {
+        const heldNotes = getHeldNotes();
+        heldNotes.forEach(startNote);
+        [...activeVoices.keys()].forEach((note) => {
+          if (!heldNotes.includes(note)) stopNote(note);
+        });
+        updatePressedKeys(heldNotes);
+      }
+
+      async function holdNotes(sourceId, notes, chordName = "") {
+        clearTimeout(releaseTimers.get(sourceId));
+        releaseTimers.delete(sourceId);
+        activeSources.set(sourceId, { notes, chordName, startedAt: Date.now() });
+        syncHeldNotes();
+        await resumeAudio();
+        syncHeldNotes();
+      }
+
+      function releaseNotes(sourceId) {
+        const source = activeSources.get(sourceId);
+        if (!source) return;
+
+        const heldFor = Date.now() - source.startedAt;
+        if (heldFor < 120) {
+          clearTimeout(releaseTimers.get(sourceId));
+          releaseTimers.set(
+            sourceId,
+            setTimeout(() => {
+              activeSources.delete(sourceId);
+              releaseTimers.delete(sourceId);
+              syncHeldNotes();
+            }, 120 - heldFor)
+          );
+          return;
+        }
+
+        activeSources.delete(sourceId);
+        syncHeldNotes();
+      }
+
+      function selectChord(chord) {
+        selectedChord = chord;
+        renderChords();
+        renderNotes();
+        updatePressedKeys(getHeldNotes());
       }
 
       function renderChords() {
@@ -366,24 +501,64 @@
           .join("");
       }
 
-      function selectChord(chord) {
-        selectedChord = chord;
-        renderChords();
-        renderNotes();
-        playNotes(chord.notes);
-      }
-
-      chordGrid.addEventListener("click", (event) => {
+      chordGrid.addEventListener("pointerdown", (event) => {
         const button = event.target.closest(".chord-button");
-        if (!button) return;
+        if (!button || event.button > 0) return;
+        event.preventDefault();
         const chord = chords.find((item) => item.name === button.dataset.chord);
+        if (!chord) return;
         selectChord(chord);
+        holdNotes(`pointer-${event.pointerId}`, chord.notes, chord.name);
       });
 
-      keyboard.addEventListener("click", (event) => {
+      keyboard.addEventListener("pointerdown", (event) => {
+        const key = event.target.closest(".key");
+        if (!key || event.button > 0) return;
+        event.preventDefault();
+        holdNotes(`pointer-${event.pointerId}`, [key.dataset.note]);
+      });
+
+      document.addEventListener("pointerup", (event) => {
+        releaseNotes(`pointer-${event.pointerId}`);
+      });
+
+      document.addEventListener("pointercancel", (event) => {
+        releaseNotes(`pointer-${event.pointerId}`);
+      });
+
+      chordGrid.addEventListener("keydown", (event) => {
+        if (event.repeat || ![" ", "Enter"].includes(event.key)) return;
+        const button = event.target.closest(".chord-button");
+        if (!button) return;
+        event.preventDefault();
+        const chord = chords.find((item) => item.name === button.dataset.chord);
+        if (!chord) return;
+        selectChord(chord);
+        holdNotes(`key-${chord.name}`, chord.notes, chord.name);
+      });
+
+      chordGrid.addEventListener("keyup", (event) => {
+        if (![" ", "Enter"].includes(event.key)) return;
+        const button = event.target.closest(".chord-button");
+        if (!button) return;
+        event.preventDefault();
+        releaseNotes(`key-${button.dataset.chord}`);
+      });
+
+      keyboard.addEventListener("keydown", (event) => {
+        if (event.repeat || ![" ", "Enter"].includes(event.key)) return;
         const key = event.target.closest(".key");
         if (!key) return;
-        playNotes([key.dataset.note]);
+        event.preventDefault();
+        holdNotes(`key-${key.dataset.note}`, [key.dataset.note]);
+      });
+
+      keyboard.addEventListener("keyup", (event) => {
+        if (![" ", "Enter"].includes(event.key)) return;
+        const key = event.target.closest(".key");
+        if (!key) return;
+        event.preventDefault();
+        releaseNotes(`key-${key.dataset.note}`);
       });
 
       renderChords();
