@@ -65,14 +65,30 @@
       }
 
       #score-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
         font-size: 13px;
         color: #aaa;
         background: rgba(255,255,255,0.1);
         border: 1px solid rgba(255,255,255,0.15);
-        padding: 4px 10px;
+        padding: 4px 8px 4px 10px;
         border-radius: 20px;
       }
       #score-bar strong { color: #fff; font-weight: 700; }
+      .reset-btn {
+        background: none;
+        border: 1px solid rgba(255,255,255,0.25);
+        color: rgba(255,255,255,0.6);
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        font-size: 13px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      .reset-btn:hover { border-color: rgba(255,255,255,0.7); color: white; }
 
       .lang-select {
         background: rgba(255,255,255,0.1);
@@ -170,7 +186,10 @@
           </select>
           <button class="quiz-btn" id="btn-quiz" type="button">퀴즈</button>
         </div>
-        <div id="score-bar" hidden><span id="score-label">맞힌 나라</span>: <strong id="score-display">0 / 0</strong></div>
+        <div id="score-bar" hidden>
+          <span><span id="score-label">맞힌 나라</span>: <strong id="score-display">0 / 0</strong></span>
+          <button class="reset-btn" id="btn-reset" type="button" title="초기화">↺</button>
+        </div>
       </div>
     </header>
 
@@ -343,6 +362,36 @@
 
       let lang = 'ko';
       const names = () => LANGS[lang].names;
+
+      const QUIZ_STORAGE_KEY = 'ashosho-globe-quiz';
+
+      function saveQuizProgress() {
+        try {
+          localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({
+            answered: [...state.answered.entries()],
+            correct: state.score.correct,
+          }));
+        } catch {}
+      }
+
+      function loadQuizProgress() {
+        try {
+          const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          if (Array.isArray(data.answered)) {
+            state.answered = new Map(data.answered);
+            state.score.correct = data.correct || 0;
+          }
+        } catch {}
+      }
+
+      function clearQuizProgress() {
+        localStorage.removeItem(QUIZ_STORAGE_KEY);
+        state.answered.clear();
+        state.activeId = null;
+        state.score = { correct: 0 };
+      }
 
       // 해외 영토로 인해 자동 centroid가 틀어지는 나라의 좌표 수동 지정 [lon, lat]
       const CENTROIDS = {
@@ -645,6 +694,7 @@
         });
         state.answered.set(id, ok ? 'correct' : 'wrong');
         if (ok) state.score.correct++;
+        saveQuizProgress();
         updateScore();
         draw();
         state.activeId = null; closePanel(); draw();
@@ -672,12 +722,21 @@
 
       document.getElementById('btn-quiz').addEventListener('click', () => {
         state.quizMode = !state.quizMode;
-        state.answered.clear();
+        if (state.quizMode) {
+          state.answered.clear();
+          state.score = { correct: 0 };
+          loadQuizProgress(); // 이전 진행상황 복원
+        }
         state.activeId = null;
-        state.score = { correct: 0 };
         closePanel();
         document.getElementById('btn-quiz').textContent = state.quizMode ? LANGS[lang].quizOff : LANGS[lang].quizOn;
         document.getElementById('score-bar').hidden = !state.quizMode;
+        updateScore();
+        draw();
+      });
+
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        clearQuizProgress();
         updateScore();
         draw();
       });
