@@ -309,12 +309,12 @@ function renderDetail() {
   detailDescription.hidden = !app.description;
 
   if (isReady) {
-    goLink.textContent = text.open;
+    goLink.textContent = "go";
     goLink.href = app.app_url;
     goLink.setAttribute("aria-label", text.openAria(app.title));
     goLink.removeAttribute("aria-disabled");
   } else {
-    goLink.textContent = text.soon;
+    goLink.textContent = "soon";
     goLink.removeAttribute("href");
     goLink.setAttribute("aria-label", text.soonAria(app.title));
     goLink.setAttribute("aria-disabled", "true");
