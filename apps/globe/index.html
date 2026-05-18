@@ -225,7 +225,7 @@
         620: [-8, 39.5],     // 포르투갈 (아조레스·마데이라로 인해 치우침)
         528: [5.3, 52.4],    // 네덜란드 (카리브 영토로 인해 치우침)
         152: [-73, -37],     // 칠레 (가늘고 긴 국토로 인해 치우침)
-        704: [107, 14],      // 베트남 (가늘고 긴 국토로 인해 치우침)
+        704: [109, 14],      // 베트남 (가늘고 긴 국토로 인해 치우침)
       };
 
       const state = {
@@ -435,7 +435,7 @@
           const fontSize = isMobile ? 11 : Math.max(8, Math.min(22, 11 * zoomRatio));
           const strokeW = isMobile ? 2.5 : Math.max(2, 3 * zoomRatio);
           // Area threshold scales down as we zoom in (small countries become visible)
-          const areaThreshold = Math.max(20, 200 / (zoomRatio * zoomRatio));
+          const areaThreshold = Math.max(20, 800 / (zoomRatio * zoomRatio));
 
           labelsG.selectAll('text')
             .data(features.filter(f => NAMES[+f.id]), d => d.id)
