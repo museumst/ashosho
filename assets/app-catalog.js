@@ -33,7 +33,7 @@ const apps = [
     tags: ["puzzle", "game", "logic"],
   },
   {
-    title: "세계지도 퀴즈",
+    title: "세계지도",
     description: "지구본을 돌려가며 나라를 찾는 세계지도 퀴즈입니다. 일반 모드에서는 나라이름이 표시되고, 퀴즈 모드에서는 이름이 사라져 클릭으로 맞춰야 합니다.",
     category: "game",
     categoryLabel: "게임",
