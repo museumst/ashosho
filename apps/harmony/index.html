@@ -32,11 +32,53 @@
         text-align: right;
       }
 
+      .root-control {
+        display: grid;
+        gap: 8px;
+        width: min(240px, 100%);
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 900;
+      }
+
+      .root-control select {
+        min-height: 48px;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 12px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 1.05rem;
+        font-weight: 900;
+      }
+
+      .chord-sections {
+        display: grid;
+        gap: 18px;
+        margin: 26px 0 0;
+      }
+
+      .chord-section {
+        display: grid;
+        gap: 8px;
+      }
+
+      .chord-section-title {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
       .chord-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 10px;
-        margin: 26px 0 0;
       }
 
       .chord-button {
@@ -71,12 +113,19 @@
         transform: translateY(1px);
       }
 
+      .keyboard-wrap {
+        max-width: 100%;
+        margin: 32px 0 0;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
       .keyboard {
         position: relative;
         display: grid;
-        grid-template-columns: repeat(11, minmax(0, 1fr));
+        grid-template-columns: repeat(16, minmax(48px, 1fr));
         height: clamp(230px, 36vw, 340px);
-        margin: 32px 0 0;
+        min-width: 760px;
         border: 1px solid #111827;
         border-radius: 8px;
         overflow: hidden;
@@ -113,7 +162,7 @@
         position: absolute;
         z-index: 3;
         top: 0;
-        width: 7.2%;
+        width: 5%;
         height: 62%;
         border: 1px solid #101418;
         border-top: 0;
@@ -185,12 +234,16 @@
           text-align: left;
         }
 
+        .root-control {
+          width: 100%;
+        }
+
         .chord-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .key.black {
-          width: 8%;
+          width: 5.8%;
         }
       }
     </style>
@@ -205,75 +258,134 @@
         <p class="harmony-status" id="status">C Major</p>
       </div>
 
-      <div class="chord-grid" id="chord-grid" aria-label="코드 선택"></div>
-      <div class="keyboard" id="keyboard" aria-label="건반"></div>
+      <label class="root-control">
+        <span>Root</span>
+        <select id="root-select" aria-label="뿌리음 선택"></select>
+      </label>
+      <div class="chord-sections" id="chord-grid" aria-label="코드 선택"></div>
+      <div class="keyboard-wrap">
+        <div class="keyboard" id="keyboard" aria-label="건반"></div>
+      </div>
       <div class="harmony-notes" id="notes" aria-live="polite"></div>
     </main>
 
     <script>
-      const chords = [
-        { name: "C Major", notes: ["C4", "E4", "G4"] },
-        { name: "D Minor", notes: ["D4", "F4", "A4"] },
-        { name: "E Minor", notes: ["E4", "G4", "B4"] },
-        { name: "F Major", notes: ["F4", "A4", "C5"] },
-        { name: "G Major", notes: ["G4", "B4", "D5"] },
-        { name: "A Minor", notes: ["A4", "C5", "E5"] },
-        { name: "B Dim", notes: ["B4", "D5", "F5"] },
-        { name: "C Major 7", notes: ["C4", "E4", "G4", "B4"] },
+      const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      const whitePitchClasses = new Set([0, 2, 4, 5, 7, 9, 11]);
+      const rootOptions = [
+        { name: "C", label: "C", pitch: 0 },
+        { name: "C#", label: "C#/Db", pitch: 1 },
+        { name: "D", label: "D", pitch: 2 },
+        { name: "D#", label: "D#/Eb", pitch: 3 },
+        { name: "E", label: "E", pitch: 4 },
+        { name: "F", label: "F", pitch: 5 },
+        { name: "F#", label: "F#/Gb", pitch: 6 },
+        { name: "G", label: "G", pitch: 7 },
+        { name: "G#", label: "G#/Ab", pitch: 8 },
+        { name: "A", label: "A", pitch: 9 },
+        { name: "A#", label: "A#/Bb", pitch: 10 },
+        { name: "B", label: "B", pitch: 11 },
       ];
-
-      const keys = [
-        { note: "C4", type: "white", label: "C" },
-        { note: "C#4", type: "black", label: "C#", after: 1 },
-        { note: "D4", type: "white", label: "D" },
-        { note: "D#4", type: "black", label: "D#", after: 2 },
-        { note: "E4", type: "white", label: "E" },
-        { note: "F4", type: "white", label: "F" },
-        { note: "F#4", type: "black", label: "F#", after: 4 },
-        { note: "G4", type: "white", label: "G" },
-        { note: "G#4", type: "black", label: "G#", after: 5 },
-        { note: "A4", type: "white", label: "A" },
-        { note: "A#4", type: "black", label: "A#", after: 6 },
-        { note: "B4", type: "white", label: "B" },
-        { note: "C5", type: "white", label: "C" },
-        { note: "C#5", type: "black", label: "C#", after: 8 },
-        { note: "D5", type: "white", label: "D" },
-        { note: "D#5", type: "black", label: "D#", after: 9 },
-        { note: "E5", type: "white", label: "E" },
-        { note: "F5", type: "white", label: "F" },
+      const chordGroups = [
+        {
+          title: "Basic",
+          types: [
+            { id: "major", label: "Major", intervals: [0, 4, 7] },
+            { id: "minor", label: "Minor", intervals: [0, 3, 7] },
+            { id: "dim", label: "Dim", intervals: [0, 3, 6] },
+            { id: "aug", label: "Aug", intervals: [0, 4, 8] },
+          ],
+        },
+        {
+          title: "Seventh",
+          types: [
+            { id: "7", label: "7", intervals: [0, 4, 7, 10] },
+            { id: "major-7", label: "Major 7", intervals: [0, 4, 7, 11] },
+            { id: "minor-7", label: "Minor 7", intervals: [0, 3, 7, 10] },
+          ],
+        },
+        {
+          title: "Color",
+          types: [
+            { id: "sus4", label: "Sus4", intervals: [0, 5, 7] },
+            { id: "add9", label: "Add9", intervals: [0, 4, 7, 14] },
+            { id: "6", label: "6", intervals: [0, 4, 7, 9] },
+            { id: "9", label: "9", intervals: [0, 4, 7, 10, 14] },
+          ],
+        },
       ];
+      const chordTypes = chordGroups.flatMap((group) => group.types);
+      const keys = buildKeyboard(60, 86);
 
-      const noteFrequency = {
-        C4: 261.63,
-        "C#4": 277.18,
-        D4: 293.66,
-        "D#4": 311.13,
-        E4: 329.63,
-        F4: 349.23,
-        "F#4": 369.99,
-        G4: 392,
-        "G#4": 415.3,
-        A4: 440,
-        "A#4": 466.16,
-        B4: 493.88,
-        C5: 523.25,
-        "C#5": 554.37,
-        D5: 587.33,
-        "D#5": 622.25,
-        E5: 659.25,
-        F5: 698.46,
-      };
-
+      const rootSelect = document.querySelector("#root-select");
       const chordGrid = document.querySelector("#chord-grid");
       const keyboard = document.querySelector("#keyboard");
       const notesOutput = document.querySelector("#notes");
       const statusOutput = document.querySelector("#status");
       let audioContext;
       let masterInput;
-      let selectedChord = chords[0];
+      let selectedRoot = rootOptions[0];
+      let selectedChordType = chordTypes[0];
+      let selectedChord = buildChord(selectedRoot, selectedChordType);
       const activeSources = new Map();
       const activeVoices = new Map();
       const releaseTimers = new Map();
+
+      function buildKeyboard(startMidi, endMidi) {
+        const whiteCount = Array.from({ length: endMidi - startMidi + 1 }, (_, index) => startMidi + index)
+          .filter((midi) => whitePitchClasses.has(midi % 12)).length;
+        let whiteBefore = 0;
+
+        return Array.from({ length: endMidi - startMidi + 1 }, (_, index) => {
+          const midi = startMidi + index;
+          const note = midiToNote(midi);
+          const pitchClass = midi % 12;
+          const isWhite = whitePitchClasses.has(pitchClass);
+          const key = {
+            note,
+            type: isWhite ? "white" : "black",
+            label: note.replace(/\d+$/, ""),
+            left: isWhite ? null : (whiteBefore / whiteCount) * 100,
+          };
+
+          if (isWhite) {
+            whiteBefore += 1;
+          }
+
+          return key;
+        });
+      }
+
+      function midiToNote(midi) {
+        const octave = Math.floor(midi / 12) - 1;
+        return `${noteNames[midi % 12]}${octave}`;
+      }
+
+      function noteToMidi(note) {
+        const match = note.match(/^([A-G])(#?)(\d+)$/);
+        if (!match) return null;
+        const [, name, sharp, octave] = match;
+        const pitch = noteNames.indexOf(`${name}${sharp}`);
+        if (pitch < 0) return null;
+        return (Number(octave) + 1) * 12 + pitch;
+      }
+
+      function noteFrequency(note) {
+        const midi = noteToMidi(note);
+        if (midi === null) return null;
+        return 440 * 2 ** ((midi - 69) / 12);
+      }
+
+      function buildChord(root, type) {
+        const rootMidi = 60 + root.pitch;
+        const notes = type.intervals.map((interval) => midiToNote(rootMidi + interval));
+        return {
+          id: `${root.name}-${type.id}`,
+          name: `${root.name} ${type.label}`,
+          notes,
+          type,
+        };
+      }
 
       function getAudioContext() {
         if (!audioContext) {
@@ -312,10 +424,10 @@
       function startNote(note) {
         if (activeVoices.has(note)) return;
         const context = getAudioContext();
-        if (!context || !noteFrequency[note]) return;
+        const frequency = noteFrequency(note);
+        if (!context || !frequency) return;
 
         const now = context.currentTime;
-        const frequency = noteFrequency[note];
         const filter = context.createBiquadFilter();
         const envelope = context.createGain();
         const bodyGain = context.createGain();
@@ -450,17 +562,43 @@
       }
 
       function renderChords() {
-        chordGrid.innerHTML = chords
+        chordGrid.innerHTML = chordGroups
+          .map((group) => {
+            const buttons = group.types
+              .map((type) => {
+                const chord = buildChord(selectedRoot, type);
+                const isActive = type.id === selectedChordType.id;
+                return `
+                  <button
+                    class="chord-button ${isActive ? "is-active" : ""}"
+                    type="button"
+                    data-chord-type="${type.id}"
+                    data-chord="${chord.name}"
+                    aria-pressed="${isActive ? "true" : "false"}"
+                  >
+                    ${chord.name}
+                  </button>
+                `;
+              })
+              .join("");
+
+            return `
+              <section class="chord-section" aria-label="${group.title}">
+                <p class="chord-section-title">${group.title}</p>
+                <div class="chord-grid">${buttons}</div>
+              </section>
+            `;
+          })
+          .join("");
+      }
+
+      function renderRootOptions() {
+        rootSelect.innerHTML = rootOptions
           .map(
-            (chord) => `
-              <button
-                class="chord-button ${chord.name === selectedChord.name ? "is-active" : ""}"
-                type="button"
-                data-chord="${chord.name}"
-                aria-pressed="${chord.name === selectedChord.name ? "true" : "false"}"
-              >
-                ${chord.name}
-              </button>
+            (root) => `
+              <option value="${root.pitch}" ${root.pitch === selectedRoot.pitch ? "selected" : ""}>
+                ${root.label}
+              </option>
             `
           )
           .join("");
@@ -478,11 +616,10 @@
             `
           ),
           ...blackKeys.map((key) => {
-            const left = (key.after / 11) * 100;
             return `
               <button
                 class="key black"
-                style="left: ${left}%"
+                style="left: ${key.left}%"
                 type="button"
                 data-note="${key.note}"
                 aria-label="${key.note}"
@@ -497,7 +634,7 @@
       function renderNotes() {
         statusOutput.textContent = selectedChord.name;
         notesOutput.innerHTML = selectedChord.notes
-          .map((note) => `<span class="note-chip">${note}</span>`)
+          .map((note) => `<span class="note-chip" title="${note}">${note.replace(/\d+$/, "")}</span>`)
           .join("");
       }
 
@@ -505,8 +642,10 @@
         const button = event.target.closest(".chord-button");
         if (!button || event.button > 0) return;
         event.preventDefault();
-        const chord = chords.find((item) => item.name === button.dataset.chord);
-        if (!chord) return;
+        const type = chordTypes.find((item) => item.id === button.dataset.chordType);
+        if (!type) return;
+        selectedChordType = type;
+        const chord = buildChord(selectedRoot, type);
         selectChord(chord);
         holdNotes(`pointer-${event.pointerId}`, chord.notes, chord.name);
       });
@@ -531,8 +670,10 @@
         const button = event.target.closest(".chord-button");
         if (!button) return;
         event.preventDefault();
-        const chord = chords.find((item) => item.name === button.dataset.chord);
-        if (!chord) return;
+        const type = chordTypes.find((item) => item.id === button.dataset.chordType);
+        if (!type) return;
+        selectedChordType = type;
+        const chord = buildChord(selectedRoot, type);
         selectChord(chord);
         holdNotes(`key-${chord.name}`, chord.notes, chord.name);
       });
@@ -561,6 +702,17 @@
         releaseNotes(`key-${key.dataset.note}`);
       });
 
+      rootSelect.addEventListener("change", () => {
+        const nextRoot = rootOptions.find((root) => root.pitch === Number(rootSelect.value));
+        if (!nextRoot) return;
+        selectedRoot = nextRoot;
+        selectedChord = buildChord(selectedRoot, selectedChordType);
+        renderChords();
+        renderNotes();
+        updatePressedKeys(getHeldNotes());
+      });
+
+      renderRootOptions();
       renderChords();
       renderKeyboard();
       renderNotes();
