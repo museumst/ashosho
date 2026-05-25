@@ -44,38 +44,6 @@
         -webkit-overflow-scrolling: touch; padding-bottom: 12px;
       }
 
-      /* 모바일: 단일 2D 스크롤 컨테이너로 전환 */
-      @media (max-width: 680px) {
-        html, body.joseon-app {
-          height: 100%;
-          overflow: hidden;
-        }
-        body.joseon-app {
-          display: flex;
-          flex-direction: column;
-          padding: 16px 16px 0;
-          box-sizing: border-box;
-        }
-        .joseon-panel {
-          flex: 1;
-          width: 100%;
-          border: none;
-          border-radius: 0;
-          padding: 0;
-          background: transparent;
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-          overflow: hidden;
-        }
-        .joseon-scroll {
-          flex: 1;
-          overflow: auto;
-          min-height: 0;
-          margin-top: 12px;
-          padding-bottom: 24px;
-        }
-      }
       #joseon-svg { display: block; margin: 0 auto; }
       .tree-line { stroke: #9dbdb8; stroke-width: 1.5; fill: none; }
 
@@ -552,6 +520,26 @@
       });
 
       btnQuiz.addEventListener('click', () => setQuizMode(!quizMode));
+
+      // 세로 스크롤을 대각선으로 리매핑 (아래로 스크롤 = 아래+오른쪽 이동)
+      const scrollEl = document.querySelector('.joseon-scroll');
+      const DIAGONAL_RATIO = 0.6; // 세로 1px 이동 시 가로 이동 비율
+
+      // 터치 (모바일)
+      let touchStartY = 0;
+      scrollEl.addEventListener('touchstart', e => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      scrollEl.addEventListener('touchmove', e => {
+        const dy = touchStartY - e.touches[0].clientY;
+        touchStartY = e.touches[0].clientY;
+        scrollEl.scrollLeft += dy * DIAGONAL_RATIO;
+      }, { passive: true });
+
+      // 마우스 휠 (데스크탑)
+      scrollEl.addEventListener('wheel', e => {
+        scrollEl.scrollLeft += e.deltaY * DIAGONAL_RATIO;
+      }, { passive: true });
 
       document.addEventListener('click', e => {
         if (!infoPanel.contains(e.target) && !quizPanel.contains(e.target) && e.target !== btnQuiz) {
