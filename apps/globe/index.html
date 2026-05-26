@@ -57,29 +57,6 @@
         text-shadow: 0 2px 12px rgba(0,0,0,0.8);
       }
 
-      .mode-tabs {
-        display: flex;
-        gap: 5px;
-        margin-top: 8px;
-      }
-      .mode-tab {
-        padding: 4px 14px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.25);
-        background: transparent;
-        color: rgba(255,255,255,0.5);
-        font-size: 0.8rem;
-        font-weight: 700;
-        cursor: pointer;
-        font-family: inherit;
-        transition: all 0.15s;
-      }
-      .mode-tab.active {
-        background: rgba(255,255,255,0.18);
-        color: #fff;
-        border-color: rgba(255,255,255,0.5);
-      }
-      .mode-tab:hover:not(.active) { color: rgba(255,255,255,0.8); }
 
       .ocean-label {
         fill: #a8d8f0;
@@ -206,10 +183,6 @@
     <header class="globe-header">
       <div class="header-left">
         <h1 id="globe-title">세계지도</h1>
-        <div class="mode-tabs">
-          <button class="mode-tab active" id="tab-country" type="button">나라</button>
-          <button class="mode-tab" id="tab-ocean" type="button">바다</button>
-        </div>
       </div>
       <div class="header-right">
         <div style="display:flex; gap:8px; align-items:center;">
@@ -389,9 +362,9 @@
       };
 
       const LANGS = {
-        ko: { label: '한국어', title: '세계지도', quizOn: '퀴즈', quizOff: '일반', scoreLabel: '맞힌 나라', quizQuestion: '이 나라는 어디일까요?', tabCountry: '나라', tabOcean: '바다', names: NAMES_KO },
-        en: { label: 'English', title: 'World Map', quizOn: 'Quiz', quizOff: 'Normal', scoreLabel: 'Score', quizQuestion: 'Which country is this?', tabCountry: 'Country', tabOcean: 'Ocean', names: NAMES_EN },
-        ja: { label: '日本語', title: '世界地図', quizOn: 'クイズ', quizOff: '通常', scoreLabel: '正解数', quizQuestion: 'この国はどこ？', tabCountry: '国', tabOcean: '海', names: NAMES_JA },
+        ko: { label: '한국어', title: '세계지도', quizOn: '퀴즈', quizOff: '일반', scoreLabel: '맞힌 나라', quizQuestion: '이 나라는 어디일까요?', names: NAMES_KO },
+        en: { label: 'English', title: 'World Map', quizOn: 'Quiz', quizOff: 'Normal', scoreLabel: 'Score', quizQuestion: 'Which country is this?', names: NAMES_EN },
+        ja: { label: '日本語', title: '世界地図', quizOn: 'クイズ', quizOff: '通常', scoreLabel: '正解数', quizQuestion: 'この国はどこ？', names: NAMES_JA },
       };
 
       let lang = 'ko';
@@ -469,7 +442,6 @@
         454: [33.5, -13.2],  // 말라위 (왼쪽으로 조정)
       };
 
-      let mapMode = 'country'; // 'country' | 'ocean'
 
       const state = {
         quizMode: false,
@@ -632,7 +604,6 @@
       }
 
       function countryFill(id) {
-        if (mapMode === 'ocean') return '#2a6b5e';
         if (!state.quizMode) {
           return id === hoveredId ? '#3d8a72' : '#2a6b5e';
         }
@@ -680,39 +651,19 @@
           .attr('stroke-width', 0.4);
 
         const labelsG = d3.select('#g-labels');
-        if (mapMode === 'ocean') {
-          // 바다 모드: 해양 이름 표시
-          const sizeMap = { large: isMobile ? 13 : Math.max(11, Math.min(17, 13 * zoomRatio)),
-                            medium: isMobile ? 11 : Math.max(9, Math.min(14, 11 * zoomRatio)),
-                            small:  isMobile ? 9  : Math.max(8, Math.min(12, 9  * zoomRatio)) };
-          const rotate = proj.rotate();
-          const viewCenter = [-rotate[0], -rotate[1]];
-          const oceanData = OCEANS.map(o => ({ ...o, pos: proj([o.lon, o.lat]) }))
-                                   .filter(o => o.pos !== null && d3.geoDistance(viewCenter, [o.lon, o.lat]) < Math.PI / 2);
-          labelsG.selectAll('text')
-            .data(oceanData, d => d.id)
-            .join('text')
-            .attr('class', 'country-label ocean-label')
-            .attr('stroke', 'rgba(0,20,60,0.6)')
-            .attr('stroke-width', 2.5)
-            .style('font-size', d => sizeMap[d.size] + 'px')
-            .attr('x', d => d.pos[0])
-            .attr('y', d => d.pos[1])
-            .text(d => d[lang]);
-        } else if (state.quizMode) {
-          labelsG.selectAll('text').remove();
+        // 나라 레이블 (퀴즈모드에서는 숨김)
+        const countryLabelsG = labelsG.selectAll('g.country-labels').data([null]).join('g').attr('class', 'country-labels');
+        if (state.quizMode) {
+          countryLabelsG.selectAll('text').remove();
         } else {
-          // 나라 모드: 국가 이름 표시
           const fontSize = isMobile ? 11 : Math.max(8, Math.min(16, 11 * zoomRatio));
-          const strokeW = 2.5;
           const areaThreshold = Math.max(20, 800 / (zoomRatio * zoomRatio));
-
-          labelsG.selectAll('text')
+          countryLabelsG.selectAll('text')
             .data(features.filter(f => names()[+f.id]), d => d.id)
             .join('text')
             .attr('class', 'country-label')
             .attr('stroke', 'rgba(0,0,0,0.55)')
-            .attr('stroke-width', strokeW)
+            .attr('stroke-width', 2.5)
             .style('font-size', fontSize + 'px')
             .each(function(d) {
               const centroid = CENTROIDS[+d.id] || d3.geoCentroid(d);
@@ -726,6 +677,25 @@
                 .text(names()[+d.id]);
             });
         }
+        // 바다 레이블 (항상 표시)
+        const oceanLabelsG = labelsG.selectAll('g.ocean-labels').data([null]).join('g').attr('class', 'ocean-labels');
+        const sizeMap = { large: isMobile ? 13 : Math.max(11, Math.min(17, 13 * zoomRatio)),
+                          medium: isMobile ? 11 : Math.max(9, Math.min(14, 11 * zoomRatio)),
+                          small:  isMobile ? 9  : Math.max(8, Math.min(12, 9  * zoomRatio)) };
+        const rotate = proj.rotate();
+        const viewCenter = [-rotate[0], -rotate[1]];
+        const oceanData = OCEANS.map(o => ({ ...o, pos: proj([o.lon, o.lat]) }))
+                                 .filter(o => o.pos !== null && d3.geoDistance(viewCenter, [o.lon, o.lat]) < Math.PI / 2);
+        oceanLabelsG.selectAll('text')
+          .data(oceanData, d => d.id)
+          .join('text')
+          .attr('class', 'country-label ocean-label')
+          .attr('stroke', 'rgba(0,20,60,0.6)')
+          .attr('stroke-width', 2.5)
+          .style('font-size', d => sizeMap[d.size] + 'px')
+          .attr('x', d => d.pos[0])
+          .attr('y', d => d.pos[1])
+          .text(d => d[lang]);
       }
 
       function onGlobeClick(event) {
@@ -736,7 +706,6 @@
         const clicked = features.find(f => d3.geoContains(f, inv));
         if (!clicked) return;
         const id = +clicked.id;
-        if (mapMode === 'ocean') return;
         if (!names()[id]) return;
         if (!state.quizMode) return;
         if (state.answered.has(id)) return;
@@ -801,24 +770,11 @@
         document.getElementById('globe-title').textContent = L.title;
         document.getElementById('quiz-question').textContent = L.quizQuestion;
         document.getElementById('btn-quiz').textContent = state.quizMode ? L.quizOff : L.quizOn;
-        document.getElementById('tab-country').textContent = L.tabCountry;
-        document.getElementById('tab-ocean').textContent = L.tabOcean;
         updateScore();
         draw();
       }
 
-      function setMapMode(mode) {
-        mapMode = mode;
-        document.getElementById('tab-country').classList.toggle('active', mode === 'country');
-        document.getElementById('tab-ocean').classList.toggle('active', mode === 'ocean');
-        // 바다 모드에서는 퀴즈 숨김
-        const quizArea = document.querySelector('.header-right div');
-        quizArea.style.display = mode === 'ocean' ? 'none' : '';
-        document.getElementById('score-bar').hidden = mode === 'ocean' || !state.quizMode;
-        draw();
-      }
-
-      document.getElementById('btn-quiz').addEventListener('click', () => {
+document.getElementById('btn-quiz').addEventListener('click', () => {
         state.quizMode = !state.quizMode;
         if (state.quizMode) {
           state.answered.clear();
@@ -851,10 +807,7 @@
         draw();
       });
 
-      document.getElementById('tab-country').addEventListener('click', () => setMapMode('country'));
-      document.getElementById('tab-ocean').addEventListener('click', () => setMapMode('ocean'));
-
-      document.getElementById('lang-select').addEventListener('change', (e) => {
+document.getElementById('lang-select').addEventListener('change', (e) => {
         lang = e.target.value;
         applyLang();
       });
