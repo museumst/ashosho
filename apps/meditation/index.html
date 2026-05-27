@@ -281,10 +281,9 @@
       const musicAudio = new Audio();
       musicAudio.crossOrigin = "anonymous";
       musicAudio.preload = "metadata";
+      musicAudio.setAttribute("playsinline", "");
 
-      let audioCtx = null;
-      const ambientNodes = new Map();
-      const ambientLoading = new Map();
+      const ambientAudioElements = new Map();
 
       function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
@@ -311,21 +310,6 @@
         return `#${toHex(left.r + (right.r - left.r) * clampedRatio)}${toHex(left.g + (right.g - left.g) * clampedRatio)}${toHex(left.b + (right.b - left.b) * clampedRatio)}`;
       }
 
-      function getAudioContext() {
-        if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          audioCtx = new AudioContextClass();
-        }
-        return audioCtx;
-      }
-
-      async function unlockAudio() {
-        const ctx = getAudioContext();
-        if (ctx.state !== "running") {
-          await ctx.resume();
-        }
-      }
-
       function currentTrack() {
         return bgmTracks[state.currentTrackIndex] || null;
       }
@@ -340,7 +324,6 @@
 
       async function playTrack(index) {
         try {
-          await unlockAudio();
           if (state.currentTrackIndex === index && state.playing) {
             musicAudio.pause();
             state.playing = false;
@@ -378,43 +361,32 @@
         playTrack((state.currentTrackIndex + 1) % bgmTracks.length);
       }
 
-      async function ensureAmbient(sound) {
-        if (ambientNodes.has(sound.id)) return ambientNodes.get(sound.id);
-        if (ambientLoading.has(sound.id)) return ambientLoading.get(sound.id);
+      function ensureAmbient(sound) {
+        if (ambientAudioElements.has(sound.id)) {
+          return ambientAudioElements.get(sound.id);
+        }
 
-        const loading = (async () => {
-          const ctx = getAudioContext();
-          const response = await fetch(sound.uri);
-          if (!response.ok) throw new Error(`${sound.label} 파일을 불러오지 못했어요.`);
-          const buffer = await response.arrayBuffer();
-          const decoded = await ctx.decodeAudioData(buffer);
-          const source = ctx.createBufferSource();
-          const gain = ctx.createGain();
-          source.buffer = decoded;
-          source.loop = true;
-          gain.gain.value = 0;
-          source.connect(gain);
-          gain.connect(ctx.destination);
-          source.start();
-          const node = { source, gain };
-          ambientNodes.set(sound.id, node);
-          ambientLoading.delete(sound.id);
-          applyAmbientLevel(sound.id);
-          return node;
-        })().catch((error) => {
-          ambientLoading.delete(sound.id);
-          showError(error.message || "사운드를 불러오지 못했어요.");
-          throw error;
+        const audio = new Audio(sound.uri);
+        audio.crossOrigin = "anonymous";
+        audio.loop = true;
+        audio.preload = "auto";
+        audio.volume = 0;
+        audio.setAttribute("playsinline", "");
+        audio.addEventListener("error", () => {
+          showError(`${sound.label} 파일을 불러오지 못했어요.`);
         });
-
-        ambientLoading.set(sound.id, loading);
-        return loading;
+        ambientAudioElements.set(sound.id, audio);
+        return audio;
       }
 
       function applyAmbientLevel(soundId) {
-        const node = ambientNodes.get(soundId);
-        if (!node || !audioCtx) return;
-        node.gain.gain.setTargetAtTime(state.ambientLevels[soundId] || 0, audioCtx.currentTime, 0.05);
+        const audio = ambientAudioElements.get(soundId);
+        if (!audio) return;
+        const level = clamp(state.ambientLevels[soundId] || 0, 0, 1);
+        audio.volume = level;
+        if (level === 0) {
+          audio.pause();
+        }
       }
 
       function updateSoundTileViews() {
@@ -438,10 +410,11 @@
         state.ambientLevels[soundId] = clamp(level, 0, 1);
         updateSoundTileViews();
         if (state.ambientLevels[soundId] > 0) {
-          unlockAudio()
-            .then(() => ensureAmbient(sound))
-            .then(() => applyAmbientLevel(soundId))
-            .catch(() => {});
+          const audio = ensureAmbient(sound);
+          applyAmbientLevel(soundId);
+          audio.play().catch(() => {
+            showError("사운드를 재생하지 못했어요.");
+          });
         } else {
           applyAmbientLevel(soundId);
         }
@@ -521,10 +494,6 @@
       }
 
       function bindEvents() {
-        document.addEventListener("pointerdown", () => {
-          unlockAudio().catch(() => {});
-        }, { once: true });
-
         dom.musicGrid.addEventListener("click", (event) => {
           const tile = event.target.closest(".music-tile");
           if (!tile) return;
