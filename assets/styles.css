@@ -853,6 +853,13 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .language-control {
+    position: static;
+    z-index: auto;
+    width: min(220px, calc(100% - 48px));
+    margin: 24px 24px 0;
+  }
+
   .app-list-pane {
     min-height: auto;
     border-right: 0;
@@ -871,9 +878,7 @@ h1 {
 @media (max-width: 620px) {
   /* 작은 모바일 화면에서 좌우 여백과 go 크기를 조정 */
   .language-control {
-    top: 16px;
-    right: 16px;
-    width: 148px;
+    width: min(100%, calc(100% - 48px));
   }
 
   .app-list-pane,
