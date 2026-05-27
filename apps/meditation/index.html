@@ -65,8 +65,8 @@
         scroll-padding-inline: calc((100% - var(--music-tile-size)) / 2);
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
-        mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0, #000 14%, #000 86%, rgba(0, 0, 0, 0.45) 100%);
-        -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0, #000 14%, #000 86%, rgba(0, 0, 0, 0.45) 100%);
+        mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.2) 7%, #000 22%, #000 78%, rgba(0,0,0,0.2) 93%, transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.2) 7%, #000 22%, #000 78%, rgba(0,0,0,0.2) 93%, transparent 100%);
         -webkit-overflow-scrolling: touch;
       }
 
@@ -261,10 +261,18 @@
       musicAudio.setAttribute("playsinline", "");
 
       const ambientAudioElements = new Map();
+      const ambientGainNodes = new Map();
+      let audioCtx = null;
       let musicCarouselSettleTimer = 0;
 
       function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
+      }
+
+      function resumeAudioContext() {
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => {});
+        }
       }
 
       function hexToRgb(hex) {
@@ -339,6 +347,24 @@
         audio.preload = "auto";
         audio.volume = 0;
         audio.setAttribute("playsinline", "");
+
+        if (!audioCtx) {
+          const CtxClass = window.AudioContext || window.webkitAudioContext;
+          if (CtxClass) {
+            try { audioCtx = new CtxClass(); } catch (e) {}
+          }
+        }
+        if (audioCtx) {
+          try {
+            const source = audioCtx.createMediaElementSource(audio);
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0;
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            ambientGainNodes.set(sound.id, gainNode);
+          } catch (e) {}
+        }
+
         audio.addEventListener("error", () => {
           showError(`${sound.label} 파일을 불러오지 못했어요.`);
         });
@@ -350,7 +376,12 @@
         const audio = ambientAudioElements.get(soundId);
         if (!audio) return;
         const level = clamp(state.ambientLevels[soundId] || 0, 0, 1);
-        audio.volume = level;
+        const gainNode = ambientGainNodes.get(soundId);
+        if (gainNode) {
+          gainNode.gain.value = level;
+        } else {
+          audio.volume = level;
+        }
         if (level === 0) {
           audio.pause();
         }
@@ -509,12 +540,18 @@
 
         dom.musicCarousel.addEventListener("scroll", () => {
           window.clearTimeout(musicCarouselSettleTimer);
-          musicCarouselSettleTimer = window.setTimeout(normalizeMusicCarouselLoop, 140);
+          musicCarouselSettleTimer = window.setTimeout(normalizeMusicCarouselLoop, 80);
+        });
+
+        dom.musicCarousel.addEventListener("scrollend", () => {
+          window.clearTimeout(musicCarouselSettleTimer);
+          normalizeMusicCarouselLoop();
         });
 
         dom.soundGrid.addEventListener("pointerdown", (event) => {
           const tile = event.target.closest(".sound-tile");
           if (!tile) return;
+          resumeAudioContext();
           showError("");
           event.preventDefault();
           state.activeSoundPointerId = event.pointerId;
@@ -545,6 +582,7 @@
             const tile = event.target.closest(".sound-tile");
             if (!touch || !tile) return;
             event.preventDefault();
+            resumeAudioContext();
             showError("");
             state.activeSoundTile = tile;
             setLevelFromPointer(tile, touch.clientY);
@@ -582,6 +620,13 @@
         });
       }
 
+      function preloadBgmArtwork() {
+        bgmTracks.forEach((track) => {
+          const img = new Image();
+          img.src = track.artworkUri;
+        });
+      }
+
       function init() {
         renderMusicTiles();
         centerInitialMusicTile();
@@ -589,6 +634,7 @@
         refreshLucideIcons();
         updateSoundTileViews();
         bindEvents();
+        preloadBgmArtwork();
       }
 
       init();
