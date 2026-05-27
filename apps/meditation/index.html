@@ -65,6 +65,8 @@
         scroll-padding-inline: calc((100% - var(--music-tile-size)) / 2);
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
+        mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0, #000 14%, #000 86%, rgba(0, 0, 0, 0.45) 100%);
+        -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0, #000 14%, #000 86%, rgba(0, 0, 0, 0.45) 100%);
         -webkit-overflow-scrolling: touch;
       }
 
@@ -242,6 +244,8 @@
       const state = {
         currentTrackIndex: -1,
         playing: false,
+        activeSoundPointerId: null,
+        activeSoundTile: null,
         ambientLevels: Object.fromEntries(ambientSounds.map((sound) => [sound.id, 0])),
       };
 
@@ -257,6 +261,7 @@
       musicAudio.setAttribute("playsinline", "");
 
       const ambientAudioElements = new Map();
+      let musicCarouselSettleTimer = 0;
 
       function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
@@ -389,22 +394,57 @@
       }
 
       function renderMusicTiles() {
-        dom.musicCarousel.innerHTML = bgmTracks.map((track, index) => `
+        const carouselTracks = [bgmTracks[bgmTracks.length - 1], ...bgmTracks, bgmTracks[0]];
+        dom.musicCarousel.innerHTML = carouselTracks.map((track, visualIndex) => {
+          const trackIndex = visualIndex === 0
+            ? bgmTracks.length - 1
+            : visualIndex === carouselTracks.length - 1
+              ? 0
+              : visualIndex - 1;
+          return `
           <div class="music-slide">
-            <button class="music-tile" type="button" data-track-index="${index}" aria-label="${track.title}" aria-pressed="false">
+            <button class="music-tile" type="button" data-track-index="${trackIndex}" aria-label="${track.title}" aria-pressed="false">
               <img src="${track.artworkUri}" alt="" loading="eager" />
             </button>
           </div>
-        `).join("");
+        `;
+        }).join("");
       }
 
-      function scrollMusicTileIntoView(index) {
-        const slide = dom.musicCarousel.children[index];
-        slide?.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
+      function scrollMusicTileIntoView(index, behavior = "smooth") {
+        centerMusicVisualIndex(index + 1, behavior);
+      }
+
+      function centerMusicVisualIndex(visualIndex, behavior = "smooth") {
+        const slide = dom.musicCarousel.children[visualIndex];
+        if (!slide) return;
+        const left = slide.offsetLeft - dom.musicCarousel.offsetLeft - (dom.musicCarousel.clientWidth - slide.offsetWidth) / 2;
+        dom.musicCarousel.scrollTo({ left, behavior });
+      }
+
+      function centerInitialMusicTile() {
+        requestAnimationFrame(() => {
+          centerMusicVisualIndex(1, "auto");
         });
+      }
+
+      function closestMusicVisualIndex() {
+        const slides = [...dom.musicCarousel.children];
+        const center = dom.musicCarousel.scrollLeft + dom.musicCarousel.clientWidth / 2;
+        return slides.reduce((closestIndex, slide, index) => {
+          const slideCenter = slide.offsetLeft - dom.musicCarousel.offsetLeft + slide.offsetWidth / 2;
+          const closestCenter = slides[closestIndex].offsetLeft - dom.musicCarousel.offsetLeft + slides[closestIndex].offsetWidth / 2;
+          return Math.abs(slideCenter - center) < Math.abs(closestCenter - center) ? index : closestIndex;
+        }, 0);
+      }
+
+      function normalizeMusicCarouselLoop() {
+        const visualIndex = closestMusicVisualIndex();
+        if (visualIndex === 0) {
+          centerMusicVisualIndex(bgmTracks.length, "auto");
+        } else if (visualIndex === bgmTracks.length + 1) {
+          centerMusicVisualIndex(1, "auto");
+        }
       }
 
       function renderSoundTiles() {
@@ -467,19 +507,63 @@
           playTrack(Number(tile.dataset.trackIndex));
         });
 
+        dom.musicCarousel.addEventListener("scroll", () => {
+          window.clearTimeout(musicCarouselSettleTimer);
+          musicCarouselSettleTimer = window.setTimeout(normalizeMusicCarouselLoop, 140);
+        });
+
         dom.soundGrid.addEventListener("pointerdown", (event) => {
           const tile = event.target.closest(".sound-tile");
           if (!tile) return;
           showError("");
-          tile.setPointerCapture(event.pointerId);
+          event.preventDefault();
+          state.activeSoundPointerId = event.pointerId;
+          state.activeSoundTile = tile;
+          tile.setPointerCapture?.(event.pointerId);
           setLevelFromPointer(tile, event.clientY);
         });
 
         dom.soundGrid.addEventListener("pointermove", (event) => {
-          const tile = event.target.closest(".sound-tile");
-          if (!tile || event.buttons !== 1) return;
-          setLevelFromPointer(tile, event.clientY);
+          if (event.pointerId !== state.activeSoundPointerId || !state.activeSoundTile) return;
+          event.preventDefault();
+          setLevelFromPointer(state.activeSoundTile, event.clientY);
         });
+
+        const clearSoundPointer = (event) => {
+          if (event.pointerId !== state.activeSoundPointerId) return;
+          state.activeSoundPointerId = null;
+          state.activeSoundTile = null;
+        };
+
+        dom.soundGrid.addEventListener("pointerup", clearSoundPointer);
+        dom.soundGrid.addEventListener("pointercancel", clearSoundPointer);
+        dom.soundGrid.addEventListener("lostpointercapture", clearSoundPointer);
+
+        if (!window.PointerEvent) {
+          dom.soundGrid.addEventListener("touchstart", (event) => {
+            const touch = event.touches[0];
+            const tile = event.target.closest(".sound-tile");
+            if (!touch || !tile) return;
+            event.preventDefault();
+            showError("");
+            state.activeSoundTile = tile;
+            setLevelFromPointer(tile, touch.clientY);
+          }, { passive: false });
+
+          dom.soundGrid.addEventListener("touchmove", (event) => {
+            const touch = event.touches[0];
+            if (!touch || !state.activeSoundTile) return;
+            event.preventDefault();
+            setLevelFromPointer(state.activeSoundTile, touch.clientY);
+          }, { passive: false });
+
+          dom.soundGrid.addEventListener("touchend", () => {
+            state.activeSoundTile = null;
+          });
+          dom.soundGrid.addEventListener("touchcancel", () => {
+            state.activeSoundTile = null;
+          });
+        }
 
         musicAudio.addEventListener("ended", () => {
           state.playing = false;
@@ -500,6 +584,7 @@
 
       function init() {
         renderMusicTiles();
+        centerInitialMusicTile();
         renderSoundTiles();
         refreshLucideIcons();
         updateSoundTileViews();
