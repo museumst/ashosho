@@ -6,864 +6,1049 @@
   <title>나의 단어장</title>
   <link rel="stylesheet" href="../../assets/styles.css" />
   <style>
-    .va       { align-items: start; padding: 16px; }
-    .va-panel { width: min(640px, 100%); }
+    .vx       { align-items: start; padding: 16px; }
+    .vx-panel { width: min(760px, 100%); }
 
     /* ── header ── */
-    .va-header {
+    .vx-header {
       display: flex; align-items: flex-start;
-      justify-content: space-between; gap: 12px; margin-bottom: 20px;
+      justify-content: space-between; gap: 12px; margin-bottom: 18px;
     }
-    .va-header h1 { margin: 0; font-size: clamp(1.4rem,5vw,1.9rem); }
-    .va-count {
-      display: inline-block; margin-top: 6px;
-      background: var(--surface-strong); border: 1px solid var(--line);
-      border-radius: 999px; padding: 4px 12px;
-      font-size: .8rem; font-weight: 800; color: var(--muted);
-      white-space: nowrap;
+    .vx-header h1 { margin: 0; font-size: clamp(1.4rem,5vw,1.9rem); }
+    .vx-book-info {
+      text-align: right; flex-shrink: 0;
     }
-
-    /* ── add bar ── */
-    .va-add-row {
-      display: flex; gap: 8px; align-items: stretch;
+    .vx-book-name {
+      font-size: .88rem; font-weight: 900; color: var(--text);
+      max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .va-input {
-      flex: 1; min-height: 48px; padding: 0 14px;
-      border: 2px solid var(--accent); border-radius: 10px;
-      background: var(--surface); color: var(--text);
-      font: inherit; font-size: 1rem;
-      transition: box-shadow .15s;
-    }
-    .va-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(79,160,145,.2); }
-    .va-input::placeholder { color: var(--muted); font-weight: 600; }
-    .va-add-btn {
-      min-width: 72px; min-height: 48px; padding: 0 18px;
-      border: none; border-radius: 10px;
-      background: var(--accent); color: #fff;
-      font: inherit; font-size: .95rem; font-weight: 900;
-      cursor: pointer; transition: background .15s;
-    }
-    .va-add-btn:hover { background: var(--accent-strong); }
-    .va-hint {
-      margin: 7px 0 0; font-size: .8rem; font-weight: 700;
-      color: var(--muted); line-height: 1.5;
-    }
-
-    /* ── status ── */
-    .va-status {
-      min-height: 20px; margin: 8px 0 0;
-      font-size: .84rem; font-weight: 800; color: var(--accent-strong);
-    }
-    .va-status.error { color: var(--red); }
+    .vx-book-meta { font-size: .75rem; color: var(--muted); font-weight: 700; }
 
     /* ── tabs ── */
-    .va-tabs {
-      display: flex; border-bottom: 1px solid var(--line); margin: 16px 0 20px;
+    .vx-tabs {
+      display: flex; border-bottom: 1px solid var(--line); margin-bottom: 24px;
     }
-    .va-tab {
+    .vx-tab {
       flex: 1; padding: 10px 0; background: none; border: none;
       border-bottom: 2px solid transparent; margin-bottom: -1px;
-      color: var(--muted); font: inherit; font-size: .9rem; font-weight: 800;
+      color: var(--muted); font: inherit; font-size: .88rem; font-weight: 800;
       cursor: pointer; transition: .15s;
     }
-    .va-tab:hover { color: var(--text); }
-    .va-tab.is-active { color: var(--accent-strong); border-bottom-color: var(--accent); }
+    .vx-tab:hover:not(:disabled) { color: var(--text); }
+    .vx-tab.is-active { color: var(--accent-strong); border-bottom-color: var(--accent); }
+    .vx-tab:disabled { opacity: .35; cursor: not-allowed; }
 
-    /* ── word list ── */
-    .va-list { display: grid; gap: 8px; }
-    .va-word-item {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px 12px;
-      border: 1px solid var(--line); border-radius: 10px;
-      padding: 14px 14px 14px 16px;
-      background: var(--surface); transition: border-color .15s;
+    /* ── status ── */
+    .vx-status {
+      min-height: 20px; margin-bottom: 12px;
+      font-size: .84rem; font-weight: 800; color: var(--accent-strong);
     }
-    .va-word-item:hover { border-color: #b0cec8; }
-    .va-word-main { min-width: 0; }
-    .va-word-en {
-      font-size: 1.25rem; font-weight: 900; margin: 0;
-      line-height: 1.2; overflow-wrap: anywhere;
-    }
-    .va-word-ko {
-      font-size: .95rem; font-weight: 700; color: var(--muted);
-      margin: 4px 0 0;
-    }
-    .va-word-ex {
-      font-size: .82rem; font-weight: 600; color: #5a7a75;
-      margin: 6px 0 0; line-height: 1.55;
-    }
-    .va-word-tr { font-size: .8rem; color: var(--muted); margin: 2px 0 0; line-height: 1.55; }
-    .va-word-side {
-      display: flex; flex-direction: column;
-      align-items: flex-end; gap: 6px; flex-shrink: 0;
-    }
-    .va-diff {
-      display: flex; gap: 3px; align-items: center;
-    }
-    .va-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--line);
-    }
-    .va-dot.on-1 { background: #4caf50; }
-    .va-dot.on-2 { background: #8bc34a; }
-    .va-dot.on-3 { background: #ffc107; }
-    .va-dot.on-4 { background: #ff7043; }
-    .va-dot.on-5 { background: #f44336; }
-    .va-del {
-      width: 28px; height: 28px; border-radius: 6px;
-      border: 1px solid transparent; background: none;
-      color: var(--muted); font: inherit; font-size: .9rem;
-      cursor: pointer; display: grid; place-items: center;
-      transition: .15s;
-    }
-    .va-del:hover { border-color: var(--red); background: #fff1f0; color: var(--red); }
+    .vx-status.error { color: var(--red); }
 
-    /* ── empty ── */
-    .va-empty {
-      display: grid; place-items: center; gap: 10px;
-      min-height: 180px; border: 2px dashed var(--line);
-      border-radius: 12px; padding: 32px; text-align: center;
+    /* ── upload screen ── */
+    .vx-steps { display: grid; gap: 20px; }
+    .vx-step {
+      display: grid; grid-template-columns: 36px 1fr; gap: 14px;
     }
-    .va-empty p { margin: 0; color: var(--muted); font-size: .9rem; font-weight: 700; }
+    .vx-step-num {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      background: var(--accent); color: #fff;
+      font-size: .9rem; font-weight: 900;
+      display: grid; place-items: center;
+    }
+    .vx-step-body { display: grid; gap: 10px; }
+    .vx-step-title { font-size: .95rem; font-weight: 900; margin: 6px 0 0; }
+    .vx-step-desc  { font-size: .83rem; font-weight: 700; color: var(--muted); margin: 0; line-height: 1.6; }
 
-    /* ── quiz ── */
-    .va-quiz-top {
-      display: flex; gap: 4px; margin-bottom: 16px;
+    /* photo tips */
+    .vx-tips {
+      display: flex; flex-wrap: wrap; gap: 8px;
     }
-    .va-mode-btn {
-      flex: 1; min-height: 40px; border-radius: 8px;
+    .vx-tip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface-strong); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 11px;
+      font-size: .8rem; font-weight: 700; color: var(--muted);
+    }
+
+    /* prompt box */
+    .vx-prompt-wrap {
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    }
+    .vx-prompt-head {
+      background: var(--surface-strong); padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line); gap: 8px; flex-wrap: wrap;
+    }
+    .vx-prompt-head-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .vx-prompt-label { font-size: .8rem; font-weight: 900; color: var(--muted); }
+    .vx-unit-input {
+      min-height: 30px; padding: 0 10px; border: 1px solid var(--line);
+      border-radius: 6px; background: var(--surface); color: var(--text);
+      font: inherit; font-size: .82rem; width: 140px;
+    }
+    .vx-unit-input:focus { outline: none; border-color: var(--accent); }
+    .vx-prompt-text {
+      padding: 14px; font-size: .8rem; font-weight: 700; color: var(--muted);
+      line-height: 1.7; white-space: pre-wrap; font-family: inherit;
+      background: var(--surface); margin: 0;
+    }
+    .vx-prompt-text strong { color: var(--text); font-size: .85rem; }
+
+    /* AI links */
+    .vx-ai-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .vx-ai-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px;
       border: 1px solid var(--line); background: var(--surface);
-      color: var(--muted); font: inherit; font-size: .85rem;
+      color: var(--muted); font-size: .83rem; font-weight: 800;
+      text-decoration: none; cursor: pointer; transition: .15s;
+    }
+    .vx-ai-link:hover { border-color: var(--accent); color: var(--accent-strong); background: #e8f4f2; }
+
+    /* drop zone */
+    .vx-drop {
+      border: 2px dashed var(--line); border-radius: 10px;
+      padding: 24px; text-align: center;
+      background: var(--surface-strong); transition: .15s;
+      display: grid; gap: 8px; cursor: pointer;
+    }
+    .vx-drop.over { border-color: var(--accent); background: #e8f4f2; }
+    .vx-drop strong { font-size: .95rem; }
+    .vx-drop p { margin: 0; font-size: .82rem; color: var(--muted); font-weight: 700; }
+    .vx-file { font-size: .84rem; font-weight: 700; color: var(--muted); width: 100%; }
+
+    /* merge options */
+    .vx-merge-opts {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .vx-merge-btn {
+      padding: 12px 10px; border-radius: 10px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--muted); font: inherit; font-size: .83rem; font-weight: 800;
+      cursor: pointer; text-align: center; transition: .15s;
+    }
+    .vx-merge-btn:hover { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
+    .vx-merge-btn strong { display: block; font-size: .9rem; color: var(--text); margin-bottom: 3px; }
+    .vx-merge-btn.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .vx-merge-btn.primary strong { color: #fff; }
+    .vx-merge-btn.primary:hover { background: var(--accent-strong); }
+
+    /* divider */
+    .vx-div { height: 1px; background: var(--line); margin: 4px 0; }
+
+    /* generic buttons */
+    .vx-btn {
+      min-height: 36px; padding: 0 14px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--muted); font: inherit; font-size: .85rem; font-weight: 800;
+      cursor: pointer; transition: .15s;
+    }
+    .vx-btn:hover { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
+    .vx-btn.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .vx-btn.primary:hover { background: var(--accent-strong); }
+    .vx-btn.danger:hover { border-color: var(--red); background: #fff1f0; color: var(--red); }
+    .vx-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    /* export / clear */
+    .vx-book-actions {
+      background: var(--surface-strong); border: 1px solid var(--line);
+      border-radius: 10px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap;
+    }
+    .vx-book-actions-info { font-size: .85rem; font-weight: 800; }
+    .vx-book-actions-info span { color: var(--muted); font-weight: 700; }
+
+    /* ── study screen ── */
+    .vx-study-bar {
+      display: flex; gap: 8px; align-items: center;
+      flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .vx-unit-sel {
+      min-height: 36px; padding: 0 10px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--text); font: inherit; font-size: .85rem; font-weight: 700;
+      flex-shrink: 0; max-width: 220px;
+    }
+    .vx-search {
+      flex: 1; min-width: 120px; min-height: 36px; padding: 0 12px;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface); color: var(--text); font: inherit;
+      font-size: .88rem;
+    }
+    .vx-search:focus, .vx-unit-sel:focus { outline: none; border-color: var(--accent); }
+    .vx-toggle {
+      min-height: 36px; padding: 0 12px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--muted); font: inherit; font-size: .82rem; font-weight: 800;
+      cursor: pointer; transition: .15s; white-space: nowrap;
+    }
+    .vx-toggle.is-on { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
+    .vx-toggle:hover { border-color: var(--accent); color: var(--accent-strong); }
+
+    /* entry cards */
+    .vx-entry-list { display: grid; gap: 6px; }
+    .vx-entry {
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 14px 16px; background: var(--surface);
+      transition: border-color .15s;
+    }
+    .vx-entry:hover { border-color: #b8d0cc; }
+    .vx-entry-top {
+      display: flex; align-items: baseline;
+      justify-content: space-between; gap: 10px; margin-bottom: 4px;
+    }
+    .vx-entry-head { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+    .vx-word {
+      font-size: 1.25rem; font-weight: 900; line-height: 1.2;
+    }
+    .vx-pron {
+      font-size: .82rem; color: var(--muted); font-weight: 600;
+    }
+    .vx-meaning {
+      font-size: .97rem; font-weight: 800;
+      color: var(--accent-strong); margin: 2px 0 8px;
+      line-height: 1.4;
+    }
+    .vx-example-row {
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .vx-example {
+      flex: 1; font-size: .88rem; font-weight: 600;
+      color: #3a3a3a; line-height: 1.6; margin: 0;
+    }
+    .vx-translation {
+      font-size: .82rem; color: var(--muted); font-weight: 600;
+      line-height: 1.6; margin: 3px 0 0;
+    }
+    .vx-play {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 7px;
+      border: 1px solid var(--line); background: var(--surface-strong);
+      color: var(--muted); font: inherit; font-size: .75rem;
+      cursor: pointer; display: grid; place-items: center; transition: .15s;
+    }
+    .vx-play:hover:not(:disabled) { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
+    .vx-play:disabled { opacity: .35; cursor: not-allowed; }
+    .vx-no-entry {
+      display: grid; place-items: center; gap: 10px;
+      min-height: 160px; border: 2px dashed var(--line);
+      border-radius: 10px; padding: 24px; text-align: center;
+    }
+    .vx-no-entry p { margin: 0; color: var(--muted); font-size: .9rem; font-weight: 700; }
+
+    /* hide mode */
+    .vx-entry-list.hide-ko .vx-meaning,
+    .vx-entry-list.hide-ko .vx-translation {
+      background: var(--surface-strong); color: transparent;
+      border-radius: 4px; cursor: pointer; user-select: none;
+      position: relative;
+    }
+    .vx-entry-list.hide-ko .vx-entry.revealed .vx-meaning,
+    .vx-entry-list.hide-ko .vx-entry.revealed .vx-translation {
+      background: none; color: var(--accent-strong); cursor: auto;
+    }
+    .vx-entry-list.hide-ko .vx-entry.revealed .vx-translation {
+      color: var(--muted);
+    }
+
+    /* ── quiz screen ── */
+    .vx-quiz-modes { display: flex; gap: 6px; margin-bottom: 14px; }
+    .vx-mode-btn {
+      flex: 1; min-height: 42px; border-radius: 9px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--muted); font: inherit; font-size: .87rem;
       font-weight: 800; cursor: pointer; transition: .15s;
     }
-    .va-mode-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
-    .va-mode-btn.is-active {
-      border-color: var(--accent); background: var(--accent); color: #fff;
-    }
+    .vx-mode-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+    .vx-mode-btn.is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
 
-    /* quiz stats bar */
-    .va-stats {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
-      font-size: .78rem; font-weight: 800;
+    .vx-quiz-opts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .vx-quiz-unit {
+      min-height: 32px; padding: 0 10px; border-radius: 7px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--text); font: inherit; font-size: .82rem; font-weight: 700;
     }
-    .va-stat { display: flex; align-items: center; gap: 5px; color: var(--muted); }
-    .va-stat-dot {
-      width: 9px; height: 9px; border-radius: 50%;
-    }
+    .vx-quiz-unit:focus { outline: none; border-color: var(--accent); }
+    .vx-diff-stats { display: flex; gap: 10px; flex-wrap: wrap; font-size: .78rem; font-weight: 800; }
+    .vx-dstat { display: flex; align-items: center; gap: 5px; color: var(--muted); }
+    .vx-dstat-dot { width: 8px; height: 8px; border-radius: 50%; }
 
     /* flashcard */
-    .va-card {
+    .vx-card {
       border: 1px solid var(--line); border-radius: 14px;
-      overflow: hidden; margin-bottom: 14px;
+      overflow: hidden; margin-bottom: 12px; background: var(--surface);
     }
-    .va-card-q {
-      padding: 28px 24px 20px;
-      background: var(--surface); border-bottom: 1px solid var(--line);
-      min-height: 140px; display: flex; flex-direction: column;
-      justify-content: center;
+    .vx-card-q {
+      padding: 26px 22px 18px; border-bottom: 1px solid var(--line);
+      min-height: 130px; display: flex; flex-direction: column; justify-content: center;
     }
-    .va-card-label {
-      font-size: .72rem; font-weight: 900; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px;
+    .vx-card-qlabel {
+      font-size: .7rem; font-weight: 900; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px;
     }
-    .va-card-word {
-      font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 900;
-      margin: 0 0 10px; line-height: 1.15;
+    .vx-card-qword {
+      font-size: clamp(1.6rem,5vw,2.1rem); font-weight: 900;
+      margin: 0 0 8px; line-height: 1.15;
     }
-    .va-card-sub {
-      font-size: .95rem; font-weight: 700; color: #4a6e68;
-      line-height: 1.6; margin: 0;
-    }
-    .va-card-tts {
-      display: inline-flex; align-items: center; gap: 5px;
-      margin-top: 12px; min-height: 32px; padding: 0 12px;
-      border: 1px solid var(--line); border-radius: 8px;
-      background: var(--surface-strong); color: var(--muted);
-      font: inherit; font-size: .8rem; font-weight: 800;
-      cursor: pointer; transition: .15s; align-self: flex-start;
-    }
-    .va-card-tts:hover:not(:disabled) {
-      border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong);
-    }
-    .va-card-tts:disabled { opacity: .4; cursor: not-allowed; }
+    .vx-card-qpron { font-size: .88rem; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
+    .vx-card-qsub  { font-size: .9rem; font-weight: 600; color: #3a3a3a; line-height: 1.6; margin: 0; }
+    .vx-card-qko   { font-size: 1.5rem; font-weight: 900; color: var(--accent-strong); margin: 0 0 6px; }
+    .vx-card-qtrs  { font-size: .88rem; color: var(--muted); margin: 0; line-height: 1.6; }
+    .vx-tts-row    { display: flex; gap: 6px; margin-top: 12px; }
 
-    .va-reveal-wrap { padding: 16px 20px 20px; }
-    .va-reveal-btn {
-      width: 100%; min-height: 80px; border-radius: 10px;
+    .vx-card-a-wrap { padding: 14px 18px 18px; }
+    .vx-reveal-btn {
+      width: 100%; min-height: 76px; border-radius: 10px;
       border: 2px dashed var(--line); background: var(--surface-strong);
-      color: var(--muted); font: inherit; font-size: .92rem; font-weight: 800;
+      color: var(--muted); font: inherit; font-size: .9rem; font-weight: 800;
       cursor: pointer; display: grid; place-items: center;
-      transition: .15s; text-align: center; padding: 16px;
-      line-height: 1.5;
+      text-align: center; padding: 16px; transition: .15s; line-height: 1.5;
     }
-    .va-reveal-btn:hover {
-      border-color: var(--accent); background: #e8f4f2;
-      color: var(--accent-strong);
-    }
-    .va-answer {
-      border-radius: 10px; padding: 18px;
+    .vx-reveal-btn:hover { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
+    .vx-answer {
+      border-radius: 10px; padding: 16px;
       background: #edf7f5; border: 2px solid var(--accent);
-      display: grid; gap: 6px;
-      animation: va-pop .18s ease;
+      display: grid; gap: 5px; animation: vxpop .18s ease;
     }
-    .va-answer-label {
-      font-size: .72rem; font-weight: 900; color: var(--accent-strong);
-      text-transform: uppercase; letter-spacing: .07em;
-    }
-    .va-answer-word {
-      font-size: clamp(1.4rem,4vw,1.9rem); font-weight: 900;
-      margin: 0; color: var(--accent-strong); line-height: 1.2;
-    }
-    .va-answer-sub {
-      font-size: .9rem; font-weight: 700; color: #3a5e5a;
-      line-height: 1.6; margin: 0;
-    }
-    @keyframes va-pop {
-      from { opacity: 0; transform: translateY(6px) scale(.98); }
-      to   { opacity: 1; transform: none; }
-    }
+    .vx-answer-label { font-size: .7rem; font-weight: 900; color: var(--accent-strong); text-transform: uppercase; letter-spacing: .07em; }
+    .vx-answer-word  { font-size: clamp(1.35rem,4vw,1.8rem); font-weight: 900; margin: 0; color: var(--accent-strong); line-height: 1.2; }
+    .vx-answer-pron  { font-size: .84rem; color: #3a8070; margin: 0; font-weight: 600; }
+    .vx-answer-sub   { font-size: .88rem; color: #3a5e5a; line-height: 1.6; margin: 4px 0 0; }
+    @keyframes vxpop { from { opacity:0; transform:translateY(5px) scale(.98); } to { opacity:1; transform:none; } }
 
-    /* rating buttons */
-    .va-rating {
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px; animation: va-pop .2s ease;
-    }
-    .va-rate-btn {
-      min-height: 60px; border-radius: 10px;
-      border: 2px solid transparent; background: none;
-      font: inherit; font-size: .88rem; font-weight: 900;
+    /* rating */
+    .vx-rating { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; animation: vxpop .2s ease; }
+    .vx-rate {
+      min-height: 62px; border-radius: 10px; border: 2px solid transparent;
+      background: none; font: inherit; font-size: .87rem; font-weight: 900;
       cursor: pointer; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 4px;
       transition: .15s; padding: 8px 4px;
     }
-    .va-rate-btn .va-rate-icon { font-size: 1.4rem; line-height: 1; }
-    .va-rate-btn .va-rate-label { font-size: .75rem; font-weight: 800; }
-    .va-rate-btn.hard {
-      background: #fff1f0; border-color: #ffb3ae; color: #c62828;
+    .vx-rate .ri { font-size: 1.3rem; line-height: 1; }
+    .vx-rate .rl { font-size: .75rem; font-weight: 800; }
+    .vx-rate.hard   { background:#fff1f0; border-color:#ffb3ae; color:#c62828; }
+    .vx-rate.medium { background:#fffde7; border-color:#ffe082; color:#e65100; }
+    .vx-rate.easy   { background:#f1f8e9; border-color:#c5e1a5; color:#2e7d32; }
+    .vx-rate.hard:hover   { background:#ffcdd2; }
+    .vx-rate.medium:hover { background:#fff9c4; }
+    .vx-rate.easy:hover   { background:#dcedc8; }
+    .vx-key-hint {
+      text-align:center; font-size:.74rem; font-weight:700;
+      color:var(--muted); margin-top:9px; line-height:1.6;
     }
-    .va-rate-btn.hard:hover { background: #ffcdd2; border-color: #ef9a9a; }
-    .va-rate-btn.medium {
-      background: #fffde7; border-color: #ffe082; color: #e65100;
-    }
-    .va-rate-btn.medium:hover { background: #fff9c4; border-color: #ffd54f; }
-    .va-rate-btn.easy {
-      background: #f1f8e9; border-color: #c5e1a5; color: #2e7d32;
-    }
-    .va-rate-btn.easy:hover { background: #dcedc8; border-color: #aed581; }
-
-    /* keyboard hint */
-    .va-key-hint {
-      text-align: center; font-size: .75rem; font-weight: 700;
-      color: var(--muted); margin-top: 10px; line-height: 1.6;
-    }
-    .va-key-hint kbd {
-      display: inline-block; padding: 1px 5px; border-radius: 4px;
-      border: 1px solid var(--line); background: var(--surface-strong);
-      font: inherit; font-size: .72rem;
+    .vx-key-hint kbd {
+      display:inline-block; padding:1px 5px; border-radius:4px;
+      border:1px solid var(--line); background:var(--surface-strong);
+      font:inherit; font-size:.7rem;
     }
 
-    /* no-words quiz state */
-    .va-quiz-empty {
-      display: grid; place-items: center; gap: 10px;
-      min-height: 220px; padding: 32px; text-align: center;
-      border: 2px dashed var(--line); border-radius: 12px;
-    }
-    .va-quiz-empty p { margin: 0; color: var(--muted); font-weight: 700; }
-
-    @media (max-width: 480px) {
-      .va { padding: 10px; }
-      .va-card-q { padding: 20px 16px 16px; }
-      .va-reveal-wrap { padding: 12px 14px 16px; }
+    @media (max-width:480px) {
+      .vx { padding: 10px; }
+      .vx-step { grid-template-columns: 30px 1fr; gap: 10px; }
+      .vx-merge-opts { grid-template-columns: 1fr; }
+      .vx-card-q { padding: 18px 14px 14px; }
+      .vx-card-a-wrap { padding: 12px 14px 14px; }
     }
   </style>
 </head>
-<body class="mini-app va">
-  <main class="mini-app-panel va-panel">
+<body class="mini-app vx">
+<main class="mini-app-panel vx-panel">
 
-    <div class="va-header">
+  <!-- Header -->
+  <div class="vx-header">
+    <div>
+      <p class="eyebrow">Study</p>
+      <h1>나의 단어장</h1>
+    </div>
+    <div class="vx-book-info" id="book-info" hidden>
+      <p class="vx-book-name" id="book-name"></p>
+      <p class="vx-book-meta" id="book-meta"></p>
+    </div>
+  </div>
+
+  <p class="vx-status" id="status-line" aria-live="polite"></p>
+
+  <!-- Tabs -->
+  <nav class="vx-tabs">
+    <button class="vx-tab is-active" data-tab="upload">📁 단어장 만들기</button>
+    <button class="vx-tab" data-tab="study"  id="tab-study" disabled>📖 학습</button>
+    <button class="vx-tab" data-tab="quiz"   id="tab-quiz"  disabled>✏️ 퀴즈</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       UPLOAD SCREEN
+  ══════════════════════════════════════ -->
+  <div id="screen-upload">
+
+    <!-- Book management (shown when book is loaded) -->
+    <div id="book-actions" hidden class="vx-book-actions" style="margin-bottom:20px;">
       <div>
-        <p class="eyebrow">Study</p>
-        <h1>나의 단어장</h1>
+        <p class="vx-book-actions-info">📚 <strong id="ba-name"></strong></p>
+        <p class="vx-book-actions-info"><span id="ba-meta"></span></p>
       </div>
-      <span class="va-count" id="word-count">단어 없음</span>
-    </div>
-
-    <!-- ── Add bar ── -->
-    <div class="va-add-row">
-      <input id="word-input" class="va-input"
-             type="text" autocomplete="off" spellcheck="false"
-             placeholder="apple, 사과" />
-      <button id="btn-add" class="va-add-btn">추가</button>
-    </div>
-    <p class="va-hint">쉼표로 구분: <strong>영어단어, 한글뜻</strong> &nbsp;·&nbsp; 예문은 자동 완성됩니다</p>
-    <p class="va-status" id="status-line" aria-live="polite"></p>
-
-    <!-- ── Tabs ── -->
-    <nav class="va-tabs">
-      <button class="va-tab is-active" data-tab="list">📋 단어 목록</button>
-      <button class="va-tab" data-tab="quiz">✏️ 퀴즈</button>
-    </nav>
-
-    <!-- ── Word list ── -->
-    <div id="tab-list">
-      <div class="va-list" id="word-list"></div>
-    </div>
-
-    <!-- ── Quiz ── -->
-    <div id="tab-quiz" hidden>
-      <div class="va-quiz-top">
-        <button class="va-mode-btn is-active" data-qmode="ko">🇰🇷 한국어 맞추기</button>
-        <button class="va-mode-btn" data-qmode="en">🇬🇧 영어 맞추기</button>
+      <div class="vx-toolbar">
+        <button class="vx-btn" id="btn-export">내보내기</button>
+        <button class="vx-btn danger" id="btn-clear">삭제</button>
       </div>
-      <div class="va-stats" id="quiz-stats"></div>
-      <div id="quiz-area"></div>
     </div>
 
-  </main>
+    <div class="vx-steps">
 
-  <script>
-  // ─────────────────────────────────────────────────────────
-  // EXAMPLE BANK  (word → { example, translation })
-  // ─────────────────────────────────────────────────────────
-  const BANK = {
-    able:        { e: "She is able to speak three languages.",          t: "그녀는 세 가지 언어를 말할 수 있다." },
-    absent:      { e: "Tom was absent from school today.",              t: "Tom은 오늘 학교에 결석했다." },
-    achieve:     { e: "You can achieve your goals if you work hard.",   t: "열심히 노력하면 목표를 달성할 수 있다." },
-    act:         { e: "We must act quickly to solve the problem.",      t: "문제를 해결하기 위해 빠르게 행동해야 한다." },
-    afraid:      { e: "He is afraid of the dark.",                      t: "그는 어둠을 두려워한다." },
-    agree:       { e: "I agree with your opinion.",                     t: "나는 당신의 의견에 동의한다." },
-    allow:       { e: "Please allow me to explain.",                    t: "설명할 기회를 주세요." },
-    amazing:     { e: "The view from the mountain was amazing.",        t: "산에서 보이는 경치는 놀라웠다." },
-    angry:       { e: "She got angry when she heard the news.",         t: "그녀는 그 소식을 듣고 화가 났다." },
-    answer:      { e: "Please answer the question.",                    t: "질문에 답해 주세요." },
-    apple:       { e: "I eat an apple every morning.",                  t: "나는 매일 아침 사과를 먹는다." },
-    arrive:      { e: "The train will arrive at 3 o'clock.",            t: "기차는 3시에 도착할 것이다." },
-    ask:         { e: "Don't be afraid to ask for help.",               t: "도움을 요청하는 것을 두려워하지 마라." },
-    attend:      { e: "All students must attend the ceremony.",         t: "모든 학생들은 행사에 참석해야 한다." },
-    beautiful:   { e: "The sunset is beautiful tonight.",               t: "오늘 저녁 일몰이 아름답다." },
-    become:      { e: "She wants to become a doctor.",                  t: "그녀는 의사가 되고 싶어한다." },
-    believe:     { e: "I believe that you can do it.",                  t: "나는 네가 할 수 있다고 믿는다." },
-    book:        { e: "This book is easy to read.",                     t: "이 책은 읽기 쉽다." },
-    borrow:      { e: "Can I borrow your pen?",                        t: "펜 좀 빌릴 수 있을까요?" },
-    break:       { e: "Don't break the rules.",                         t: "규칙을 어기지 마라." },
-    bring:       { e: "Please bring your notebook to class.",           t: "수업에 공책을 가져오세요." },
-    build:       { e: "They are going to build a new school.",          t: "그들은 새 학교를 지을 것이다." },
-    busy:        { e: "She is too busy to talk right now.",             t: "그녀는 지금 너무 바빠서 이야기할 수 없다." },
-    buy:         { e: "I want to buy a new phone.",                     t: "나는 새 휴대폰을 사고 싶다." },
-    call:        { e: "I will call you tomorrow morning.",              t: "내일 아침에 전화할게." },
-    care:        { e: "Please take care of yourself.",                  t: "몸 조심하세요." },
-    carry:       { e: "Can you help me carry these boxes?",            t: "이 상자들 옮기는 것 좀 도와줄 수 있어?" },
-    catch:       { e: "He tried to catch the ball.",                    t: "그는 공을 잡으려 했다." },
-    change:      { e: "The weather can change quickly.",                t: "날씨는 빠르게 변할 수 있다." },
-    cheap:       { e: "This restaurant is cheap but delicious.",        t: "이 식당은 저렴하지만 맛있다." },
-    choose:      { e: "Choose the answer that is correct.",             t: "맞는 답을 선택하세요." },
-    clean:       { e: "My room is very clean.",                         t: "내 방은 매우 깨끗하다." },
-    climb:       { e: "We climbed the mountain together.",              t: "우리는 함께 산을 올랐다." },
-    collect:     { e: "He likes to collect stamps.",                    t: "그는 우표 모으는 것을 좋아한다." },
-    complete:    { e: "Please complete the form.",                      t: "양식을 작성해 주세요." },
-    cook:        { e: "My mother cooks dinner every evening.",          t: "어머니는 매일 저녁을 요리하신다." },
-    create:      { e: "We can create a better future together.",        t: "우리는 함께 더 나은 미래를 만들 수 있다." },
-    dangerous:   { e: "It is dangerous to swim alone.",                 t: "혼자 수영하는 것은 위험하다." },
-    decide:      { e: "I decided to study harder.",                     t: "나는 더 열심히 공부하기로 결심했다." },
-    describe:    { e: "Can you describe what you saw?",                t: "본 것을 설명해 줄 수 있나요?" },
-    develop:     { e: "Reading helps develop your vocabulary.",         t: "독서는 어휘력 향상에 도움이 된다." },
-    difficult:   { e: "This problem is very difficult.",                t: "이 문제는 매우 어렵다." },
-    discover:    { e: "She discovered a new planet.",                   t: "그녀는 새로운 행성을 발견했다." },
-    dream:       { e: "I had a strange dream last night.",              t: "나는 어젯밤에 이상한 꿈을 꿨다." },
-    drink:       { e: "Drink enough water every day.",                  t: "매일 물을 충분히 마셔라." },
-    early:       { e: "She arrives at school early every day.",         t: "그녀는 매일 학교에 일찍 도착한다." },
-    easy:        { e: "The test was easier than I expected.",           t: "시험은 내가 예상했던 것보다 쉬웠다." },
-    enjoy:       { e: "I enjoy listening to music.",                    t: "나는 음악 듣는 것을 즐긴다." },
-    enter:       { e: "Please enter your name here.",                   t: "여기에 이름을 입력해 주세요." },
-    environment: { e: "We must protect the environment.",               t: "우리는 환경을 보호해야 한다." },
-    excellent:   { e: "She did an excellent job.",                      t: "그녀는 훌륭한 일을 했다." },
-    explain:     { e: "Can you explain the rules again?",              t: "규칙을 다시 설명해 줄 수 있나요?" },
-    fail:        { e: "Don't be afraid to fail.",                       t: "실패를 두려워하지 마라." },
-    fall:        { e: "Leaves fall from the trees in autumn.",          t: "가을에 나뭇잎이 나무에서 떨어진다." },
-    famous:      { e: "Seoul is famous for its food.",                  t: "서울은 음식으로 유명하다." },
-    fast:        { e: "She runs very fast.",                            t: "그녀는 매우 빠르게 달린다." },
-    feel:        { e: "I feel happy when I help others.",               t: "나는 다른 사람들을 도울 때 행복함을 느낀다." },
-    find:        { e: "I can't find my keys.",                         t: "열쇠를 찾을 수가 없어." },
-    finish:      { e: "Please finish your homework first.",             t: "숙제부터 끝내세요." },
-    follow:      { e: "Follow the teacher's instructions.",             t: "선생님의 지시를 따르세요." },
-    forget:      { e: "Don't forget to bring your lunch.",              t: "도시락 가져오는 것 잊지 마세요." },
-    free:        { e: "Are you free this weekend?",                    t: "이번 주말에 시간 있어?" },
-    friend:      { e: "My best friend lives next door.",                t: "내 가장 친한 친구는 바로 옆집에 산다." },
-    give:        { e: "Give me a chance to explain.",                   t: "설명할 기회를 줘." },
-    glad:        { e: "I'm glad to hear that.",                        t: "그 말을 들으니 기쁩니다." },
-    go:          { e: "I go to school by bus.",                        t: "나는 버스를 타고 학교에 간다." },
-    great:       { e: "You did a great job!",                          t: "정말 잘 했어!" },
-    grow:        { e: "Plants need water to grow.",                    t: "식물은 자라기 위해 물이 필요하다." },
-    guess:       { e: "Can you guess what I'm thinking?",             t: "내가 무슨 생각을 하는지 맞혀볼 수 있어?" },
-    happen:      { e: "What happened to your arm?",                    t: "팔에 무슨 일이 있었어?" },
-    happy:       { e: "I am happy to see you again.",                  t: "당신을 다시 만나서 기쁩니다." },
-    hard:        { e: "This rock is very hard.",                        t: "이 돌은 매우 단단하다." },
-    hate:        { e: "I hate getting up early.",                       t: "나는 일찍 일어나는 것을 싫어한다." },
-    help:        { e: "Can you help me with my homework?",             t: "숙제 좀 도와줄 수 있어?" },
-    hold:        { e: "Hold my hand, it's slippery.",                  t: "미끄러우니까 내 손을 잡아." },
-    hope:        { e: "I hope to see you soon.",                       t: "곧 볼 수 있기를 바랍니다." },
-    hurt:        { e: "My leg hurts after the fall.",                  t: "넘어진 후 다리가 아프다." },
-    imagine:     { e: "Imagine a world without plastic.",              t: "플라스틱이 없는 세상을 상상해 봐." },
-    important:   { e: "It is important to eat breakfast.",             t: "아침식사를 하는 것이 중요하다." },
-    improve:     { e: "Practice every day to improve your skills.",    t: "실력을 향상시키려면 매일 연습해라." },
-    include:     { e: "The price includes breakfast.",                  t: "그 가격에는 아침식사가 포함되어 있다." },
-    interesting: { e: "This story is very interesting.",               t: "이 이야기는 매우 흥미롭다." },
-    invite:      { e: "I invited all my friends to the party.",        t: "나는 파티에 친구들을 모두 초대했다." },
-    join:        { e: "Would you like to join our club?",              t: "우리 동아리에 가입할래?" },
-    keep:        { e: "Keep the room clean, please.",                  t: "방을 깨끗하게 유지해 주세요." },
-    kind:        { e: "She is always kind to everyone.",               t: "그녀는 항상 모든 사람에게 친절하다." },
-    know:        { e: "Do you know how to cook?",                      t: "요리하는 방법을 알아?" },
-    laugh:       { e: "The movie made everyone laugh.",                t: "그 영화는 모든 사람을 웃게 만들었다." },
-    learn:       { e: "I want to learn how to play the guitar.",       t: "나는 기타 치는 법을 배우고 싶다." },
-    leave:       { e: "The bus leaves at 8 in the morning.",           t: "버스는 아침 8시에 출발한다." },
-    like:        { e: "I like watching movies on weekends.",           t: "나는 주말에 영화 보는 것을 좋아한다." },
-    listen:      { e: "Please listen carefully.",                      t: "주의 깊게 들으세요." },
-    live:        { e: "I live near the school.",                       t: "나는 학교 근처에 산다." },
-    lose:        { e: "I don't want to lose this game.",               t: "나는 이 게임에서 지고 싶지 않다." },
-    love:        { e: "I love spending time with my family.",          t: "나는 가족과 시간을 보내는 것을 사랑한다." },
-    make:        { e: "Let's make a plan together.",                   t: "같이 계획을 세워보자." },
-    mean:        { e: "What does this word mean?",                     t: "이 단어는 무슨 뜻이야?" },
-    meet:        { e: "Nice to meet you.",                             t: "만나서 반갑습니다." },
-    miss:        { e: "I miss my hometown.",                           t: "나는 고향이 그립다." },
-    move:        { e: "We are going to move to a new house.",          t: "우리는 새 집으로 이사할 것이다." },
-    necessary:   { e: "Water is necessary for all living things.",     t: "물은 모든 생물에게 필요하다." },
-    need:        { e: "I need your help.",                             t: "당신의 도움이 필요해요." },
-    notice:      { e: "Did you notice anything strange?",             t: "이상한 점을 알아챘나요?" },
-    open:        { e: "Open your textbook to page 10.",                t: "교과서 10쪽을 펴세요." },
-    plan:        { e: "I plan to study abroad next year.",             t: "나는 내년에 해외에서 공부할 계획이다." },
-    popular:     { e: "K-pop is popular around the world.",            t: "K-pop은 전 세계에서 인기 있다." },
-    practice:    { e: "Practice makes perfect.",                       t: "연습이 완벽함을 만든다." },
-    prepare:     { e: "You should prepare for the exam.",              t: "시험 준비를 해야 한다." },
-    protect:     { e: "We should protect wild animals.",               t: "우리는 야생 동물을 보호해야 한다." },
-    read:        { e: "I read at least one book a month.",             t: "나는 한 달에 적어도 책 한 권을 읽는다." },
-    receive:     { e: "I received a letter from my friend.",           t: "나는 친구에게서 편지를 받았다." },
-    remember:    { e: "Remember to call me tonight.",                  t: "오늘 밤 나에게 전화하는 거 기억해." },
-    run:         { e: "I run every morning to stay healthy.",          t: "나는 건강을 유지하기 위해 매일 아침 달린다." },
-    save:        { e: "Save your work before closing the file.",       t: "파일을 닫기 전에 저장하세요." },
-    share:       { e: "Let's share our ideas with each other.",        t: "서로의 생각을 나눠봅시다." },
-    show:        { e: "Can you show me the way?",                      t: "길을 알려줄 수 있나요?" },
-    sleep:       { e: "I sleep eight hours a night.",                  t: "나는 하루 밤에 여덟 시간 잔다." },
-    smile:       { e: "Smile, and the world smiles with you.",         t: "웃으면 세상도 당신과 함께 웃는다." },
-    solve:       { e: "We need to solve this problem together.",       t: "우리는 이 문제를 함께 해결해야 한다." },
-    speak:       { e: "Speak up so everyone can hear you.",            t: "모두가 들을 수 있도록 크게 말하세요." },
-    start:       { e: "Let's start from the beginning.",               t: "처음부터 시작합시다." },
-    stay:        { e: "Please stay calm.",                             t: "차분하게 있어주세요." },
-    stop:        { e: "Stop talking and listen.",                      t: "말하기를 멈추고 들으세요." },
-    study:       { e: "I study English for two hours a day.",          t: "나는 하루에 두 시간씩 영어를 공부한다." },
-    succeed:     { e: "I worked hard to succeed.",                     t: "나는 성공하기 위해 열심히 일했다." },
-    support:     { e: "My family always supports me.",                 t: "우리 가족은 항상 나를 응원한다." },
-    take:        { e: "Take a deep breath and relax.",                 t: "심호흡을 하고 긴장을 풀어라." },
-    talk:        { e: "Let's talk about the problem.",                 t: "그 문제에 대해 이야기해보자." },
-    teach:       { e: "She teaches math at our school.",               t: "그녀는 우리 학교에서 수학을 가르친다." },
-    think:       { e: "Think before you speak.",                       t: "말하기 전에 생각하라." },
-    travel:      { e: "I want to travel the world.",                   t: "나는 세계를 여행하고 싶다." },
-    try:         { e: "Always try your best.",                         t: "항상 최선을 다하라." },
-    understand:  { e: "I don't understand this question.",             t: "이 질문을 이해하지 못하겠어요." },
-    use:         { e: "Can I use your dictionary?",                    t: "사전 좀 써도 될까?" },
-    visit:       { e: "I want to visit Japan someday.",                t: "나는 언젠가 일본을 방문하고 싶다." },
-    wait:        { e: "Please wait a moment.",                         t: "잠시 기다려 주세요." },
-    walk:        { e: "I walk to school every day.",                   t: "나는 매일 학교까지 걸어간다." },
-    want:        { e: "What do you want to be in the future?",        t: "미래에 무엇이 되고 싶어?" },
-    watch:       { e: "I watch TV after dinner.",                      t: "나는 저녁 식사 후에 TV를 본다." },
-    win:         { e: "Our team won the game!",                        t: "우리 팀이 경기에서 이겼다!" },
-    work:        { e: "I work hard to achieve my dreams.",             t: "나는 꿈을 이루기 위해 열심히 일한다." },
-    worry:       { e: "Don't worry, everything will be okay.",         t: "걱정하지 마, 모든 것이 다 잘 될 거야." },
-    write:       { e: "Write your name at the top of the page.",      t: "페이지 상단에 이름을 쓰세요." },
-  };
+      <!-- STEP 1 -->
+      <div class="vx-step">
+        <div class="vx-step-num">1</div>
+        <div class="vx-step-body">
+          <p class="vx-step-title">📸 교재 페이지를 스마트폰으로 촬영하세요</p>
+          <div class="vx-tips">
+            <span class="vx-tip">☀️ 밝은 곳에서 촬영</span>
+            <span class="vx-tip">📄 페이지 전체가 보이게</span>
+            <span class="vx-tip">🔍 텍스트가 선명하게</span>
+            <span class="vx-tip">📐 최대한 정면에서</span>
+          </div>
+        </div>
+      </div>
 
-  // ─────────────────────────────────────────────────────────
-  // STATE
-  // ─────────────────────────────────────────────────────────
-  const STORAGE_KEY = 'ashosho-vocab-v2';
-  const hasTTS = 'speechSynthesis' in window;
+      <!-- STEP 2 -->
+      <div class="vx-step">
+        <div class="vx-step-num">2</div>
+        <div class="vx-step-body">
+          <p class="vx-step-title">🤖 AI에게 사진과 함께 아래 프롬프트를 보내세요</p>
+          <p class="vx-step-desc">단원 이름을 입력하면 프롬프트에 자동 반영됩니다.</p>
 
-  const state = {
-    words: [],       // { id, word, meaning, example, translation, difficulty }
-    tab: 'list',
-    quizMode: 'ko',
-    quizCard: null,
-    quizRevealed: false,
-    recentIds: [],   // avoid immediate repeat
-  };
+          <div class="vx-prompt-wrap">
+            <div class="vx-prompt-head">
+              <div class="vx-prompt-head-left">
+                <span class="vx-prompt-label">단원명</span>
+                <input id="unit-name-input" class="vx-unit-input"
+                       type="text" placeholder="예: Unit 01, 1단원, 여행 영어" />
+              </div>
+              <button class="vx-btn primary" id="btn-copy-prompt">📋 프롬프트 복사</button>
+            </div>
+            <pre class="vx-prompt-text" id="prompt-display"></pre>
+          </div>
 
-  // difficulty: 1(easy) ~ 5(hard), starts at 3
-  // selection weight = difficulty^1.5
+          <div class="vx-ai-links">
+            <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener">💬 ChatGPT</a>
+            <a class="vx-ai-link" href="https://claude.ai" target="_blank" rel="noopener">✨ Claude</a>
+            <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener">🔷 Gemini</a>
+          </div>
+        </div>
+      </div>
 
-  // ─────────────────────────────────────────────────────────
-  // PERSISTENCE
-  // ─────────────────────────────────────────────────────────
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.words));
-  }
-  function load() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      state.words = raw ? JSON.parse(raw) : [];
-    } catch { state.words = []; }
-  }
+      <!-- STEP 3 -->
+      <div class="vx-step">
+        <div class="vx-step-num">3</div>
+        <div class="vx-step-body">
+          <p class="vx-step-title">📂 AI가 생성한 JSON을 업로드하세요</p>
+          <p class="vx-step-desc">AI 답변의 JSON 부분을 메모장에 붙여넣고 <strong>파일명.json</strong>으로 저장 후 올려주세요.<br>
+          Windows 메모장: '다른 이름으로 저장' → 파일 형식 '모든 파일' → 파일명 끝에 .json</p>
 
-  // ─────────────────────────────────────────────────────────
-  // HELPERS
-  // ─────────────────────────────────────────────────────────
-  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+          <!-- Merge option (shown when book exists) -->
+          <div id="merge-opts" hidden>
+            <p style="font-size:.83rem;font-weight:800;color:var(--muted);margin:0 0 8px;">이미 단어장이 있습니다. 어떻게 할까요?</p>
+            <div class="vx-merge-opts">
+              <button class="vx-merge-btn primary" id="btn-mode-replace">
+                <strong>새 단어장으로 시작</strong>기존 내용을 지우고 새로 시작
+              </button>
+              <button class="vx-merge-btn" id="btn-mode-add">
+                <strong>유닛 추가</strong>현재 단어장에 새 유닛을 추가
+              </button>
+            </div>
+          </div>
 
-  function esc(v) {
-    return String(v ?? '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+          <div class="vx-drop" id="drop-zone">
+            <strong>📄 파일을 여기에 끌어다 놓거나</strong>
+            <p>클릭하여 JSON 파일을 선택하세요</p>
+            <input class="vx-file" id="file-input" type="file" accept="application/json,.json" />
+          </div>
 
-  function setStatus(msg, type = 'ok') {
-    const el = document.getElementById('status-line');
-    el.textContent = msg;
-    el.className = 'va-status' + (type === 'error' ? ' error' : '');
-    if (type === 'ok' && msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 3000);
-  }
+          <div class="vx-toolbar" style="margin-top:4px;">
+            <button class="vx-btn" id="btn-sample">샘플로 미리보기</button>
+          </div>
+        </div>
+      </div>
 
-  function speak(text) {
-    if (!hasTTS) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US';
-    window.speechSynthesis.speak(u);
-  }
+    </div>
+  </div><!-- /screen-upload -->
 
-  function diffLabel(d) {
-    return ['', '매우 쉬움', '쉬움', '보통', '어려움', '매우 어려움'][d] || '보통';
-  }
-  function diffColor(d) {
-    return ['', '#4caf50','#8bc34a','#ffc107','#ff7043','#f44336'][d] || '#ffc107';
-  }
+  <!-- ══════════════════════════════════════
+       STUDY SCREEN
+  ══════════════════════════════════════ -->
+  <div id="screen-study" hidden>
+    <div class="vx-study-bar">
+      <select class="vx-unit-sel" id="unit-select"></select>
+      <input  class="vx-search" id="study-search" type="search" placeholder="검색" />
+      <button class="vx-toggle is-on" id="btn-always-show">항상 표시</button>
+    </div>
+    <div class="vx-entry-list" id="entry-list"></div>
+  </div>
 
-  // ─────────────────────────────────────────────────────────
-  // ADD WORD
-  // ─────────────────────────────────────────────────────────
-  function parseInput(raw) {
-    // Split by comma; also accept tab as delimiter
-    const parts = raw.split(/,|\t/).map(s => s.trim()).filter(Boolean);
-    if (!parts.length) return null;
-    const word = parts[0];
-    const meaning = parts[1] || '';
-    const db = BANK[word.toLowerCase()];
-    const example     = parts[2] || db?.e || '';
-    const translation = parts[3] || db?.t || '';
-    return { word, meaning, example, translation, fromDb: Boolean(db && !parts[2]) };
-  }
+  <!-- ══════════════════════════════════════
+       QUIZ SCREEN
+  ══════════════════════════════════════ -->
+  <div id="screen-quiz" hidden>
+    <div class="vx-quiz-modes">
+      <button class="vx-mode-btn is-active" data-qmode="ko">🇰🇷 한국어 맞추기</button>
+      <button class="vx-mode-btn"           data-qmode="en">🇬🇧 영어 맞추기</button>
+    </div>
+    <div class="vx-quiz-opts">
+      <select class="vx-quiz-unit" id="quiz-unit-select"></select>
+      <button class="vx-btn" id="btn-shuffle" style="min-height:32px;padding:0 10px;font-size:.8rem;">🔀 섞기</button>
+    </div>
+    <div class="vx-diff-stats" id="diff-stats"></div>
+    <div style="height:12px;"></div>
+    <div id="quiz-area"></div>
+  </div>
 
-  function addWord() {
-    const input = document.getElementById('word-input');
-    const raw = input.value.trim();
-    if (!raw) return;
+</main>
+<script>
+// ────────────────────────────────────────────────────────
+// SAMPLE BOOK (for preview)
+// ────────────────────────────────────────────────────────
+const SAMPLE = {
+  title: "샘플 단어장",
+  entries: [
+    { word:"achieve", pronunciation:"/əˈtʃiːv/", meaning:"달성하다, 이루다",
+      example:"You can achieve your goals if you work hard.",
+      translation:"열심히 노력하면 목표를 달성할 수 있다." },
+    { word:"imagination", pronunciation:"/ɪˌmædʒɪˈneɪʃn/", meaning:"상상력, 상상",
+      example:"Children have a wonderful imagination.",
+      translation:"아이들은 놀라운 상상력을 가지고 있다." },
+    { word:"persist", pronunciation:"/pəˈsɪst/", meaning:"고집하다, 지속하다",
+      example:"If you persist, you will eventually succeed.",
+      translation:"끈기 있게 하면 결국 성공할 것이다." },
+    { word:"remarkable", pronunciation:"/rɪˈmɑːrkəbl/", meaning:"놀라운, 주목할만한",
+      example:"She made a remarkable recovery after the accident.",
+      translation:"그녀는 사고 후 놀라운 회복을 보였다." },
+  ]
+};
 
-    const parsed = parseInput(raw);
-    if (!parsed) { setStatus('입력값을 확인해 주세요.', 'error'); return; }
-    if (!parsed.meaning) {
-      setStatus(`💡 한글 뜻을 함께 입력해 주세요.  예: ${parsed.word}, 사과`, 'error');
-      return;
+// ────────────────────────────────────────────────────────
+// STATE & STORAGE
+// ────────────────────────────────────────────────────────
+const SK = { BOOK: 'vx-book-v3', DIFF: 'vx-diff-v3' };
+const hasTTS = 'speechSynthesis' in window;
+
+const state = {
+  book: null,          // { title, units:[{ title, entries:[...] }] }
+  tab: 'upload',
+  uploadMode: 'replace', // 'replace' | 'add'
+  // study
+  unitIndex: 0,
+  studySearch: '',
+  alwaysShow: true,
+  // quiz
+  quizMode: 'ko',
+  quizUnitIndex: -1,   // -1 = all
+  quizCard: null,
+  quizRevealed: false,
+  recentIds: [],
+  diff: {},            // { entryId: 1-5 }
+};
+
+function saveBook()  { if(state.book) localStorage.setItem(SK.BOOK, JSON.stringify(state.book)); }
+function saveDiff()  { localStorage.setItem(SK.DIFF, JSON.stringify(state.diff)); }
+function loadData()  {
+  try { state.book = JSON.parse(localStorage.getItem(SK.BOOK) || 'null'); } catch { state.book = null; }
+  try { state.diff = JSON.parse(localStorage.getItem(SK.DIFF) || '{}');  } catch { state.diff = {}; }
+}
+
+// ────────────────────────────────────────────────────────
+// HELPERS
+// ────────────────────────────────────────────────────────
+function uid()  { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(v) {
+  return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function setStatus(msg, type='ok') {
+  const el = document.getElementById('status-line');
+  el.textContent = msg;
+  el.className = 'vx-status' + (type==='error' ? ' error' : '');
+  if (type==='ok' && msg) setTimeout(() => { if(el.textContent===msg) el.textContent=''; }, 3500);
+}
+function speak(text) {
+  if (!hasTTS) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='en-US';
+  window.speechSynthesis.speak(u);
+}
+function allEntries() {
+  if (!state.book) return [];
+  return state.book.units.flatMap(u => u.entries);
+}
+function countAll()  { return allEntries().length; }
+
+// ────────────────────────────────────────────────────────
+// PROMPT BUILDER
+// ────────────────────────────────────────────────────────
+function buildPrompt(unitName) {
+  const title = unitName.trim() || '단원명';
+  return `아래 사진은 영어 교재 페이지입니다.
+이 페이지의 영어 단어 정보를 추출하여 JSON으로 만들어주세요.
+
+규칙:
+• 교재에 있는 내용만 사용하세요
+• 예문·해석·발음기호가 없으면 절대 만들지 말고 빈 문자열("")로 두세요
+• JSON만 출력하고 다른 설명은 하지 마세요
+
+형식:
+{
+  "title": "${title}",
+  "entries": [
+    {
+      "word": "영어단어",
+      "pronunciation": "/발음기호/ 또는 빈 문자열",
+      "meaning": "한글뜻",
+      "example": "영어 예문 또는 빈 문자열",
+      "translation": "한글 해석 또는 빈 문자열"
     }
-    // Check duplicate
-    if (state.words.some(w => w.word.toLowerCase() === parsed.word.toLowerCase())) {
-      setStatus(`"${parsed.word}"은(는) 이미 단어장에 있습니다.`, 'error');
-      return;
-    }
+  ]
+}`;
+}
 
-    state.words.unshift({
-      id: uid(),
-      word: parsed.word,
-      meaning: parsed.meaning,
-      example: parsed.example,
-      translation: parsed.translation,
-      difficulty: 3,
+function refreshPrompt() {
+  const name = document.getElementById('unit-name-input').value;
+  document.getElementById('prompt-display').textContent = buildPrompt(name);
+}
+
+// ────────────────────────────────────────────────────────
+// NORMALIZE JSON → internal format
+// ────────────────────────────────────────────────────────
+function normalize(raw) {
+  if (!raw || typeof raw !== 'object') throw new Error('올바른 JSON 형식이 아닙니다.');
+  const bookTitle = String(raw.title || '나의 단어장').trim();
+  let units = [];
+
+  if (Array.isArray(raw.units) && raw.units.length) {
+    // multi-unit format
+    units = raw.units.map((u, ui) => {
+      const entries = (u.entries||[]).map((e,ei) => normalizeEntry(e, ui, ei));
+      return { id: uid(), title: String(u.title||`Unit ${ui+1}`).trim(), entries };
     });
-    save();
-    input.value = '';
-    input.focus();
+  } else if (Array.isArray(raw.entries) && raw.entries.length) {
+    // flat format → single unit
+    const entries = raw.entries.map((e,ei) => normalizeEntry(e, 0, ei));
+    units = [{ id: uid(), title: bookTitle, entries }];
+  } else {
+    throw new Error('"entries" 또는 "units" 배열이 필요합니다.');
+  }
 
-    const msg = parsed.fromDb
-      ? `✓ "${parsed.word}" 추가됨 — 예문 자동완성`
-      : `✓ "${parsed.word}" 추가됨`;
-    setStatus(msg);
+  if (!units.length || units.every(u => !u.entries.length))
+    throw new Error('단어가 하나도 없습니다.');
+
+  return { title: bookTitle, units };
+}
+
+function normalizeEntry(e, ui, ei) {
+  const word = String(e.word||'').trim();
+  const meaning = String(e.meaning||'').trim();
+  if (!word)    throw new Error(`항목 ${ui+1}-${ei+1}: 영어 단어가 없습니다.`);
+  if (!meaning) throw new Error(`"${word}": 한글 뜻이 없습니다.`);
+  return {
+    id: uid(),
+    word,
+    pronunciation: String(e.pronunciation||'').trim(),
+    meaning,
+    example:     String(e.example||'').trim(),
+    translation: String(e.translation||'').trim(),
+  };
+}
+
+// ────────────────────────────────────────────────────────
+// FILE HANDLING
+// ────────────────────────────────────────────────────────
+async function handleFile(file) {
+  if (!file) return;
+  try {
+    const raw = JSON.parse(await file.text());
+    const incoming = normalize(raw);
+    if (state.uploadMode === 'add' && state.book) {
+      // merge units
+      state.book.units.push(...incoming.units);
+      setStatus(`유닛 추가 완료! 현재 ${countAll()}개 단어`);
+    } else {
+      state.book = incoming;
+      state.unitIndex = 0;
+      setStatus(`"${state.book.title}" 불러오기 완료! ${countAll()}개 단어`);
+    }
+    saveBook();
     renderAll();
+    showTab('study');
+  } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
+  finally { document.getElementById('file-input').value = ''; }
+}
+
+// ────────────────────────────────────────────────────────
+// QUIZ — WEIGHTED PICK
+// ────────────────────────────────────────────────────────
+function quizPool() {
+  if (!state.book) return [];
+  let entries;
+  if (state.quizUnitIndex === -1) {
+    entries = allEntries();
+  } else {
+    entries = state.book.units[state.quizUnitIndex]?.entries || [];
+  }
+  return entries;
+}
+
+function pickCard() {
+  const pool = quizPool(); if (!pool.length) return null;
+  const maxRecent = Math.min(5, Math.floor(pool.length / 2));
+  const recent = state.recentIds.slice(0, maxRecent);
+  const src = pool.filter(e => !recent.includes(e.id));
+  const candidates = src.length > 0 ? src : pool;
+  const weights = candidates.map(e => Math.pow(state.diff[e.id]||3, 1.5));
+  const total = weights.reduce((a,b) => a+b, 0);
+  let r = Math.random() * total;
+  for (let i=0; i<candidates.length; i++) { r -= weights[i]; if(r<=0) return candidates[i]; }
+  return candidates[candidates.length-1];
+}
+
+function rateCard(level) {
+  if (state.quizCard) {
+    const id = state.quizCard.id;
+    const cur = state.diff[id] || 3;
+    if (level==='hard')   state.diff[id] = Math.min(5, cur+1);
+    else if (level==='easy') state.diff[id] = Math.max(1, cur-1);
+    saveDiff();
+    state.recentIds = [id, ...state.recentIds].slice(0, 8);
+  }
+  state.quizCard = pickCard();
+  state.quizRevealed = false;
+  renderQuiz();
+}
+
+// ────────────────────────────────────────────────────────
+// RENDER — UPLOAD TAB
+// ────────────────────────────────────────────────────────
+function renderUpload() {
+  const hasBook = Boolean(state.book);
+  document.getElementById('book-actions').hidden = !hasBook;
+  document.getElementById('merge-opts').hidden   = !hasBook;
+  if (hasBook) {
+    const cnt = countAll();
+    document.getElementById('ba-name').textContent = state.book.title;
+    document.getElementById('ba-meta').textContent =
+      `${state.book.units.length}개 유닛 · ${cnt}개 단어`;
+    // highlight active merge mode
+    document.getElementById('btn-mode-replace').className =
+      'vx-merge-btn' + (state.uploadMode==='replace' ? ' primary' : '');
+    document.getElementById('btn-mode-add').className =
+      'vx-merge-btn' + (state.uploadMode==='add' ? ' primary' : '');
+  }
+}
+
+// ────────────────────────────────────────────────────────
+// RENDER — STUDY TAB
+// ────────────────────────────────────────────────────────
+function renderStudy() {
+  if (!state.book) return;
+  const units = state.book.units;
+
+  // unit selector
+  const sel = document.getElementById('unit-select');
+  sel.innerHTML = units.map((u,i) =>
+    `<option value="${i}">${esc(u.title)} (${u.entries.length})</option>`
+  ).join('');
+  sel.value = String(Math.min(state.unitIndex, units.length-1));
+  state.unitIndex = Number(sel.value);
+
+  const unit = units[state.unitIndex];
+  const q = state.studySearch.trim().toLowerCase();
+  const entries = unit.entries.filter(e =>
+    !q || [e.word, e.meaning, e.example, e.translation].join(' ').toLowerCase().includes(q)
+  );
+
+  // always-show toggle
+  document.getElementById('btn-always-show').classList.toggle('is-on', state.alwaysShow);
+  const list = document.getElementById('entry-list');
+  list.className = 'vx-entry-list' + (state.alwaysShow ? '' : ' hide-ko');
+
+  if (!entries.length) {
+    list.innerHTML = `<div class="vx-no-entry"><p>표시할 단어가 없습니다.</p></div>`;
+    return;
   }
 
-  // ─────────────────────────────────────────────────────────
-  // QUIZ — WEIGHTED PICK
-  // ─────────────────────────────────────────────────────────
-  function pickCard() {
-    if (!state.words.length) return null;
-    // Exclude recently seen (up to half the list, max 5)
-    const maxRecent = Math.min(5, Math.floor(state.words.length / 2));
-    const recent = state.recentIds.slice(0, maxRecent);
-    const pool = state.words.filter(w => !recent.includes(w.id));
-    const src = pool.length > 0 ? pool : state.words;
-
-    // Weighted random by difficulty^1.5
-    const weights = src.map(w => Math.pow(w.difficulty, 1.5));
-    const total = weights.reduce((a, b) => a + b, 0);
-    let r = Math.random() * total;
-    for (let i = 0; i < src.length; i++) {
-      r -= weights[i];
-      if (r <= 0) return src[i];
-    }
-    return src[src.length - 1];
-  }
-
-  function rateCard(level) {
-    // level: 'hard' | 'medium' | 'easy'
-    const w = state.words.find(x => x.id === state.quizCard?.id);
-    if (w) {
-      if (level === 'hard')   w.difficulty = Math.min(5, w.difficulty + 1);
-      else if (level === 'easy') w.difficulty = Math.max(1, w.difficulty - 1);
-      save();
-    }
-    if (state.quizCard) {
-      state.recentIds = [state.quizCard.id, ...state.recentIds].slice(0, 8);
-    }
-    state.quizCard    = pickCard();
-    state.quizRevealed = false;
-    renderQuiz();
-  }
-
-  // ─────────────────────────────────────────────────────────
-  // RENDER — WORD LIST
-  // ─────────────────────────────────────────────────────────
-  function renderList() {
-    const list = document.getElementById('word-list');
-    const count = document.getElementById('word-count');
-    count.textContent = state.words.length ? `${state.words.length}개 단어` : '단어 없음';
-
-    if (!state.words.length) {
-      list.innerHTML = `<div class="va-empty">
-        <span style="font-size:2.5rem">📖</span>
-        <p>아직 단어가 없어요.<br>위 입력창에서 단어를 추가해 보세요!</p>
-        <p style="font-size:.8rem;color:var(--muted)">예: apple, 사과</p>
-      </div>`;
-      return;
-    }
-
-    list.innerHTML = state.words.map(w => {
-      const dc = diffColor(w.difficulty);
-      const dots = Array.from({length: 5}, (_, i) =>
-        `<span class="va-dot${i < w.difficulty ? ' on-' + w.difficulty : ''}"
-               style="${i < w.difficulty ? `background:${dc}` : ''}"></span>`
-      ).join('');
-      return `<div class="va-word-item" data-id="${esc(w.id)}">
-        <div class="va-word-main">
-          <p class="va-word-en">${esc(w.word)}</p>
-          <p class="va-word-ko">${esc(w.meaning)}</p>
-          ${w.example ? `<p class="va-word-ex">${esc(w.example)}</p>` : ''}
-          ${w.translation ? `<p class="va-word-tr">${esc(w.translation)}</p>` : ''}
+  list.innerHTML = entries.map(e => `
+    <article class="vx-entry" data-id="${esc(e.id)}">
+      <div class="vx-entry-top">
+        <div class="vx-entry-head">
+          <span class="vx-word">${esc(e.word)}</span>
+          ${e.pronunciation ? `<span class="vx-pron">${esc(e.pronunciation)}</span>` : ''}
         </div>
-        <div class="va-word-side">
-          <button class="va-del" data-del="${esc(w.id)}" title="삭제">✕</button>
-          <div class="va-diff" title="${diffLabel(w.difficulty)}">${dots}</div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  // ─────────────────────────────────────────────────────────
-  // RENDER — QUIZ
-  // ─────────────────────────────────────────────────────────
-  function renderQuiz() {
-    // mode buttons
-    document.querySelectorAll('[data-qmode]').forEach(b =>
-      b.classList.toggle('is-active', b.dataset.qmode === state.quizMode));
-
-    // stats bar
-    const stats = document.getElementById('quiz-stats');
-    const counts = [0, 0, 0]; // easy(1-2), medium(3), hard(4-5)
-    state.words.forEach(w => {
-      if (w.difficulty <= 2) counts[0]++;
-      else if (w.difficulty === 3) counts[1]++;
-      else counts[2]++;
-    });
-    stats.innerHTML = `
-      <span class="va-stat"><span class="va-stat-dot" style="background:#4caf50"></span>쉬움 ${counts[0]}개</span>
-      <span class="va-stat"><span class="va-stat-dot" style="background:#ffc107"></span>보통 ${counts[1]}개</span>
-      <span class="va-stat"><span class="va-stat-dot" style="background:#f44336"></span>어려움 ${counts[2]}개</span>
-    `;
-
-    const area = document.getElementById('quiz-area');
-
-    if (!state.words.length) {
-      area.innerHTML = `<div class="va-quiz-empty">
-        <span style="font-size:2.5rem">✏️</span>
-        <p>단어를 추가하면 바로 퀴즈를 시작할 수 있어요!</p>
-      </div>`;
-      return;
-    }
-
-    if (!state.quizCard) state.quizCard = pickCard();
-    if (!state.quizCard) return;
-
-    const w = state.quizCard;
-    const isKo = state.quizMode === 'ko';
-
-    // Question side
-    let qLabel, qWord, qSub, showTts;
-    if (isKo) {
-      qLabel  = '영어 단어를 보고 한국어 뜻을 맞추세요';
-      qWord   = w.word;
-      qSub    = w.example || '';
-      showTts = true;
-    } else {
-      qLabel  = '한국어 뜻을 보고 영어 단어를 맞추세요';
-      qWord   = w.meaning;
-      qSub    = w.translation || '';
-      showTts = false;
-    }
-
-    // Answer side
-    let aWord, aSub;
-    if (isKo) {
-      aWord = w.meaning;
-      aSub  = w.translation || '';
-    } else {
-      aWord = w.word;
-      aSub  = w.example || '';
-    }
-
-    const revealHtml = state.quizRevealed
-      ? `<div class="va-answer">
-          <p class="va-answer-label">정답</p>
-          <p class="va-answer-word">${esc(aWord)}</p>
-          ${aSub ? `<p class="va-answer-sub">${esc(aSub)}</p>` : ''}
-          ${!isKo && w.word ? `<div style="margin-top:8px;display:flex;gap:6px;">
-            <button class="va-card-tts" data-speak="${esc(w.word)}" ${hasTTS?'':'disabled'}>🔊 단어 듣기</button>
-            ${w.example ? `<button class="va-card-tts" data-speak="${esc(w.example)}" ${hasTTS?'':'disabled'}>🔊 예문 듣기</button>` : ''}
-          </div>` : ''}
-        </div>`
-      : `<button class="va-reveal-btn" id="btn-reveal">
-          탭하여 정답 확인<br>
-          <span style="font-size:.75rem;font-weight:700;opacity:.7">Space / Enter</span>
-        </button>`;
-
-    const ratingHtml = state.quizRevealed
-      ? `<div class="va-rating" style="margin-top:12px;">
-          <button class="va-rate-btn hard" data-rate="hard">
-            <span class="va-rate-icon">😰</span>
-            <span class="va-rate-label">어려워요</span>
-          </button>
-          <button class="va-rate-btn medium" data-rate="medium">
-            <span class="va-rate-icon">🤔</span>
-            <span class="va-rate-label">애매해요</span>
-          </button>
-          <button class="va-rate-btn easy" data-rate="easy">
-            <span class="va-rate-icon">😊</span>
-            <span class="va-rate-label">알아요!</span>
-          </button>
-        </div>
-        <p class="va-key-hint"><kbd>1</kbd> 어려워요 &nbsp; <kbd>2</kbd> 애매해요 &nbsp; <kbd>3</kbd> 알아요</p>`
-      : '';
-
-    area.innerHTML = `
-      <div class="va-card">
-        <div class="va-card-q">
-          <p class="va-card-label">${esc(qLabel)}</p>
-          <p class="va-card-word">${esc(qWord)}</p>
-          ${qSub ? `<p class="va-card-sub">${esc(qSub)}</p>` : ''}
-          ${showTts ? `<div style="display:flex;gap:6px;margin-top:10px;">
-            <button class="va-card-tts" data-speak="${esc(w.word)}" ${hasTTS?'':'disabled'}>🔊 단어 듣기</button>
-            ${w.example ? `<button class="va-card-tts" data-speak="${esc(w.example)}" ${hasTTS?'':'disabled'}>🔊 예문 듣기</button>` : ''}
-          </div>` : ''}
-        </div>
-        <div class="va-reveal-wrap">${revealHtml}</div>
+        <button class="vx-play" data-speak="${esc(e.word)}" ${hasTTS?'':'disabled'} title="단어 듣기">▶</button>
       </div>
-      ${ratingHtml}
-    `;
-  }
+      <p class="vx-meaning">${esc(e.meaning)}</p>
+      ${e.example ? `
+        <div class="vx-example-row">
+          <p class="vx-example">${esc(e.example)}</p>
+          <button class="vx-play" data-speak="${esc(e.example)}" ${hasTTS?'':'disabled'} title="예문 듣기">▶</button>
+        </div>
+      ` : ''}
+      ${e.translation ? `<p class="vx-translation">${esc(e.translation)}</p>` : ''}
+    </article>
+  `).join('');
+}
 
-  // ─────────────────────────────────────────────────────────
-  // RENDER ALL
-  // ─────────────────────────────────────────────────────────
-  function renderAll() {
-    renderList();
-    if (state.tab === 'quiz') renderQuiz();
-  }
-
-  function showTab(tab) {
-    state.tab = tab;
-    document.getElementById('tab-list').hidden = tab !== 'list';
-    document.getElementById('tab-quiz').hidden = tab !== 'quiz';
-    document.querySelectorAll('.va-tab').forEach(b =>
-      b.classList.toggle('is-active', b.dataset.tab === tab));
-    if (tab === 'quiz') {
-      if (!state.quizCard) state.quizCard = pickCard();
-      state.quizRevealed = false;
-      renderQuiz();
-    }
-  }
-
-  // ─────────────────────────────────────────────────────────
-  // EVENTS
-  // ─────────────────────────────────────────────────────────
-
-  // Add word
-  document.getElementById('btn-add').addEventListener('click', addWord);
-  document.getElementById('word-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); addWord(); }
-  });
-
-  // Tabs
-  document.querySelectorAll('.va-tab').forEach(b =>
-    b.addEventListener('click', () => showTab(b.dataset.tab)));
-
-  // Quiz mode
+// ────────────────────────────────────────────────────────
+// RENDER — QUIZ TAB
+// ────────────────────────────────────────────────────────
+function renderQuiz() {
+  if (!state.book) return;
   document.querySelectorAll('[data-qmode]').forEach(b =>
-    b.addEventListener('click', () => {
-      state.quizMode = b.dataset.qmode;
-      state.quizCard = pickCard();
-      state.quizRevealed = false;
-      renderQuiz();
-    }));
+    b.classList.toggle('is-active', b.dataset.qmode === state.quizMode));
 
-  // Word list: delete
-  document.getElementById('word-list').addEventListener('click', e => {
-    const del = e.target.closest('[data-del]');
-    if (!del) return;
-    const id = del.dataset.del;
-    const w = state.words.find(x => x.id === id);
-    if (!w) return;
-    state.words = state.words.filter(x => x.id !== id);
-    // Remove from quiz if currently shown
-    if (state.quizCard?.id === id) {
-      state.quizCard = pickCard();
-      state.quizRevealed = false;
-    }
-    save(); renderAll();
-    setStatus(`"${w.word}" 삭제됨`);
+  // unit selector
+  const qs = document.getElementById('quiz-unit-select');
+  const units = state.book.units;
+  qs.innerHTML = `<option value="-1">전체 (${countAll()}개)</option>` +
+    units.map((u,i) => `<option value="${i}">${esc(u.title)} (${u.entries.length})</option>`).join('');
+  qs.value = String(state.quizUnitIndex);
+
+  // diff stats
+  const pool = quizPool();
+  let easy=0, med=0, hard=0;
+  pool.forEach(e => {
+    const d = state.diff[e.id]||3;
+    if(d<=2) easy++; else if(d===3) med++; else hard++;
   });
+  document.getElementById('diff-stats').innerHTML = `
+    <span class="vx-dstat"><span class="vx-dstat-dot" style="background:#4caf50"></span>쉬움 ${easy}개</span>
+    <span class="vx-dstat"><span class="vx-dstat-dot" style="background:#ffc107"></span>보통 ${med}개</span>
+    <span class="vx-dstat"><span class="vx-dstat-dot" style="background:#f44336"></span>어려움 ${hard}개</span>
+  `;
 
-  // Quiz area: reveal + rate + tts
-  document.getElementById('quiz-area').addEventListener('click', e => {
-    if (e.target.closest('#btn-reveal')) {
-      state.quizRevealed = true; renderQuiz(); return;
-    }
-    const rateBtn = e.target.closest('[data-rate]');
-    if (rateBtn) { rateCard(rateBtn.dataset.rate); return; }
-    const ttsBtn = e.target.closest('[data-speak]');
-    if (ttsBtn) { speak(ttsBtn.dataset.speak); }
+  const area = document.getElementById('quiz-area');
+  if (!pool.length) {
+    area.innerHTML = `<div class="vx-no-entry"><p>단어장을 불러오면 퀴즈를 시작할 수 있어요.</p></div>`;
+    return;
+  }
+  if (!state.quizCard) state.quizCard = pickCard();
+  const e = state.quizCard;
+  if (!e) return;
+
+  const isKo = state.quizMode === 'ko';
+  // question side
+  const qHtml = isKo ? `
+    <p class="vx-card-qlabel">영어 단어를 보고 한국어 뜻을 맞추세요</p>
+    <p class="vx-card-qword">${esc(e.word)}</p>
+    ${e.pronunciation ? `<p class="vx-card-qpron">${esc(e.pronunciation)}</p>` : ''}
+    ${e.example ? `<p class="vx-card-qsub">${esc(e.example)}</p>` : ''}
+    <div class="vx-tts-row">
+      <button class="vx-play" data-speak="${esc(e.word)}" ${hasTTS?'':'disabled'}>▶ 단어</button>
+      ${e.example ? `<button class="vx-play" data-speak="${esc(e.example)}" ${hasTTS?'':'disabled'}>▶ 예문</button>` : ''}
+    </div>
+  ` : `
+    <p class="vx-card-qlabel">한국어 뜻을 보고 영어 단어를 맞추세요</p>
+    <p class="vx-card-qko">${esc(e.meaning)}</p>
+    ${e.translation ? `<p class="vx-card-qtrs">${esc(e.translation)}</p>` : ''}
+  `;
+
+  // answer side
+  const aHtml = isKo ? `
+    <p class="vx-answer-label">정답</p>
+    <p class="vx-answer-word">${esc(e.meaning)}</p>
+    ${e.translation ? `<p class="vx-answer-sub">${esc(e.translation)}</p>` : ''}
+  ` : `
+    <p class="vx-answer-label">정답</p>
+    <p class="vx-answer-word">${esc(e.word)}</p>
+    ${e.pronunciation ? `<p class="vx-answer-pron">${esc(e.pronunciation)}</p>` : ''}
+    ${e.example ? `<p class="vx-answer-sub">${esc(e.example)}</p>` : ''}
+    <div class="vx-tts-row" style="margin-top:8px;">
+      <button class="vx-play" data-speak="${esc(e.word)}" ${hasTTS?'':'disabled'}>▶ 단어</button>
+      ${e.example ? `<button class="vx-play" data-speak="${esc(e.example)}" ${hasTTS?'':'disabled'}>▶ 예문</button>` : ''}
+    </div>
+  `;
+
+  area.innerHTML = `
+    <div class="vx-card">
+      <div class="vx-card-q">${qHtml}</div>
+      <div class="vx-card-a-wrap">
+        ${state.quizRevealed
+          ? `<div class="vx-answer">${aHtml}</div>`
+          : `<button class="vx-reveal-btn" id="btn-reveal">탭하여 정답 확인<br>
+              <span style="font-size:.72rem;opacity:.6">Space / Enter</span></button>`
+        }
+      </div>
+    </div>
+    ${state.quizRevealed ? `
+      <div class="vx-rating">
+        <button class="vx-rate hard"   data-rate="hard"  ><span class="ri">😰</span><span class="rl">어려워요</span></button>
+        <button class="vx-rate medium" data-rate="medium"><span class="ri">🤔</span><span class="rl">애매해요</span></button>
+        <button class="vx-rate easy"   data-rate="easy"  ><span class="ri">😊</span><span class="rl">알아요!</span></button>
+      </div>
+      <p class="vx-key-hint"><kbd>1</kbd> 어려워요 &nbsp; <kbd>2</kbd> 애매해요 &nbsp; <kbd>3</kbd> 알아요</p>
+    ` : ''}
+  `;
+}
+
+// ────────────────────────────────────────────────────────
+// RENDER ALL
+// ────────────────────────────────────────────────────────
+function renderAll() {
+  const hasBook = Boolean(state.book);
+  document.getElementById('tab-study').disabled = !hasBook;
+  document.getElementById('tab-quiz').disabled  = !hasBook;
+
+  // header book info
+  document.getElementById('book-info').hidden = !hasBook;
+  if (hasBook) {
+    document.getElementById('book-name').textContent = state.book.title;
+    document.getElementById('book-meta').textContent =
+      `${state.book.units.length}개 유닛 · ${countAll()}개 단어`;
+  }
+
+  renderUpload();
+  if (state.tab === 'study') renderStudy();
+  if (state.tab === 'quiz')  renderQuiz();
+}
+
+function showTab(tab) {
+  state.tab = tab;
+  ['upload','study','quiz'].forEach(s => {
+    document.getElementById('screen-'+s).hidden = s !== tab;
   });
+  document.querySelectorAll('.vx-tab').forEach(b =>
+    b.classList.toggle('is-active', b.dataset.tab === tab));
+  if (tab === 'study') renderStudy();
+  if (tab === 'quiz')  { state.quizCard = pickCard(); state.quizRevealed = false; renderQuiz(); }
+}
 
-  // Keyboard shortcuts
-  document.addEventListener('keydown', e => {
-    if (state.tab !== 'quiz') return;
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      if (!state.quizRevealed) { state.quizRevealed = true; renderQuiz(); }
-    } else if (e.key === '1') { if (state.quizRevealed) rateCard('hard'); }
-    else if (e.key === '2')   { if (state.quizRevealed) rateCard('medium'); }
-    else if (e.key === '3')   { if (state.quizRevealed) rateCard('easy'); }
-  });
+// ────────────────────────────────────────────────────────
+// EXPORT
+// ────────────────────────────────────────────────────────
+function exportBook() {
+  if (!state.book) return;
+  // strip internal ids for clean export
+  const out = {
+    title: state.book.title,
+    units: state.book.units.map(u => ({
+      title: u.title,
+      entries: u.entries.map(({id:_, ...e}) => e)
+    }))
+  };
+  const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (state.book.title.replace(/[\\/:*?"<>|]+/g,'-')||'vocab') + '.json';
+  document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
 
-  // ─────────────────────────────────────────────────────────
-  // INIT
-  // ─────────────────────────────────────────────────────────
-  load();
-  renderAll();
-  </script>
+// ────────────────────────────────────────────────────────
+// EVENTS
+// ────────────────────────────────────────────────────────
+
+// Tabs
+document.querySelectorAll('.vx-tab').forEach(b =>
+  b.addEventListener('click', () => showTab(b.dataset.tab)));
+
+// Prompt
+document.getElementById('unit-name-input').addEventListener('input', refreshPrompt);
+document.getElementById('btn-copy-prompt').addEventListener('click', () => {
+  navigator.clipboard.writeText(buildPrompt(document.getElementById('unit-name-input').value))
+    .then(() => setStatus('✓ 프롬프트 복사 완료! AI에게 사진과 함께 붙여넣으세요 📸'));
+});
+
+// Upload mode
+document.getElementById('btn-mode-replace').addEventListener('click', () => { state.uploadMode='replace'; renderUpload(); });
+document.getElementById('btn-mode-add').addEventListener('click',     () => { state.uploadMode='add';     renderUpload(); });
+
+// File drop
+const dz = document.getElementById('drop-zone');
+const fi = document.getElementById('file-input');
+fi.addEventListener('change', () => handleFile(fi.files[0]));
+['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('over'); }));
+dz.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+
+// Sample
+document.getElementById('btn-sample').addEventListener('click', () => {
+  state.book = normalize(SAMPLE);
+  state.unitIndex = 0;
+  saveBook();
+  setStatus('샘플 단어장을 불러왔습니다.');
+  renderAll(); showTab('study');
+});
+
+// Export / Clear
+document.getElementById('btn-export').addEventListener('click', exportBook);
+document.getElementById('btn-clear').addEventListener('click', () => {
+  if (!confirm('단어장을 삭제할까요?')) return;
+  state.book = null; state.diff = {};
+  localStorage.removeItem(SK.BOOK); localStorage.removeItem(SK.DIFF);
+  setStatus('삭제됐습니다.');
+  showTab('upload'); renderAll();
+});
+
+// Study
+document.getElementById('unit-select').addEventListener('change', e => {
+  state.unitIndex = Number(e.target.value); renderStudy();
+});
+document.getElementById('study-search').addEventListener('input', e => {
+  state.studySearch = e.target.value; renderStudy();
+});
+document.getElementById('btn-always-show').addEventListener('click', () => {
+  state.alwaysShow = !state.alwaysShow; renderStudy();
+});
+// click to reveal when hide mode
+document.getElementById('entry-list').addEventListener('click', e => {
+  const play = e.target.closest('[data-speak]');
+  if (play) { e.stopPropagation(); speak(play.dataset.speak); return; }
+  if (!state.alwaysShow) {
+    const entry = e.target.closest('.vx-entry');
+    if (entry) entry.classList.toggle('revealed');
+  }
+});
+
+// Quiz mode
+document.querySelectorAll('[data-qmode]').forEach(b =>
+  b.addEventListener('click', () => {
+    state.quizMode = b.dataset.qmode;
+    state.quizCard = pickCard(); state.quizRevealed = false; renderQuiz();
+  }));
+document.getElementById('quiz-unit-select').addEventListener('change', e => {
+  state.quizUnitIndex = Number(e.target.value);
+  state.quizCard = pickCard(); state.quizRevealed = false; renderQuiz();
+});
+document.getElementById('btn-shuffle').addEventListener('click', () => {
+  // reset all difficulties to 3 for current pool, reshuffle
+  quizPool().forEach(e => { state.diff[e.id] = 3; });
+  saveDiff(); state.recentIds = [];
+  state.quizCard = pickCard(); state.quizRevealed = false; renderQuiz();
+  setStatus('난이도를 초기화하고 섞었습니다.');
+});
+
+// Quiz area (delegated)
+document.getElementById('quiz-area').addEventListener('click', e => {
+  if (e.target.closest('#btn-reveal')) { state.quizRevealed=true; renderQuiz(); return; }
+  const rate = e.target.closest('[data-rate]');
+  if (rate) { rateCard(rate.dataset.rate); return; }
+  const play = e.target.closest('[data-speak]');
+  if (play) { speak(play.dataset.speak); }
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (state.tab !== 'quiz') return;
+  if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
+  if (e.key===' '||e.key==='Enter') { e.preventDefault(); if(!state.quizRevealed){state.quizRevealed=true;renderQuiz();} }
+  else if (e.key==='1') { if(state.quizRevealed) rateCard('hard'); }
+  else if (e.key==='2') { if(state.quizRevealed) rateCard('medium'); }
+  else if (e.key==='3') { if(state.quizRevealed) rateCard('easy'); }
+});
+
+// ────────────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────────────
+loadData();
+refreshPrompt();
+renderAll();
+if (state.book) showTab('study');
+</script>
 </body>
 </html>
