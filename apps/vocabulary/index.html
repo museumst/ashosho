@@ -513,21 +513,21 @@
   <div id="screen-upload">
     <div class="vx-upload-grid">
 
+      <!-- AI links + prompt copy (same row) -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <div class="vx-ai-links">
+          <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener">💬 ChatGPT</a>
+          <a class="vx-ai-link" href="https://claude.ai"       target="_blank" rel="noopener">✨ Claude</a>
+          <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener">🔷 Gemini</a>
+        </div>
+        <button class="vx-btn primary" id="btn-copy-prompt" style="white-space:nowrap;flex-shrink:0;">📋 프롬프트 복사</button>
+      </div>
+
       <!-- Compact prompt row -->
       <div class="vx-prompt-row">
         <span class="vx-prompt-label">단어장 이름</span>
         <input id="unit-name-input" class="vx-unit-input"
                type="text" placeholder="예: Unit 01, 1단원, 여행 영어" />
-        <button class="vx-btn primary" id="btn-copy-prompt"
-                style="white-space:nowrap;">📋 프롬프트 복사</button>
-      </div>
-
-      <!-- AI links -->
-      <div class="vx-ai-links">
-        <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener">💬 ChatGPT</a>
-        <a class="vx-ai-link" href="https://claude.ai"       target="_blank" rel="noopener">✨ Claude</a>
-        <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener">🔷 Gemini</a>
-        <span style="font-size:.8rem;font-weight:700;color:var(--muted);align-self:center;">← 사진과 함께 프롬프트를 붙여넣으세요</span>
       </div>
 
       <!-- Merge option (shown when book exists) -->
@@ -543,15 +543,11 @@
         </div>
       </div>
 
-      <!-- Drop zone — TOP & PROMINENT -->
-      <label class="vx-drop" id="drop-zone" for="file-input">
+      <!-- Drop zone -->
+      <label class="vx-drop" id="drop-zone" for="file-input" style="min-height:140px;">
         <strong>JSON 파일을 끌어다 놓거나 클릭하여 파일을 선택하세요</strong>
         <input class="vx-file" id="file-input" type="file" accept="application/json,.json" />
       </label>
-
-      <div class="vx-toolbar">
-        <button class="vx-btn" id="btn-sample">샘플로 미리보기</button>
-      </div>
 
     </div>
   </div><!-- /screen-upload -->
@@ -1044,16 +1040,6 @@ fi.addEventListener('change', () => handleFile(fi.files[0]));
 ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('over'); }));
 ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('over'); }));
 dz.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
-
-// Sample
-document.getElementById('btn-sample').addEventListener('click', () => {
-  state.book = normalize(SAMPLE);
-  state.unitIndex = 0;
-  saveBook();
-  setStatus('샘플 단어장을 불러왔습니다.');
-  renderAll(); showTab('study');
-});
-
 
 // Study
 document.getElementById('unit-select').addEventListener('change', e => {
