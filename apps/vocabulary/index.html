@@ -466,7 +466,7 @@
           <div class="vx-prompt-wrap">
             <div class="vx-prompt-head">
               <div class="vx-prompt-head-left">
-                <span class="vx-prompt-head-label">단원명</span>
+                <span class="vx-prompt-head-label">단어장 이름</span>
                 <input id="unit-name-modal" class="vx-unit-input-modal"
                        type="text" placeholder="예: Unit 01" />
               </div>
@@ -513,21 +513,9 @@
   <div id="screen-upload">
     <div class="vx-upload-grid">
 
-      <!-- Book management (shown when book is loaded) -->
-      <div id="book-actions" hidden class="vx-book-actions">
-        <div>
-          <p class="vx-book-actions-info">📚 <strong id="ba-name"></strong></p>
-          <p class="vx-book-actions-info"><span id="ba-meta"></span></p>
-        </div>
-        <div class="vx-toolbar">
-          <button class="vx-btn" id="btn-export">내보내기</button>
-          <button class="vx-btn danger" id="btn-clear">삭제</button>
-        </div>
-      </div>
-
       <!-- Compact prompt row -->
       <div class="vx-prompt-row">
-        <span class="vx-prompt-label">단원명</span>
+        <span class="vx-prompt-label">단어장 이름</span>
         <input id="unit-name-input" class="vx-unit-input"
                type="text" placeholder="예: Unit 01, 1단원, 여행 영어" />
         <button class="vx-btn primary" id="btn-copy-prompt"
@@ -556,13 +544,10 @@
       </div>
 
       <!-- Drop zone — TOP & PROMINENT -->
-      <div class="vx-drop" id="drop-zone">
-        <div class="vx-drop-icon">📂</div>
-        <strong>AI가 만든 JSON 파일을 여기에 끌어다 놓거나</strong>
-        <p>클릭하여 파일을 선택하세요</p>
-        <p style="font-size:.76rem;opacity:.7;">AI 답변의 JSON을 .json 파일로 저장한 뒤 올리세요</p>
+      <label class="vx-drop" id="drop-zone" for="file-input">
+        <strong>JSON 파일을 끌어다 놓거나 클릭하여 파일을 선택하세요</strong>
         <input class="vx-file" id="file-input" type="file" accept="application/json,.json" />
-      </div>
+      </label>
 
       <div class="vx-toolbar">
         <button class="vx-btn" id="btn-sample">샘플로 미리보기</button>
@@ -833,12 +818,8 @@ function rateCard(level) {
 // ────────────────────────────────────────────────────────
 function renderUpload() {
   const hasBook = Boolean(state.book);
-  document.getElementById('book-actions').hidden = !hasBook;
-  document.getElementById('merge-opts').hidden   = !hasBook;
+  document.getElementById('merge-opts').hidden = !hasBook;
   if (hasBook) {
-    document.getElementById('ba-name').textContent = state.book.title;
-    document.getElementById('ba-meta').textContent =
-      `${state.book.units.length}개 유닛 · ${countAll()}개 단어`;
     document.getElementById('btn-mode-replace').className =
       'vx-merge-btn' + (state.uploadMode==='replace' ? ' primary' : '');
     document.getElementById('btn-mode-add').className =
@@ -1073,14 +1054,6 @@ document.getElementById('btn-sample').addEventListener('click', () => {
   renderAll(); showTab('study');
 });
 
-// Export / Clear
-document.getElementById('btn-export').addEventListener('click', exportBook);
-document.getElementById('btn-clear').addEventListener('click', () => {
-  if (!confirm('단어장을 삭제할까요?')) return;
-  state.book = null; state.diff = {};
-  localStorage.removeItem(SK.BOOK); localStorage.removeItem(SK.DIFF);
-  setStatus('삭제됐습니다.'); showTab('upload'); renderAll();
-});
 
 // Study
 document.getElementById('unit-select').addEventListener('change', e => {
