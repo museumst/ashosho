@@ -236,6 +236,22 @@
       background: var(--surface-strong); margin: 0; max-height: 220px; overflow-y: auto;
     }
 
+    /* paste zone */
+    .vx-paste-wrap {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .vx-paste-label {
+      font-size: .8rem; font-weight: 900; color: var(--muted);
+    }
+    .vx-paste-area {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--line);
+      border-radius: 10px; background: var(--surface); color: var(--text);
+      font: inherit; font-size: .82rem; line-height: 1.6; resize: vertical;
+      transition: border-color .15s;
+    }
+    .vx-paste-area:focus { outline: none; border-color: var(--accent); }
+    .vx-paste-area::placeholder { color: var(--muted); opacity: .7; }
+
     /* ── study screen ── */
     .vx-study-bar {
       display: flex; gap: 8px; align-items: center;
@@ -555,6 +571,15 @@
         <span id="drop-filename" hidden class="vx-drop-filename"></span>
         <input id="file-input" type="file" accept="application/json,.json" style="display:none;" />
       </label>
+
+      <!-- Paste zone -->
+      <div class="vx-paste-wrap">
+        <label class="vx-paste-label" for="paste-input">또는 JSON 텍스트 직접 붙여넣기</label>
+        <textarea id="paste-input" class="vx-paste-area"
+                  placeholder='AI 답변의 JSON을 여기에 붙여넣으세요 (Ctrl+V / ⌘V)'
+                  rows="4" spellcheck="false"></textarea>
+        <button class="vx-btn primary" id="btn-paste-load" style="align-self:flex-end;">불러오기</button>
+      </div>
 
     </div>
   </div><!-- /screen-upload -->
@@ -1054,6 +1079,38 @@ fi.addEventListener('change', () => handleFile(fi.files[0]));
 ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('over'); }));
 ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('over'); }));
 dz.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+
+// Paste load
+async function handlePaste(text) {
+  if (!text.trim()) { setStatus('붙여넣은 내용이 없습니다.', 'error'); return; }
+  try {
+    const raw = JSON.parse(text);
+    const incoming = normalize(raw);
+    if (state.uploadMode === 'add' && state.book) {
+      state.book.units.push(...incoming.units);
+      setStatus(`유닛 추가 완료! 현재 ${countAll()}개 단어`);
+    } else {
+      state.book = incoming;
+      state.unitIndex = 0;
+      setStatus(`"${state.book.title}" 불러오기 완료! ${countAll()}개 단어`);
+    }
+    saveBook();
+    document.getElementById('paste-input').value = '';
+    renderAll(); showTab('study');
+  } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
+}
+
+document.getElementById('btn-paste-load').addEventListener('click', () => {
+  handlePaste(document.getElementById('paste-input').value);
+});
+
+// Ctrl+Enter in textarea also triggers load
+document.getElementById('paste-input').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    handlePaste(e.target.value);
+  }
+});
 
 // Study
 document.getElementById('unit-select').addEventListener('change', e => {
