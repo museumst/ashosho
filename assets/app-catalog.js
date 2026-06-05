@@ -165,6 +165,39 @@ const apps = [
     tags: ["history", "joseon", "memory"],
   },
   {
+    title: "나의 단어장",
+    description: "직접 만든 JSON 단어장을 브라우저에 저장하고 학습, 퀴즈, TTS로 복습하는 학습 앱입니다.",
+    i18n: {
+      ko: {
+        title: "나의 단어장",
+        description: "직접 만든 JSON 단어장을 브라우저에 저장하고 학습, 퀴즈, TTS로 복습하는 학습 앱입니다.",
+      },
+      en: {
+        title: "My Vocabulary",
+        description: "Upload your own JSON vocabulary book and study it with cards, quizzes, and browser TTS.",
+      },
+      ja: {
+        title: "私の単語帳",
+        description: "自分で作ったJSON単語帳をブラウザーに保存し、カード、クイズ、TTSで復習できる学習アプリです。",
+      },
+      zh: {
+        title: "我的单词本",
+        description: "上传自己的 JSON 单词本，并通过卡片、测验和浏览器 TTS 进行学习。",
+      },
+      es: {
+        title: "Mi Vocabulario",
+        description: "Sube tu propio vocabulario JSON y estúdialo con tarjetas, cuestionarios y TTS del navegador.",
+      },
+    },
+    category: "study",
+    categoryLabel: "학습",
+    thumbnail: "vocabulary",
+    app_url: "apps/vocabulary/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["vocabulary", "study", "quiz", "tts"],
+  },
+  {
     title: "그리스 신화 계보",
     description: "원초신, 티탄, 올림포스 신과 주요 영웅의 관계를 SVG 계보도로 정리한 학습 앱입니다.",
     i18n: {
@@ -262,6 +295,39 @@ const apps = [
     status: "ready",
     statusLabel: "실행 가능",
     tags: ["meditation", "audio", "bgm", "ambient"],
+  },
+  {
+    title: "나의 리더십 유형",
+    description: "다니엘 골먼의 6대 리더십 프레임워크를 기반으로 당신의 고유한 업무 성향과 리더십 DNA를 정밀 해독합니다.",
+    i18n: {
+      ko: {
+        title: "나의 리더십 유형",
+        description: "다니엘 골먼의 6대 리더십 프레임워크를 기반으로 당신의 고유한 업무 성향과 리더십 DNA를 정밀 해독합니다.",
+      },
+      en: {
+        title: "Leadership Style Decoder",
+        description: "Decode your unique leadership DNA based on Daniel Goleman's six leadership styles framework.",
+      },
+      ja: {
+        title: "リーダーシップスタイル診断",
+        description: "ダニエル・ゴールマンの6つのリーダーシップスタイルに基づき、あなたの固有のリーダーシップDNAを解析します。",
+      },
+      zh: {
+        title: "领导力风格测评",
+        description: "基于丹尼尔·戈尔曼的六种领导力框架，精准解码您独特的工作风格与领导力DNA。",
+      },
+      es: {
+        title: "Decodificador de Liderazgo",
+        description: "Descifra tu ADN de liderazgo único basado en los seis estilos de liderazgo de Daniel Goleman.",
+      },
+    },
+    category: "tool",
+    categoryLabel: "도구",
+    thumbnail: "leadership",
+    app_url: "apps/leadership/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["leadership", "goleman", "quiz", "personality"],
   },
 ];
 

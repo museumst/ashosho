@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>골먼의 6가지 리더십 디코더</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center py-4 md:py-8 px-3 md:px-8 selection:bg-indigo-500/30 selection:text-indigo-200">
+
+  <!-- Main Container -->
+  <div id="app" class="w-full max-w-3xl bg-slate-950 rounded-2xl md:rounded-3xl border border-slate-800 shadow-2xl shadow-indigo-950/20 overflow-hidden transition-all duration-500 relative">
+    
+    <!-- Top Gradient Bar -->
+    <div class="h-1.5 bg-gradient-to-r from-violet-600 via-indigo-500 to-emerald-500"></div>
+
+    <!-- 1. INTRO PAGE -->
+    <div id="intro-screen" class="p-6 md:p-12 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[75vh]">
+      <div class="absolute -top-32 -left-32 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-indigo-900/40 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-extrabold text-2xl md:text-3xl mb-6 shadow-lg shadow-indigo-900/30">
+        LX
+      </div>
+
+      <h1 class="text-2xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent mb-3 md:mb-4">
+        LEADERSHIP DECODER
+      </h1>
+      <p class="text-xs md:text-sm text-slate-400 max-w-sm md:max-w-md mx-auto leading-relaxed mb-10">
+        다니엘 골먼(Daniel Goleman)의 6대 리더십 프레임워크를 기반으로 당신의 고유한 업무 성향과 리더십 DNA를 정밀 해독합니다.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg mb-12 text-left z-10">
+        <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl flex items-center gap-3 backdrop-blur-sm">
+           <span class="text-2xl drop-shadow-md">⏱️</span>
+           <div>
+             <p class="text-[10px] text-slate-500 font-bold tracking-wider">소요 시간</p>
+             <p class="text-xs text-slate-200 font-semibold mt-0.5">약 3분 (총 36문항)</p>
+           </div>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl flex items-center gap-3 backdrop-blur-sm">
+           <span class="text-2xl drop-shadow-md">📊</span>
+           <div>
+             <p class="text-[10px] text-slate-500 font-bold tracking-wider">결과 분석</p>
+             <p class="text-xs text-slate-200 font-semibold mt-0.5">다면적 스펙트럼 차트</p>
+           </div>
+        </div>
+      </div>
+
+      <button
+        onclick="startDiagnosis()"
+        class="w-full max-w-xs py-4 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm md:text-base font-extrabold rounded-2xl transition-all duration-300 shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 group z-10"
+      >
+        <span>진단 시작하기</span>
+        <span class="group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+    </div>
+
+    <!-- 2. DIAGNOSIS PAGE -->
+    <div id="test-screen" class="hidden">
+      <!-- Header -->
+      <div class="p-4 md:p-8 border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-md flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-extrabold text-sm md:text-base">
+            LX
+          </div>
+          <div>
+            <h1 class="text-lg md:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+              LEADERSHIP DECODER
+            </h1>
+            <p class="text-[10px] md:text-xs text-slate-500 font-semibold tracking-wide">6대 골먼 리더십 스타일 정밀 진단</p>
+          </div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <span id="progress-badge" class="text-[10px] md:text-xs font-bold px-2.5 py-1.5 rounded-full bg-indigo-950 text-indigo-400 border border-indigo-900/40">
+            0% 완료
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 md:p-8 space-y-5 md:space-y-6">
+        <!-- Progress Bar -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center text-[10px] md:text-xs text-slate-400">
+            <span class="font-bold text-slate-500">PROGRESSED Qs</span>
+            <span class="font-black text-indigo-400"><span id="current-question-num">1</span> <span class="text-slate-600">/ 36</span></span>
+          </div>
+          <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden p-[1.5px] border border-slate-800">
+            <div id="progress-bar-fill" class="bg-gradient-to-r from-violet-600 to-indigo-500 h-full rounded-full transition-all duration-300 ease-out shadow-lg shadow-indigo-500/20" style="width: 2.7%"></div>
+          </div>
+        </div>
+
+        <!-- Notification Banner -->
+        <div class="bg-slate-900/40 rounded-xl p-4 border border-slate-850 flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-base flex-shrink-0 shadow-lg shadow-indigo-500/20">
+            🧭
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs md:text-sm font-bold text-slate-200 truncate">두 선택지 중 더 마음에 드는 문장을 골라주세요</h4>
+            <p class="text-[10px] md:text-xs text-slate-500 mt-0.5 leading-relaxed">이상적인 가치보다 실제 업무 현장에서 자신도 모르게 취하는 태도에 답해 주십시오.</p>
+          </div>
+        </div>
+
+        <!-- Question Section -->
+        <div class="space-y-4 my-6 md:my-8">
+          <div class="bg-slate-900/80 p-4 md:p-6 rounded-2xl border border-slate-800">
+            <p class="font-extrabold text-slate-100 text-base md:text-lg leading-snug flex items-start gap-1.5">
+              <span id="question-label" class="text-indigo-400 font-black">Q1.</span>
+              <span id="question-text" class="flex-1 text-slate-200">로딩 중...</span>
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-2.5" id="options-container">
+            <!-- Options dynamically loaded here -->
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-6 md:mt-8 flex gap-3">
+          <button 
+            id="prev-btn"
+            onclick="goPrev()" 
+            class="py-3.5 px-4 bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-white font-bold rounded-xl text-xs md:text-sm disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 flex items-center justify-center gap-1.5 border border-slate-800"
+          >
+            ← 이전
+          </button>
+          
+          <button 
+            id="next-btn"
+            disabled
+            onclick="goNext()" 
+            class="flex-1 py-3.5 px-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-violet-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 text-white text-xs md:text-sm font-bold rounded-xl transition-all duration-200 shadow-md shadow-indigo-600/10"
+          >
+            다음 단계 →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. RESULT PAGE -->
+    <div id="result-screen" class="hidden">
+      <!-- Header -->
+      <div class="p-4 md:p-8 border-b border-slate-800/80 bg-slate-950/50 backdrop-blur-md flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-extrabold text-sm md:text-base">
+            LX
+          </div>
+          <div>
+            <h1 class="text-lg md:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+              LEADERSHIP DECODER
+            </h1>
+            <p class="text-[10px] md:text-xs text-slate-500 font-semibold tracking-wide">6대 골먼 리더십 스타일 정밀 진단</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 md:p-8 space-y-8 md:space-y-10">
+        <!-- Persona Billboard -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-950 p-5 md:p-8 border border-indigo-500/20 text-center shadow-xl">
+          <div class="absolute top-0 left-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl"></div>
+          <div class="absolute bottom-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl"></div>
+          
+          <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-emerald-950/80 text-emerald-400 border border-emerald-500/20 px-3.5 py-1.5 rounded-full">
+            DIAGNOSIS COMPLETE
+          </span>
+          
+          <h2 id="persona-title" class="text-2xl md:text-4xl font-extrabold text-slate-100 mt-4 tracking-tight">
+            잠재적 성과 기획자
+          </h2>
+          <p id="persona-sub" class="text-xs md:text-sm text-indigo-400 mt-1.5 font-bold">
+            정밀 분석 중...
+          </p>
+
+          <div class="h-[1px] bg-gradient-to-r from-transparent via-slate-800 to-transparent my-5"></div>
+
+          <p id="persona-desc" class="text-slate-400 text-xs md:text-sm leading-relaxed max-w-xl mx-auto">
+            로딩 중...
+          </p>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="text-sm md:text-base font-bold text-slate-200">📊 다차원 성향 스펙트럼</h3>
+              <p class="text-[10px] md:text-xs text-slate-500">6가지 리더십 스타일의 고유 지형도 및 비중도</p>
+            </div>
+            <div class="flex bg-slate-900 p-0.5 rounded-lg border border-slate-800 self-start text-[10px] md:text-xs">
+              <button 
+                id="view-radar-btn"
+                onclick="toggleChartView('radar')" 
+                class="px-2.5 py-1.5 rounded-md font-bold transition bg-indigo-600 text-white"
+              >
+                방사형
+              </button>
+              <button 
+                id="view-bar-btn"
+                onclick="toggleChartView('bar')" 
+                class="px-2.5 py-1.5 rounded-md font-bold transition text-slate-400 hover:text-slate-200"
+              >
+                막대형
+              </button>
+            </div>
+          </div>
+
+          <!-- Chart Container -->
+          <div class="h-60 md:h-72 bg-slate-900/40 rounded-xl p-2.5 border border-slate-850 flex items-center justify-center relative">
+            <canvas id="leadershipChart" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Primary & Secondary Display -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Primary -->
+          <div class="relative overflow-hidden bg-slate-900/80 p-4 md:p-5 rounded-xl border border-indigo-500/20 group hover:border-indigo-500/40 transition">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-600/5 rounded-full blur-2xl"></div>
+            <div class="flex items-center gap-1.5 mb-2">
+              <span id="primary-emoji" class="text-base">👑</span>
+              <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block">Primary · 주도 리더십</span>
+            </div>
+            <p id="primary-name" class="text-lg font-extrabold text-slate-100">권위적</p>
+            <p id="primary-desc" class="text-xs text-slate-400 mt-1.5 leading-relaxed">설명</p>
+            <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-800/60">
+              <span class="text-xs text-indigo-300/80 font-semibold">진단 스코어</span>
+              <span id="primary-score" class="text-xs font-black bg-indigo-950 border border-indigo-500/20 text-indigo-400 px-2.5 py-1 rounded-md">
+                0 / 12점
+              </span>
+            </div>
+          </div>
+
+          <!-- Backup -->
+          <div class="relative overflow-hidden bg-slate-900/80 p-4 md:p-5 rounded-xl border border-slate-800 hover:border-slate-700 transition">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-600/5 rounded-full blur-2xl"></div>
+            <div class="flex items-center gap-1.5 mb-2">
+              <span id="secondary-emoji" class="text-base">🤝</span>
+              <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest block">Backup · 보조 리더십</span>
+            </div>
+            <p id="secondary-name" class="text-lg font-extrabold text-slate-100">협력적</p>
+            <p id="secondary-desc" class="text-xs text-slate-400 mt-1.5 leading-relaxed">설명</p>
+            <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-800/60">
+              <span class="text-xs text-emerald-300/80 font-semibold">진단 스코어</span>
+              <span id="secondary-score" class="text-xs font-black bg-emerald-950 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-md">
+                0 / 12점
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- All Scores List -->
+        <div class="bg-slate-900/40 border border-slate-850 p-4 rounded-xl">
+          <h4 class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">🧩 전체 스타일 유형별 스코어 라인</h4>
+          <div id="scores-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <!-- Generated dynamically -->
+          </div>
+        </div>
+
+        <!-- Back to Diagnosis Button -->
+        <div class="pt-5 border-t border-slate-800 flex flex-col sm:flex-row gap-3">
+          <button 
+            onclick="resetDiagnosis()" 
+            class="flex-1 py-3.5 px-4 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white font-bold rounded-xl transition-all duration-150 text-center text-xs md:text-sm shadow-md"
+          >
+            🔄 진단 전면 재설정 및 다시 응답하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- STYLES & DATA ---
+    const STYLES = {
+      A: { name: '강압적 (Coercive)', emoji: '🎯', color: 'rgba(244, 63, 94, 0.85)', hoverColor: 'rgba(225, 29, 72, 1)', desc: '지시적이고 명확하며 즉각적인 행동과 신속한 결과를 요구합니다.' },
+      B: { name: '권위적 (Authoritative)', emoji: '👑', color: 'rgba(245, 158, 11, 0.85)', hoverColor: 'rgba(217, 119, 6, 1)', desc: '명확하고 영감을 주는 비전을 제시하고 팀원들을 그 방향으로 이끕니다.' },
+      C: { name: '협력적 (Affiliative)', emoji: '🤝', color: 'rgba(52, 211, 153, 0.85)', hoverColor: 'rgba(5, 150, 105, 1)', desc: '팀원 간의 조화와 유대를 중요하게 생각하며 정서적 관계를 형성합니다.' },
+      D: { name: '민주적 (Democratic)', emoji: '🗳️', color: 'rgba(56, 189, 248, 0.85)', hoverColor: 'rgba(13, 148, 136, 1)', desc: '합의와 참여를 통해 의사결정을 하며 팀원들의 참여를 이끌어냅니다.' },
+      E: { name: '선도적 (Pacesetting)', emoji: '⚡', color: 'rgba(99, 102, 241, 0.85)', hoverColor: 'rgba(79, 70, 229, 1)', desc: '높은 수행 기준을 스스로 직접 보여주며 솔선수범하고 도전을 즐깁니다.' },
+      F: { name: '코칭 (Coaching)', emoji: '🌱', color: 'rgba(217, 70, 239, 0.85)', hoverColor: 'rgba(192, 38, 211, 1)', desc: '개인의 장기적인 성장을 돕고 역량을 극대화하도록 개발을 촉진합니다.' }
+    };
+
+    const QUESTIONS = [
+      { id: 1, opt1: { text: "목표가 설정되면 각 개인이 목표를 달성할 충분한 동기를 가져야 한다고 생각합니다.", cat: 'E' }, opt2: { text: "직원들에게 책임을 부여하지만, 성과가 나타나지 않으면 책임을 철회합니다.", cat: 'A' } },
+      { id: 2, opt1: { text: "직원들에게 다른 사람의 성과에 대해 걱정하지 말고 자기 계발에 집중하라고 말합니다.", cat: 'F' }, opt2: { text: "직원들이 직무 관련 문제에 대한 토론에 참여한 상황에서는 긴밀한 감독이 필요하지 않다고 생각합니다.", cat: 'D' } },
+      { id: 3, opt1: { text: "성과에 대한 기준이 높고, 성과가 기대에 미치지 못하는 사람에 대해서는 동정심이 거의 없습니다.", cat: 'E' }, opt2: { text: "직원의 업무 계획이 부적절한 경우, 문제를 다시 생각해보고 다른 계획을 세우는 것이 좋습니다.", cat: 'F' } },
+      { id: 4, opt1: { text: "직원들의 권리와 감정이 당장의 업무보다 더 중요하다고 믿습니다.", cat: 'C' }, opt2: { text: "좋은 업무에 대해서는 보상을 하고, 성과가 좋지 않을 때 처벌하는 것은 별로 효과가 없다고 생각합니다.", cat: 'D' } },
+      { id: 5, opt1: { text: "나는 내가 어떻게 할 것인지를 지적하기보다는 대안적인 방법을 제안합니다.", cat: 'F' }, opt2: { text: "나는 직원들이 직장에서 겪는 어려움에 대한 해결책을 스스로 찾을 수 있어야 한다고 생각합니다.", cat: 'E' } },
+      { id: 6, opt1: { text: "직원들이 대안을 제안하면, 나는 내가 선호하는 대안을 재빨리 제시합니다.", cat: 'A' }, opt2: { text: "직원이 내 의견에 동의하지 않을 때, 나는 왜 특정 방식으로 일을 처리하고 싶은지 설명하는 데 시간을 할애합니다.", cat: 'B' } },
+      { id: 7, opt1: { text: "나는 직원들을 징계하는 것이 득보다 실이 더 많다고 생각합니다.", cat: 'C' }, opt2: { text: "나는 직원들과 친밀한 개인적 관계를 맺는 것이 좋은 관리자의 특징이라고 생각합니다.", cat: 'C' } },
+      { id: 8, opt1: { text: "나는 좋은 업무에 대해서는 보상을 하고, 저조한 성과에 대한 처벌은 별로 효과가 없다고 생각한다.", cat: 'D' }, opt2: { text: "직원들이 업무에 실패할 때, 나는 차분하지만 단호하게 왜 실패했는지 알려준다.", cat: 'B' } },
+      { id: 9, opt1: { text: "나는 직원들이 내가 준비한 계획을 실행하기를 기대한다.", cat: 'A' }, opt2: { text: "나는 직원들이 업무상의 어려움에 대한 해결책을 스스로 찾을 수 있어야 한다고 생각한다.", cat: 'E' } },
+      { id: 10, opt1: { text: "나는 결정을 내릴 때 직원들이 그 결정을 받아들이도록 설득하려고 노력한다.", cat: 'B' }, opt2: { text: "나는 업무 계획이 직원들의 생각을 반영해야 한다고 생각한다.", cat: 'D' } },
+      { id: 11, opt1: { text: "나는 사람들이 참여할 기회가 주어졌을 때 가장 가장 잘 성장한다고 생각한다.", cat: 'D' }, opt2: { text: "목표가 설정되면 각 개인이 목표를 달성할 충분한 동기를 가져야 한다고 생각한다.", cat: 'E' } },
+      { id: 12, opt1: { text: "직원을 징계할 때, 나는 그 직원에게 무엇이 잘못되었는지 정확하게 알린다.", cat: 'B' }, opt2: { text: "직원들이 직무 관련 문제에 대한 논의에 참여한 상황에서는 면밀한 감독이 필요하지 않다고 생각한다.", cat: 'D' } },
+      { id: 13, opt1: { text: "나는 일을 완수하기 위해서는 확고한 규율이 중요하다고 믿는다.", cat: 'A' }, opt2: { text: "나는 직원들에게 자신의 활동에 대한 자세한 보고서를 제출하라고 요구한다.", cat: 'A' } },
+      { id: 14, opt1: { text: "나는 인기 있는 리더가 인기 없는 리더보다 낫다고 믿는다.", cat: 'C' }, opt2: { text: "나는 직원들이 스스로 어려움을 극복할 수 있어야 하며, 좌절에 낙담해서는 안 된다고 생각한다.", cat: 'E' } },
+      { id: 15, opt1: { text: "나는 성과 피드백을 제공하여 직원들에게 동기를 부여하는 것이 관리자의 역할이라고 생각한다.", cat: 'F' }, opt2: { text: "나는 높은 성과 기준에 관심을 갖고 직원들이 이러한 기준에 도달하도록 장려한다.", cat: 'E' } },
+      { id: 16, opt1: { text: "나는 직원들이 도움이 필요할 때 서로에게 조언자 역할을 하도록 권장한다.", cat: 'C' }, opt2: { text: "나는 사람들이 참여할 기회가 주어졌을 때 가장 잘 발전한다고 생각한다.", cat: 'D' } },
+      { id: 17, opt1: { text: "직원의 업무 계획이 부적절할 때, 나는 그 문제를 재고하고 다른 계획을 세우라고 제안한다.", cat: 'F' }, opt2: { text: "나는 종종 제안의 형태로 명령을 내리지만, 내가 원하는 것이 무엇인지 명확하게 밝힌다.", cat: 'B' } },
+      { id: 18, opt1: { text: "나는 직원의 행복을 위해 직업 안정성과 복리후생이 중요하다고 생각한다.", cat: 'C' }, opt2: { text: "직원의 업무 계획이 부적절할 경우, 문제를 다시 생각해 보고 다른 계획을 세우는 것이 좋다.", cat: 'F' } },
+      { id: 19, opt1: { text: "장기적으로 볼 때, 나는 다루기 어렵다고 생각되는 사람을 해고하거나 다른 부서로 이전할 것이다.", cat: 'A' }, opt2: { text: "나는 직원들 사이에 갈등을 야기하는 논쟁을 권장하지 않는다.", cat: 'C' } },
+      { id: 20, opt1: { text: "직원들이 업무 관련 논의에 참여한 상황에서는 면밀한 감독이 필요하지 않다고 생각한다.", cat: 'D' }, opt2: { text: "나는 직원들이 내가 준비한 계획을 실행하기를 기대한다.", cat: 'A' } },
+      { id: 21, opt1: { text: "나는 가까운 개인적 관계를 맺는 것보다 직원들이 제 모범을 따르도록 하는 데 더 관심이 있습니다.", cat: 'E' }, opt2: { text: "나는 직원들의 권리와 감정이 당장의 업무보다 더 중요하다고 생각한다.", cat: 'C' } },
+      { id: 22, opt1: { text: "나는 특정 수준의 성과를 고집하기보다는 직원 성과 향상에 집중합니다.", cat: 'F' }, opt2: { text: "나는 직원들 간의 갈등으로 이어지는 논쟁을 지양합니다.", cat: 'C' } },
+      { id: 23, opt1: { text: "나는 직원들이 스스로 어려움을 극복할 수 있어야 하며, 좌절에 낙담해서는 안 된다고 생각한다.", cat: 'E' }, opt2: { text: "나는 결정을 내릴 때 직원들이 그 결정을 받아들이도록 설득하려고 노력한다.", cat: 'B' } },
+      { id: 24, opt1: { text: "직원이 나에게 동의하지 않을 때, 나는 왜 내가 특정 방식으로 일을 처리하고 싶어 하는지 설명하려고 노력한다.", cat: 'B' }, opt2: { text: "직원을 징계하는 것은 득보다 실이 많다고 생각한다.", cat: 'C' } },
+      { id: 25, opt1: { text: "나는 높은 성과 기준에 관심을 갖고 있으며, 직원들이 이러한 기준에 도달하도록 장려한다.", cat: 'E' }, opt2: { text: "나는 일을 완수하기 위해서는 확고한 규율이 중요하다고 믿는다.", cat: 'A' } },
+      { id: 26, opt1: { text: "나는 직원들 사이에 갈등을 야기하는 논쟁을 하지 않는다.", cat: 'C' }, opt2: { text: "나는 직원들이 내 지시를 철저히 따르기를 기대한다.", cat: 'A' } },
+      { id: 27, opt1: { text: "나는 직원들과 친밀한 개인적 관계를 맺는 것이 훌륭한 관리자의 특징이라고 생각한다.", cat: 'C' }, opt2: { text: "직원들이 나에게 대안을 제안할 때, 나는 내가 선호하는 대안을 재빨리 제시한다.", cat: 'A' } },
+      { id: 28, opt1: { text: "직원들이 업무에 실패하면, 나는 차분하지만 단호하게 왜 실패했는지 설명한다.", cat: 'B' }, opt2: { text: "나는 친밀한 관계보다 나의 모범을 따르도록 하는 데 더 관심이 있다.", cat: 'E' } },
+      { id: 29, opt1: { text: "나는 직원들이 내 지시를 꼼꼼히 따르기를 기대한다.", cat: 'A' }, opt2: { text: "나는 종종 제안의 형태로 명령을 내리지만, 내가 원하는 것이 무엇인지 명확하게 밝힌다.", cat: 'B' } },
+      { id: 30, opt1: { text: "나는 직원들에게 책임을 부여하지만, 성과가 따르지 않으면 책임을 되돌려줍니다.", cat: 'A' }, opt2: { text: "나는 직원들이 도움이 필요할 때 서로에게 조언자 역할을 하도록 권장한다.", cat: 'C' } },
+      { id: 31, opt1: { text: "나는 직원들이 업무상의 어려움에 대한 해결책을 스스로 찾을 수 있어야 한다고 생각한다.", cat: 'E' }, opt2: { text: "직원을 징계할 때, 나는 그 직원에게 무엇이 잘못되었는지 정확하게 알린다.", cat: 'B' } },
+      { id: 32, opt1: { text: "나는 직접적인 감독이나 통제보다는 집단의 합의에 의존하는 경향이 있다.", cat: 'D' }, opt2: { text: "나는 내가 어떻게 할 것인지 제시하기보다는 대안적인 방법을 제안한다.", cat: 'F' } },
+      { id: 33, opt1: { text: "나는 직원들이 무엇을 얻어야 하는지 명시함으로써 내 결정에 대한 저항을 줄이려고 노력한다.", cat: 'B' }, opt2: { text: "나는 특정 수준의 성과를 고집하기보다는 직원 성과 향상에 집중한다.", cat: 'F' } },
+      { id: 34, opt1: { text: "나는 종종 제안의 형태로 명령을 내리지만, 내가 원하는 것이 무엇인지 명확하게 밝힌다.", cat: 'B' }, opt2: { text: "장기적으로 볼 때, 나는 내가 다루기 힘들다고 생각하는 사람을 해고하거나 다른 곳으로 전근시킬 것이다.", cat: 'A' } },
+      { id: 35, opt1: { text: "나는 직원들이 자신의 활동에 대한 자세한 보고서를 제출하도록 요구한다.", cat: 'A' }, opt2: { text: "나는 높은 성과 기준을 중요하게 생각하며, 직원들이 이러한 기준을 달성하도록 장려한다.", cat: 'E' } },
+      { id: 36, opt1: { text: "나는 업무 계획이 직원들의 생각을 반영해야 한다고 생각한다.", cat: 'D' }, opt2: { text: "나는 인기 있는 리더가 인기 없는 리더보다 낫다고 믿는다.", cat: 'C' } }
+    ];
+
+    // --- APPLICATION STATE ---
+    let currentStep = 0;
+    let answers = Array(36).fill(null);
+    let chartInstance = null;
+    let currentChartView = 'radar'; // 'radar' | 'bar'
+
+    // --- VIEW TRIGGERS ---
+    function startDiagnosis() {
+      document.getElementById('intro-screen').classList.add('hidden');
+      document.getElementById('test-screen').classList.remove('hidden');
+      loadQuestion();
+    }
+
+    function resetDiagnosis() {
+      currentStep = 0;
+      answers = Array(36).fill(null);
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('test-screen').classList.remove('hidden');
+      loadQuestion();
+    }
+
+    // --- DIAGNOSIS LOGIC ---
+    function loadQuestion() {
+      const q = QUESTIONS[currentStep];
+      document.getElementById('current-question-num').innerText = currentStep + 1;
+      document.getElementById('question-label').innerText = `Q${q.id}.`;
+      
+      if (q.id === 8) {
+        document.getElementById('question-text').innerText = "나는 좋은 업무에 대해서는 보상을 하고, 저조한 성과에 대한 처벌은 별로 효과가 없다고 생각합니다.";
+      } else {
+        document.getElementById('question-text').innerText = "다음 중 당신의 리더십 지향점과 더 가까운 문장을 선택하세요.";
+      }
+
+      // Progress bar & badge update
+      const percent = Math.round(((currentStep) / 36) * 100);
+      document.getElementById('progress-badge').innerText = `${percent}% 완료`;
+      document.getElementById('progress-bar-fill').style.width = `${Math.max(3, percent)}%`;
+
+      // Render Options
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      const opts = [q.opt1, q.opt2];
+      opts.forEach((opt, idx) => {
+        const isSelected = answers[currentStep] === opt.cat;
+        
+        const btn = document.createElement('button');
+        btn.className = `group w-full text-left p-4 md:p-5 rounded-xl border-2 transition-all duration-200 flex items-start gap-3 md:gap-4 ${
+          isSelected 
+            ? 'border-indigo-500 bg-indigo-950/40 text-indigo-200 shadow-lg shadow-indigo-950/20' 
+            : 'border-slate-800 bg-slate-900/90 hover:border-slate-700 text-slate-300 hover:text-white'
+        }`;
+        
+        btn.onclick = () => selectOption(opt.cat);
+
+        const circle = document.createElement('div');
+        circle.className = `w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 transition-all ${
+          isSelected ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-slate-700 group-hover:border-slate-500'
+        }`;
+        if (isSelected) {
+          const dot = document.createElement('span');
+          dot.className = 'w-1.5 h-1.5 bg-slate-950 rounded-full';
+          circle.appendChild(dot);
+        }
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'text-xs md:text-sm leading-relaxed font-medium transition-all flex-1';
+        textSpan.innerText = opt.text;
+
+        btn.appendChild(circle);
+        btn.appendChild(textSpan);
+        container.appendChild(btn);
+      });
+
+      // Handle Buttons State
+      document.getElementById('prev-btn').disabled = currentStep === 0;
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (answers[currentStep] !== null) {
+        nextBtn.disabled = false;
+        if (currentStep === 35) {
+          nextBtn.innerText = '🚀 결과 심층 분석하기';
+          nextBtn.className = 'flex-1 py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs md:text-sm font-extrabold rounded-xl transition-all duration-200 shadow-md shadow-emerald-600/10';
+        } else {
+          nextBtn.innerText = '다음 단계 →';
+          nextBtn.className = 'flex-1 py-3.5 px-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-violet-500 text-white text-xs md:text-sm font-bold rounded-xl transition-all duration-200 shadow-md shadow-indigo-600/10';
+        }
+      } else {
+        nextBtn.disabled = true;
+        nextBtn.innerText = currentStep === 35 ? '🚀 결과 심층 분석하기' : '다음 단계 →';
+        nextBtn.className = 'flex-1 py-3.5 px-4 bg-slate-800 text-slate-600 text-xs md:text-sm font-bold rounded-xl transition-all duration-200';
+      }
+    }
+
+    function selectOption(cat) {
+      answers[currentStep] = cat;
+      loadQuestion();
+      
+      if (currentStep < 35) {
+        setTimeout(() => {
+          currentStep++;
+          loadQuestion();
+        }, 250);
+      } else {
+        setTimeout(() => {
+          showResultsPage();
+        }, 300);
+      }
+    }
+
+    function goPrev() {
+      if (currentStep > 0) {
+        currentStep--;
+        loadQuestion();
+      }
+    }
+
+    function goNext() {
+      if (currentStep < 35) {
+        currentStep++;
+        loadQuestion();
+      } else {
+        showResultsPage();
+      }
+    }
+
+    // --- SCORE CALCULATIONS ---
+    function getScores() {
+      const counts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
+      answers.forEach(a => { if (a) counts[a]++; });
+      return counts;
+    }
+
+    function getSortedScores() {
+      const scores = getScores();
+      return Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    }
+
+    // --- PERSONA BUILDER ---
+    function getPersona() {
+      const sorted = getSortedScores();
+      const primary = sorted[0][0];
+      const backup = sorted[1][0];
+      const combo = primary + backup;
+
+      const titles = {
+        'EF': { title: '인간존중형 레이서', sub: '높은 기준을 추격하며 팀원의 성장을 끊임없이 밀어주는 촉진가' },
+        'FE': { title: '인간존중형 레이서', sub: '팀원의 잠재력을 폭발시켜 최고 성과를 이끌어내는 육성가' },
+        'BC': { title: '정서적 등대지기', sub: '따뜻한 유대감 속에서 명확한 비전과 북극성을 제시하는 선구자' },
+        'CB': { title: '정서적 등대지기', sub: '팀원의 감정을 보듬으며 하나의 원대한 방향으로 정렬시키는 리더' },
+        'BD': { title: '지혜로운 정치가', sub: '합리적인 참여를 이끌어내고 확고한 비전으로 통합을 만드는 전략가' },
+        'DB': { title: '지혜로운 정치가', sub: '수평적 합의를 통해 강력한 한 방향의 추진력을 얻어내는 조율자' },
+        'AE': { title: '폭풍우의 조타수', sub: '위기 속에서 고성능의 잣대를 제시하며 단호하게 난관을 극복하는 해결사' },
+        'EA': { title: '폭풍우의 조타수', sub: '불도저 같은 추진력과 완벽한 성과 기준으로 돌파구를 개척하는 리더' },
+        'CF': { title: '정원사 (The Gardener)', sub: '사랑과 정성으로 팀원들의 역량이 자연스레 꽃피도록 돕는 수호자' },
+        'FC': { title: '정원사 (The Gardener)', sub: '일대일 성장에 몰입하며 팀에 정서적 안전지대를 제공하는 코치' },
+      };
+
+      const PREFIX = { A: '강압적', B: '권위적', C: '협력적', D: '민주적', E: '선도적', F: '코칭형' };
+      const SUFFIX = { A: '지시자', B: '비전가', C: '협력가', D: '조율자', E: '선도자', F: '코치' };
+
+      return titles[combo] || {
+        title: `${PREFIX[primary]} ${SUFFIX[backup]}`,
+        sub: `주도적인 [${STYLES[primary].name.split(' ')[0]}] 강점과 유연한 [${STYLES[backup].name.split(' ')[0]}] 능력이 공존하는 리더`
+      };
+    }
+
+    function getCombinedAnalysisText() {
+      const sorted = getSortedScores();
+      const primary = sorted[0][0];
+      const backup = sorted[1][0];
+      return `귀하는 [${STYLES[primary].name}] 스타일을 주요 추진력으로 발휘하고 있으며, [${STYLES[backup].name}] 스타일을 강력한 보완 도구로 유연하게 전환하여 활용하는 독보적인 지형을 보유하고 있습니다. 이 두 지표의 입체적 시너지는 상황에 대한 냉철한 대처뿐만 아니라, 의사 결정 시 팀의 동기부여와 실질적 성과 창출을 조화롭게 이끌어갈 수 있는 잠재력을 시사합니다.`;
+    }
+
+    // --- UI DISPLAY RESULT ---
+    function showResultsPage() {
+      document.getElementById('test-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+
+      const persona = getPersona();
+      document.getElementById('persona-title').innerText = persona.title;
+      document.getElementById('persona-sub').innerText = persona.sub;
+      document.getElementById('persona-desc').innerText = getCombinedAnalysisText();
+
+      // Setup Primary/Secondary cards
+      const sorted = getSortedScores();
+      const pKey = sorted[0][0];
+      const sKey = sorted[1][0];
+
+      document.getElementById('primary-emoji').innerText = STYLES[pKey].emoji;
+      document.getElementById('primary-name').innerText = STYLES[pKey].name;
+      document.getElementById('primary-desc').innerText = STYLES[pKey].desc;
+      document.getElementById('primary-score').innerText = `${sorted[0][1]} / 12점`;
+
+      document.getElementById('secondary-emoji').innerText = STYLES[sKey].emoji;
+      document.getElementById('secondary-name').innerText = STYLES[sKey].name;
+      document.getElementById('secondary-desc').innerText = STYLES[sKey].desc;
+      document.getElementById('secondary-score').innerText = `${sorted[1][1]} / 12점`;
+
+      // Build scores list grid
+      const grid = document.getElementById('scores-grid');
+      grid.innerHTML = '';
+      sorted.forEach(([key, val], idx) => {
+        const item = document.createElement('div');
+        item.className = 'bg-slate-950/60 p-2.5 rounded-lg border border-slate-850 flex justify-between items-center text-[11px]';
+        item.innerHTML = `
+          <span class="text-slate-400 font-semibold">${idx+1}. ${STYLES[key].name.split(' ')[0]}</span>
+          <span class="font-extrabold text-indigo-400">${val}점</span>
+        `;
+        grid.appendChild(item);
+      });
+
+      // Render Charts
+      renderChart();
+    }
+
+    // --- CHART.JS RENDERING ---
+    function renderChart() {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const ctx = document.getElementById('leadershipChart').getContext('2d');
+      const scores = getScores();
+      
+      const labels = Object.keys(scores).map(k => STYLES[k].name.split(' ')[0]);
+      const dataValues = Object.values(scores);
+      const backgroundColors = Object.keys(scores).map(k => STYLES[k].color);
+      const borderColors = Object.keys(scores).map(k => STYLES[k].hoverColor);
+
+      if (currentChartView === 'radar') {
+        chartInstance = new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: '리더십 스펙트럼',
+              data: dataValues,
+              backgroundColor: 'rgba(99, 102, 241, 0.25)',
+              borderColor: 'rgba(129, 140, 248, 1)',
+              borderWidth: 2,
+              pointBackgroundColor: 'rgba(255, 255, 255, 1)',
+              pointBorderColor: '#6366f1',
+              pointRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              r: {
+                angleLines: { color: 'rgba(51, 65, 85, 0.5)' },
+                grid: { color: 'rgba(51, 65, 85, 0.5)' },
+                pointLabels: {
+                  color: '#94a3b8',
+                  font: { size: 10, weight: 'bold' }
+                },
+                ticks: {
+                  color: '#475569',
+                  backdropColor: 'transparent',
+                  font: { size: 8 },
+                  stepSize: 3,
+                  max: 12
+                },
+                suggestedMin: 0,
+                suggestedMax: 12
+              }
+            }
+          }
+        });
+      } else {
+        // Bar Chart
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: dataValues,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 1.5,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  color: '#94a3b8',
+                  font: { size: 10, weight: 'bold' }
+                }
+              },
+              y: {
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: {
+                  color: '#475569',
+                  stepSize: 2
+                },
+                suggestedMin: 0,
+                suggestedMax: 12
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function toggleChartView(view) {
+      currentChartView = view;
+      const radarBtn = document.getElementById('view-radar-btn');
+      const barBtn = document.getElementById('view-bar-btn');
+
+      if (view === 'radar') {
+        radarBtn.className = 'px-2.5 py-1.5 rounded-md font-bold transition bg-indigo-600 text-white';
+        barBtn.className = 'px-2.5 py-1.5 rounded-md font-bold transition text-slate-400 hover:text-slate-200';
+      } else {
+        barBtn.className = 'px-2.5 py-1.5 rounded-md font-bold transition bg-indigo-600 text-white';
+        radarBtn.className = 'px-2.5 py-1.5 rounded-md font-bold transition text-slate-400 hover:text-slate-200';
+      }
+
+      renderChart();
+    }
+  </script>
+</body>
+</html>
