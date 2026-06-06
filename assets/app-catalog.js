@@ -225,7 +225,7 @@ const apps = [
     category: "study",
     categoryLabel: "학습",
     thumbnail: "vocabulary",
-    app_url: "apps/vocabulary/index.html",
+    app_url: "apps/vocabulary/index.html?v=20260607-user-scoped-storage",
     status: "ready",
     statusLabel: "실행 가능",
     tags: ["vocabulary", "study", "quiz", "tts"],

@@ -614,6 +614,7 @@
 // STATE & STORAGE
 // ────────────────────────────────────────────────────────
 const SK = { BOOKS: 'vx-books-v4', BOOK_OLD: 'vx-book-v3', EXCL: 'vx-excl-v3' };
+let activeUid = null;
 const hasTTS = 'speechSynthesis' in window;
 
 const state = {
@@ -640,31 +641,43 @@ function countAll() { return allEntries().length; }
 // cloud 헬퍼 (firebase-auth.js 로드 후 채워짐)
 let _saveCloud = null, _loadCloud = null, _deleteCloud = null;
 
+function scopedKey(base) {
+  return activeUid ? `${base}:user:${activeUid}` : `${base}:anon`;
+}
+
+function resetData() {
+  state.books = [];
+  state.bookIndex = 0;
+  state.excl = {};
+}
+
 function saveBooks() {
-  localStorage.setItem(SK.BOOKS, JSON.stringify(state.books));
-  if (_saveCloud) _saveCloud('vocabulary/books', { books: state.books }).catch(console.error);
+  localStorage.setItem(scopedKey(SK.BOOKS), JSON.stringify(state.books));
+  if (activeUid && _saveCloud) _saveCloud('vocabulary/books', { books: state.books }).catch(console.error);
 }
 function saveExcl() {
-  localStorage.setItem(SK.EXCL, JSON.stringify(state.excl));
-  if (_saveCloud) _saveCloud('vocabulary/excl', { excl: state.excl }).catch(console.error);
+  localStorage.setItem(scopedKey(SK.EXCL), JSON.stringify(state.excl));
+  if (activeUid && _saveCloud) _saveCloud('vocabulary/excl', { excl: state.excl }).catch(console.error);
 }
 function loadData() {
+  resetData();
+
   // 새 포맷 시도
   try {
-    const raw = localStorage.getItem(SK.BOOKS);
+    const raw = localStorage.getItem(scopedKey(SK.BOOKS));
     if (raw) { state.books = JSON.parse(raw) || []; }
   } catch { state.books = []; }
 
-  // 구 포맷 마이그레이션 (vx-book-v3 → 배열 첫 항목)
+  // 구 포맷 마이그레이션 (로그인하지 않은 새 저장소에만 1회 적용)
   if (!state.books.length) {
     try {
-      const old = JSON.parse(localStorage.getItem(SK.BOOK_OLD) || 'null');
+      const old = activeUid ? null : JSON.parse(localStorage.getItem(scopedKey(SK.BOOK_OLD)) || 'null');
       if (old) { state.books = [old]; saveBooks(); }
     } catch {}
   }
 
   state.bookIndex = Math.min(state.bookIndex, Math.max(0, state.books.length - 1));
-  try { state.excl = JSON.parse(localStorage.getItem(SK.EXCL) || '{}'); } catch { state.excl = {}; }
+  try { state.excl = JSON.parse(localStorage.getItem(scopedKey(SK.EXCL)) || '{}'); } catch { state.excl = {}; }
 }
 
 // 중복 이름 처리: "UNIT 17" → "UNIT 17 (2)" → "UNIT 17 (3)"
@@ -684,17 +697,13 @@ async function syncFromCloud() {
       _loadCloud('vocabulary/books'),
       _loadCloud('vocabulary/excl'),
     ]);
-    if (booksData?.books?.length) {
-      state.books = booksData.books;
-      localStorage.setItem(SK.BOOKS, JSON.stringify(state.books));
-    }
-    if (exclData) {
-      state.excl = exclData.excl || {};
-      localStorage.setItem(SK.EXCL, JSON.stringify(state.excl));
-    }
+    state.books = booksData?.books?.length ? booksData.books : [];
+    localStorage.setItem(scopedKey(SK.BOOKS), JSON.stringify(state.books));
+    state.excl = exclData?.excl || {};
+    localStorage.setItem(scopedKey(SK.EXCL), JSON.stringify(state.excl));
     state.bookIndex = 0;
     renderAll();
-    if (state.books.length) showTab('study');
+    showTab(state.books.length ? 'study' : 'upload');
     setStatus('☁️ 클라우드에서 단어장을 불러왔습니다.');
   } catch(e) { console.error('cloud sync failed', e); }
 }
@@ -1354,7 +1363,7 @@ if (state.books.length) showTab('study');
 
 <!-- Firebase 연동 (로그인 상태에 따라 클라우드 동기화) -->
 <script type="module">
-import { onAuthChange, saveCloud, loadCloud, deleteCloud } from '../../assets/firebase-auth.js';
+import { onAuthChange, saveCloud, loadCloud, deleteCloud } from '../../assets/firebase-auth-default.js?v=20260607-vocabulary-scope';
 
 // 전역 스크립트에서 접근할 수 있도록 노출
 _saveCloud = saveCloud;
@@ -1365,13 +1374,15 @@ let prevUid = null;
 onAuthChange(async user => {
   if (user && user.uid !== prevUid) {
     prevUid = user.uid;
+    activeUid = user.uid;
     // 로그인 시 클라우드 동기화
     await syncFromCloud();
   } else if (!user) {
     prevUid = null;
-    // 로그아웃 시 로컬 데이터로 복원
+    activeUid = null;
+    // 로그아웃 시 계정 저장소가 아닌 익명 저장소만 표시
     loadData(); renderAll();
-    if (state.books.length) showTab('study');
+    showTab(state.books.length ? 'study' : 'upload');
   }
 });
 </script>
