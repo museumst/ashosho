@@ -611,83 +611,90 @@
 </main>
 <script>
 // ────────────────────────────────────────────────────────
-// SAMPLE BOOK
-// ────────────────────────────────────────────────────────
-const SAMPLE = {
-  title: "샘플 단어장",
-  entries: [
-    { word:"achieve", pronunciation:"/əˈtʃiːv/", meaning:"달성하다, 이루다",
-      example:"You can achieve your goals if you work hard.",
-      translation:"열심히 노력하면 목표를 달성할 수 있다." },
-    { word:"imagination", pronunciation:"/ɪˌmædʒɪˈneɪʃn/", meaning:"상상력, 상상",
-      example:"Children have a wonderful imagination.",
-      translation:"아이들은 놀라운 상상력을 가지고 있다." },
-    { word:"persist", pronunciation:"/pəˈsɪst/", meaning:"고집하다, 지속하다",
-      example:"If you persist, you will eventually succeed.",
-      translation:"끈기 있게 하면 결국 성공할 것이다." },
-    { word:"remarkable", pronunciation:"/rɪˈmɑːrkəbl/", meaning:"놀라운, 주목할만한",
-      example:"She made a remarkable recovery after the accident.",
-      translation:"그녀는 사고 후 놀라운 회복을 보였다." },
-  ]
-};
-
-// ────────────────────────────────────────────────────────
 // STATE & STORAGE
 // ────────────────────────────────────────────────────────
-const SK = { BOOK: 'vx-book-v3', EXCL: 'vx-excl-v3' };
+const SK = { BOOKS: 'vx-books-v4', BOOK_OLD: 'vx-book-v3', EXCL: 'vx-excl-v3' };
 const hasTTS = 'speechSynthesis' in window;
 
 const state = {
-  book: null,
+  books: [],        // 모든 단어장 배열
+  bookIndex: 0,     // 현재 선택된 단어장
   tab: 'upload',
-  unitIndex: 0,
   studySearch: '',
   quizMode: 'ko',
-  quizUnitIndex: -1,
-  // quiz session
-  quizQueue: [],    // shuffled entry ids remaining
+  quizQueue: [],
   quizCorrect: 0,
   quizTotal: 0,
   quizAnswered: false,
   quizChoices: [],
-  excl: {},         // id -> true if excluded from quiz
+  excl: {},
 };
+
+function curBook() { return state.books[state.bookIndex] || null; }
+function allEntries() {
+  const b = curBook(); if (!b) return [];
+  return b.units.flatMap(u => u.entries);
+}
+function countAll() { return allEntries().length; }
 
 // cloud 헬퍼 (firebase-auth.js 로드 후 채워짐)
 let _saveCloud = null, _loadCloud = null, _deleteCloud = null;
 
-function saveBook() {
-  if (!state.book) return;
-  localStorage.setItem(SK.BOOK, JSON.stringify(state.book));
-  if (_saveCloud) _saveCloud('vocabulary/book', state.book).catch(console.error);
+function saveBooks() {
+  localStorage.setItem(SK.BOOKS, JSON.stringify(state.books));
+  if (_saveCloud) _saveCloud('vocabulary/books', { books: state.books }).catch(console.error);
 }
 function saveExcl() {
   localStorage.setItem(SK.EXCL, JSON.stringify(state.excl));
   if (_saveCloud) _saveCloud('vocabulary/excl', { excl: state.excl }).catch(console.error);
 }
 function loadData() {
-  try { state.book = JSON.parse(localStorage.getItem(SK.BOOK) || 'null'); } catch { state.book = null; }
-  try { state.excl = JSON.parse(localStorage.getItem(SK.EXCL) || '{}');  } catch { state.excl = {}; }
+  // 새 포맷 시도
+  try {
+    const raw = localStorage.getItem(SK.BOOKS);
+    if (raw) { state.books = JSON.parse(raw) || []; }
+  } catch { state.books = []; }
+
+  // 구 포맷 마이그레이션 (vx-book-v3 → 배열 첫 항목)
+  if (!state.books.length) {
+    try {
+      const old = JSON.parse(localStorage.getItem(SK.BOOK_OLD) || 'null');
+      if (old) { state.books = [old]; saveBooks(); }
+    } catch {}
+  }
+
+  state.bookIndex = Math.min(state.bookIndex, Math.max(0, state.books.length - 1));
+  try { state.excl = JSON.parse(localStorage.getItem(SK.EXCL) || '{}'); } catch { state.excl = {}; }
+}
+
+// 중복 이름 처리: "UNIT 17" → "UNIT 17 (2)" → "UNIT 17 (3)"
+function uniqueTitle(title) {
+  const existing = state.books.map(b => b.title);
+  if (!existing.includes(title)) return title;
+  let n = 2;
+  while (existing.includes(`${title} (${n})`)) n++;
+  return `${title} (${n})`;
 }
 
 // 로그인 후 클라우드에서 불러와 로컬 + 화면에 반영
 async function syncFromCloud() {
   if (!_loadCloud) return;
   try {
-    const [bookData, exclData] = await Promise.all([
-      _loadCloud('vocabulary/book'),
+    const [booksData, exclData] = await Promise.all([
+      _loadCloud('vocabulary/books'),
       _loadCloud('vocabulary/excl'),
     ]);
-    if (bookData) {
-      state.book = bookData;
-      localStorage.setItem(SK.BOOK, JSON.stringify(state.book));
+    if (booksData?.books?.length) {
+      state.books = booksData.books;
+      localStorage.setItem(SK.BOOKS, JSON.stringify(state.books));
     }
     if (exclData) {
       state.excl = exclData.excl || {};
       localStorage.setItem(SK.EXCL, JSON.stringify(state.excl));
     }
+    state.bookIndex = 0;
     renderAll();
-    if (state.book) showTab('study');
+    if (state.books.length) showTab('study');
     setStatus('☁️ 클라우드에서 단어장을 불러왔습니다.');
   } catch(e) { console.error('cloud sync failed', e); }
 }
@@ -731,11 +738,6 @@ function speak(text) {
   u.rate = 0.92;
   window.speechSynthesis.speak(u);
 }
-function allEntries() {
-  if (!state.book) return [];
-  return state.book.units.flatMap(u => u.entries);
-}
-function countAll() { return allEntries().length; }
 
 // ────────────────────────────────────────────────────────
 // PROMPT BUILDER
@@ -834,17 +836,18 @@ function showFilename(name) {
 async function handleFile(file) {
   if (!file) return;
   showFilename(file.name);
-  const bookTitle = document.getElementById('unit-name-input').value.trim();
-  if (!bookTitle) { setStatus('단어장 이름을 입력하세요.', 'error'); return; }
+  const rawTitle = document.getElementById('unit-name-input').value.trim();
+  if (!rawTitle) { setStatus('단어장 이름을 입력하세요.', 'error'); return; }
   try {
     const raw = JSON.parse(await file.text());
     const incoming = normalize(raw);
+    const bookTitle = uniqueTitle(rawTitle);
     incoming.title = bookTitle;
     incoming.units[0].title = bookTitle;
-    state.book = incoming;
-    state.unitIndex = 0;
+    state.books.push(incoming);
+    state.bookIndex = state.books.length - 1;
     setStatus(`"${bookTitle}" 단어장 생성 완료! ${countAll()}개 단어`);
-    saveBook(); renderAll(); showTab('study');
+    saveBooks(); renderAll(); showTab('study');
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
   finally { document.getElementById('file-input').value = ''; }
 }
@@ -853,10 +856,14 @@ async function handleFile(file) {
 // QUIZ — MULTIPLE CHOICE
 // ────────────────────────────────────────────────────────
 function quizPool() {
-  if (!state.book) return [];
-  const all = state.quizUnitIndex === -1
-    ? allEntries()
-    : (state.book.units[state.quizUnitIndex]?.entries || []);
+  if (!state.books.length) return [];
+  let all;
+  if (state.quizUnitIndex === -1) {
+    all = allEntries(); // 현재 단어장
+  } else {
+    const b = state.books[state.quizUnitIndex];
+    all = b ? b.units.flatMap(u => u.entries) : [];
+  }
   return all.filter(e => !state.excl[e.id]);
 }
 
@@ -910,29 +917,27 @@ function nextQuiz() {
 // RENDER — UPLOAD
 // ────────────────────────────────────────────────────────
 function renderUpload() {
-  // 현재 단어장이 있으면 이름 필드에 자동으로 채워줌 (수정 가능)
-  if (state.book) {
-    const input = document.getElementById('unit-name-input');
-    if (!input.value) input.value = state.book.title;
-  }
+  // 이름 필드는 비워둠 — 새 단어장이므로 사용자가 직접 입력
 }
 
 // ────────────────────────────────────────────────────────
 // RENDER — STUDY
 // ────────────────────────────────────────────────────────
 function renderStudy() {
-  if (!state.book) return;
-  const units = state.book.units;
+  if (!state.books.length) return;
+  // 단어장 선택 드롭다운
   const sel = document.getElementById('unit-select');
-  sel.innerHTML = units.map((u,i) =>
-    `<option value="${i}">${esc(u.title)} (${u.entries.length})</option>`).join('');
-  sel.value = String(Math.min(state.unitIndex, units.length-1));
-  state.unitIndex = Number(sel.value);
+  sel.innerHTML = state.books.map((b,i) =>
+    `<option value="${i}">${esc(b.title)} (${b.units.flatMap(u=>u.entries).length})</option>`).join('');
+  state.bookIndex = Math.min(state.bookIndex, state.books.length - 1);
+  sel.value = String(state.bookIndex);
 
-  const unit = units[state.unitIndex];
+  const book = curBook();
+  const unit = book.units[0];
   const q = state.studySearch.trim().toLowerCase();
   const entries = unit.entries.filter(e =>
     !q || [e.word,e.meaning,e.example,e.translation].join(' ').toLowerCase().includes(q));
+
 
   const list = document.getElementById('entry-list');
   list.className = 'vx-entry-list';
@@ -968,16 +973,15 @@ function renderStudy() {
 // RENDER — QUIZ
 // ────────────────────────────────────────────────────────
 function renderQuiz() {
-  if (!state.book) return;
+  if (!state.books.length) return;
   document.querySelectorAll('[data-qmode]').forEach(b =>
     b.classList.toggle('is-active', b.dataset.qmode === state.quizMode));
 
   const qs = document.getElementById('quiz-unit-select');
-  const units = state.book.units;
-  qs.innerHTML = `<option value="-1">전체 (${quizPool().length}개)</option>` +
-    units.map((u,i) => {
-      const cnt = u.entries.filter(e => !state.excl[e.id]).length;
-      return `<option value="${i}">${esc(u.title)} (${cnt}개)</option>`;
+  qs.innerHTML = `<option value="-1">현재 단어장 전체 (${quizPool().length}개)</option>` +
+    state.books.map((b,i) => {
+      const cnt = b.units.flatMap(u=>u.entries).filter(e => !state.excl[e.id]).length;
+      return `<option value="${i}">${esc(b.title)} (${cnt}개)</option>`;
     }).join('');
   qs.value = String(state.quizUnitIndex);
 
@@ -1072,7 +1076,7 @@ function renderQuiz() {
 // RENDER ALL
 // ────────────────────────────────────────────────────────
 function renderAll() {
-  const hasBook = Boolean(state.book);
+  const hasBook = state.books.length > 0;
   document.getElementById('tab-study').disabled = !hasBook;
   document.getElementById('tab-quiz').disabled  = !hasBook;
   renderUpload();
@@ -1095,10 +1099,10 @@ function showTab(tab) {
 // EXPORT
 // ────────────────────────────────────────────────────────
 function exportBook() {
-  if (!state.book) return;
+  const b = curBook(); if (!b) return;
   const out = {
-    title: state.book.title,
-    units: state.book.units.map(u => ({
+    title: b.title,
+    units: b.units.map(u => ({
       title: u.title,
       entries: u.entries.map(({id:_, ...e}) => e)
     }))
@@ -1107,7 +1111,7 @@ function exportBook() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = (state.book.title.replace(/[\\/:*?"<>|]+/g,'-')||'vocab') + '.json';
+  a.download = (b.title.replace(/[\\/:*?"<>|]+/g,'-')||'vocab') + '.json';
   document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 
@@ -1164,8 +1168,8 @@ function parseMultipleJSON(text) {
 
 async function handlePaste(text) {
   if (!text.trim()) { setStatus('붙여넣은 내용이 없습니다.', 'error'); return; }
-  const bookTitle = document.getElementById('unit-name-input').value.trim();
-  if (!bookTitle) { setStatus('단어장 이름을 입력하세요.', 'error'); return; }
+  const rawTitle = document.getElementById('unit-name-input').value.trim();
+  if (!rawTitle) { setStatus('단어장 이름을 입력하세요.', 'error'); return; }
   try {
     const raws = parseMultipleJSON(text);
     const books = raws.map(r => normalize(r));
@@ -1173,30 +1177,33 @@ async function handlePaste(text) {
     for (let i = 1; i < books.length; i++) {
       merged.units[0].entries.push(...books[i].units.flatMap(u => u.entries));
     }
-    // 사용자가 입력한 이름으로 덮어쓰기
+    const bookTitle = uniqueTitle(rawTitle);
     merged.title = bookTitle;
     merged.units[0].title = bookTitle;
 
-    state.book = merged;
-    state.unitIndex = 0;
-    setStatus(`"${bookTitle}" 단어장 생성 완료! ${countAll()}개 단어`);
-    saveBook();
+    state.books.push(merged);
+    state.bookIndex = state.books.length - 1;
+    const added = countAll();
+    if (bookTitle !== rawTitle) {
+      setStatus(`"${rawTitle}"이(가) 이미 있어 "${bookTitle}"로 저장했습니다. (${added}개 단어)`);
+    } else {
+      setStatus(`"${bookTitle}" 단어장 생성 완료! (${added}개 단어)`);
+    }
+    saveBooks();
     document.getElementById('paste-input').value = '';
+    document.getElementById('unit-name-input').value = '';
     renderAll(); showTab('study');
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
 }
 
 // 수정 모달 열기/닫기
 function openEditModal() {
-  if (!state.book) return;
-  const unit = state.book.units[state.unitIndex];
-  // 현재 단어장 데이터를 JSON으로 직렬화해서 편집기에 채움
-  const out = {
-    entries: unit.entries.map(({id:_, ...e}) => e)
-  };
+  const b = curBook(); if (!b) return;
+  const unit = b.units[0];
+  const out = { entries: unit.entries.map(({id:_, ...e}) => e) };
   document.getElementById('edit-json-input').value = JSON.stringify(out, null, 2);
-  document.getElementById('edit-unit-name').value = unit.title;
-  document.getElementById('edit-modal-title').textContent = `수정 — ${unit.title}`;
+  document.getElementById('edit-unit-name').value = b.title;
+  document.getElementById('edit-modal-title').textContent = `수정 — ${b.title}`;
   document.getElementById('edit-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   setTimeout(() => document.getElementById('edit-json-input').focus(), 50);
@@ -1216,13 +1223,11 @@ function handleEditSave() {
     const books = raws.map(r => normalize(r));
     const newEntries = books.flatMap(b => b.units.flatMap(u => u.entries));
     const newName = document.getElementById('edit-unit-name').value.trim();
-    if (newName) {
-      state.book.units[state.unitIndex].title = newName;
-      if (state.book.units.length === 1) state.book.title = newName;
-    }
-    state.book.units[state.unitIndex].entries = newEntries;
+    const b = curBook();
+    if (newName) { b.title = newName; b.units[0].title = newName; }
+    b.units[0].entries = newEntries;
     setStatus(`저장 완료! ${newEntries.length}개 단어`);
-    saveBook();
+    saveBooks();
     closeEditModal();
     renderStudy();
   } catch(e) { setStatus('저장 실패: ' + e.message, 'error'); }
@@ -1240,30 +1245,23 @@ document.getElementById('paste-input').addEventListener('keydown', e => {
   }
 });
 
-// Study
+// Study — 단어장 선택
 document.getElementById('unit-select').addEventListener('change', e => {
-  state.unitIndex = Number(e.target.value); renderStudy();
+  state.bookIndex = Number(e.target.value); renderStudy();
 });
 document.getElementById('study-search').addEventListener('input', e => {
   state.studySearch = e.target.value; renderStudy();
 });
 document.getElementById('btn-study-edit').addEventListener('click', openEditModal);
 document.getElementById('btn-study-delete').addEventListener('click', () => {
-  if (!state.book) return;
-  const unitTitle = state.book.units[state.unitIndex]?.title || '이 단어장';
-  if (!confirm(`"${unitTitle}"을(를) 정말 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) return;
-  state.book = null;
-  state.unitIndex = 0;
-  state.excl = {};
-  localStorage.removeItem(SK.BOOK);
-  localStorage.removeItem(SK.EXCL);
-  if (_deleteCloud) {
-    _deleteCloud('vocabulary/book').catch(console.error);
-    _deleteCloud('vocabulary/excl').catch(console.error);
-  }
+  const b = curBook(); if (!b) return;
+  if (!confirm(`"${b.title}"을(를) 정말 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) return;
+  state.books.splice(state.bookIndex, 1);
+  state.bookIndex = Math.max(0, state.bookIndex - 1);
+  saveBooks();
   setStatus('단어장이 삭제되었습니다.');
-  renderAll();
-  showTab('upload');
+  if (!state.books.length) { showTab('upload'); }
+  else { renderAll(); }
 });
 document.getElementById('btn-edit-save').addEventListener('click', handleEditSave);
 document.getElementById('btn-edit-cancel').addEventListener('click', closeEditModal);
@@ -1287,7 +1285,7 @@ document.querySelectorAll('[data-qmode]').forEach(b =>
     renderQuiz();
   }));
 document.getElementById('quiz-unit-select').addEventListener('change', e => {
-  state.quizUnitIndex = Number(e.target.value);
+  state.quizUnitIndex = Number(e.target.value); // -1=현재, 0~N=특정 단어장
   state.quizQueue = []; state.quizTotal = 0; state.quizCorrect = 0; state.quizAnswered = false;
   renderQuiz();
 });
@@ -1351,7 +1349,7 @@ document.getElementById('entry-list').addEventListener('change', e => {
 // ────────────────────────────────────────────────────────
 loadData();
 renderAll();
-if (state.book) showTab('study');
+if (state.books.length) showTab('study');
 </script>
 
 <!-- Firebase 연동 (로그인 상태에 따라 클라우드 동기화) -->
@@ -1373,7 +1371,7 @@ onAuthChange(async user => {
     prevUid = null;
     // 로그아웃 시 로컬 데이터로 복원
     loadData(); renderAll();
-    if (state.book) showTab('study');
+    if (state.books.length) showTab('study');
   }
 });
 </script>
