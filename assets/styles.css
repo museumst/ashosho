@@ -81,6 +81,7 @@ input {
 }
 
 /* ── 로그인 패널 ── */
+[hidden] { display: none !important; }
 .auth-panel {
   width: 100%;
 }
