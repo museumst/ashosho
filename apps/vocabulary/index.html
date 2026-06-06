@@ -75,22 +75,32 @@
     }
     .vx-ai-link:hover { border-color: var(--accent); color: var(--accent-strong); background: #e8f4f2; }
 
-    /* drop zone */
-    .vx-drop {
-      border: 2px dashed var(--line); border-radius: 12px;
-      padding: 24px; text-align: center;
-      background: var(--surface-strong); transition: .15s;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 12px; cursor: pointer;
-    }
-    .vx-drop.over { border-color: var(--accent); background: #e8f4f2; }
-    .vx-drop strong { font-size: 1rem; }
+    /* drop filename badge */
     .vx-drop-filename {
       display: inline-flex; align-items: center; gap: 7px;
       background: #e8f4f2; border: 1px solid var(--accent);
-      border-radius: 20px; padding: 5px 14px;
-      font-size: .84rem; font-weight: 800; color: var(--accent-strong);
+      border-radius: 20px; padding: 4px 12px;
+      font-weight: 800; color: var(--accent-strong);
+    }
+
+    /* file upload — secondary */
+    .vx-file-alt {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+      background: var(--surface-strong);
+    }
+    .vx-file-alt-label {
+      font-size: .8rem; font-weight: 900; color: var(--muted); white-space: nowrap;
+    }
+    .vx-file-alt-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--muted); font-size: .83rem; font-weight: 800;
+      cursor: pointer; transition: .15s; white-space: nowrap;
+    }
+    .vx-file-alt-btn:hover, .vx-file-alt-btn.over {
+      border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong);
     }
 
     /* merge options */
@@ -236,21 +246,18 @@
       background: var(--surface-strong); margin: 0; max-height: 220px; overflow-y: auto;
     }
 
-    /* paste zone */
+    /* paste zone — main */
     .vx-paste-wrap {
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .vx-paste-label {
-      font-size: .8rem; font-weight: 900; color: var(--muted);
+      display: flex; flex-direction: column; gap: 10px;
     }
     .vx-paste-area {
-      width: 100%; padding: 12px 14px; border: 1px solid var(--line);
-      border-radius: 10px; background: var(--surface); color: var(--text);
-      font: inherit; font-size: .82rem; line-height: 1.6; resize: vertical;
-      transition: border-color .15s;
+      width: 100%; padding: 16px; border: 2px solid var(--line);
+      border-radius: 12px; background: var(--surface); color: var(--text);
+      font: inherit; font-size: .88rem; line-height: 1.7; resize: vertical;
+      transition: border-color .15s; min-height: 200px;
     }
     .vx-paste-area:focus { outline: none; border-color: var(--accent); }
-    .vx-paste-area::placeholder { color: var(--muted); opacity: .7; }
+    .vx-paste-area::placeholder { color: var(--muted); opacity: .6; font-size:.85rem; }
 
     /* ── study screen ── */
     .vx-study-bar {
@@ -565,20 +572,22 @@
         </div>
       </div>
 
-      <!-- Drop zone -->
-      <label class="vx-drop" id="drop-zone" for="file-input" style="min-height:280px;">
-        <strong>JSON 파일을 끌어다 놓거나 클릭하여 파일을 선택하세요</strong>
-        <span id="drop-filename" hidden class="vx-drop-filename"></span>
-        <input id="file-input" type="file" accept="application/json,.json" style="display:none;" />
-      </label>
-
-      <!-- Paste zone -->
+      <!-- Paste zone — MAIN -->
       <div class="vx-paste-wrap">
-        <label class="vx-paste-label" for="paste-input">또는 JSON 텍스트 직접 붙여넣기</label>
         <textarea id="paste-input" class="vx-paste-area"
-                  placeholder='AI 답변의 JSON을 여기에 붙여넣으세요 (Ctrl+V / ⌘V)'
-                  rows="4" spellcheck="false"></textarea>
-        <button class="vx-btn primary" id="btn-paste-load" style="align-self:flex-end;">불러오기</button>
+                  placeholder='AI가 만든 JSON을 여기에 붙여넣으세요'
+                  rows="10" spellcheck="false"></textarea>
+        <button class="vx-btn primary" id="btn-paste-load" style="align-self:flex-end;min-height:42px;padding:0 22px;font-size:.95rem;">불러오기</button>
+      </div>
+
+      <!-- File upload — secondary -->
+      <div class="vx-file-alt">
+        <span class="vx-file-alt-label">파일로 업로드</span>
+        <label class="vx-file-alt-btn" id="drop-zone" for="file-input">
+          <span id="drop-filename-text">📂 파일 선택</span>
+          <input id="file-input" type="file" accept="application/json,.json" style="display:none;" />
+        </label>
+        <span id="drop-filename" hidden class="vx-drop-filename" style="font-size:.8rem;"></span>
       </div>
 
     </div>
@@ -787,9 +796,15 @@ function normalizeEntry(e, ui, ei) {
 // FILE HANDLING
 // ────────────────────────────────────────────────────────
 function showFilename(name) {
-  const el = document.getElementById('drop-filename');
-  if (name) { el.textContent = '📄 ' + name; el.hidden = false; }
-  else { el.hidden = true; }
+  const badge = document.getElementById('drop-filename');
+  const btn   = document.getElementById('drop-filename-text');
+  if (name) {
+    badge.textContent = '📄 ' + name; badge.hidden = false;
+    btn.textContent = '📂 파일 변경';
+  } else {
+    badge.hidden = true;
+    btn.textContent = '📂 파일 선택';
+  }
 }
 
 async function handleFile(file) {
@@ -1072,7 +1087,7 @@ document.getElementById('btn-copy-prompt').addEventListener('click', () => {
 document.getElementById('btn-mode-replace').addEventListener('click', () => { state.uploadMode='replace'; renderUpload(); });
 document.getElementById('btn-mode-add').addEventListener('click',     () => { state.uploadMode='add';     renderUpload(); });
 
-// File drop
+// File upload (secondary)
 const dz = document.getElementById('drop-zone');
 const fi = document.getElementById('file-input');
 fi.addEventListener('change', () => handleFile(fi.files[0]));
