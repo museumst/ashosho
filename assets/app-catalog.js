@@ -225,7 +225,7 @@ const apps = [
     category: "study",
     categoryLabel: "학습",
     thumbnail: "vocabulary",
-    app_url: "apps/vocabulary/index.html?v=20260607-vocabulary-ai-row",
+    app_url: "apps/vocabulary/index.html?v=20260607-vocabulary-search-row",
     status: "ready",
     statusLabel: "실행 가능",
     tags: ["vocabulary", "study", "quiz", "tts"],
