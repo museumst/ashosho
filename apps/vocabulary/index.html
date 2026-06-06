@@ -65,7 +65,25 @@
     .vx-unit-input:focus::placeholder { color: transparent; }
 
     /* AI links */
-    .vx-ai-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .vx-ai-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vx-copy-prompt {
+      min-width: 148px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .vx-ai-links {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-left: auto;
+    }
     .vx-ai-link {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 7px 13px; border-radius: 8px;
@@ -75,6 +93,35 @@
     }
     .vx-ai-link:hover { border-color: var(--accent); color: var(--accent-strong); background: #e8f4f2; }
     .vx-ai-logo { width: 28px; height: 28px; object-fit: contain; vertical-align: middle; }
+
+    @media (max-width: 640px) {
+      .vx-ai-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .vx-copy-prompt.vx-btn {
+        width: 100%;
+        min-height: 46px;
+      }
+      .vx-ai-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-left: 0;
+      }
+      .vx-ai-link {
+        justify-content: center;
+        min-width: 0;
+        padding: 9px 6px;
+        font-size: .78rem;
+      }
+      .vx-ai-logo {
+        width: 22px;
+        height: 22px;
+      }
+    }
 
     /* drop filename badge */
     .vx-drop-filename {
@@ -516,13 +563,13 @@
     <div class="vx-upload-grid">
 
       <!-- AI links + prompt copy (same row) -->
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+      <div class="vx-ai-row">
+        <button class="vx-btn primary vx-copy-prompt" id="btn-copy-prompt">📋 프롬프트 복사</button>
         <div class="vx-ai-links">
           <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener"><img src="chatgpt.png" class="vx-ai-logo" alt="ChatGPT"> ChatGPT</a>
           <a class="vx-ai-link" href="https://claude.ai"       target="_blank" rel="noopener"><img src="claude.png"  class="vx-ai-logo" alt="Claude"> Claude</a>
           <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener"><img src="gemini.png" class="vx-ai-logo" alt="Gemini"> Gemini</a>
         </div>
-        <button class="vx-btn primary" id="btn-copy-prompt" style="white-space:nowrap;flex-shrink:0;">📋 프롬프트 복사</button>
       </div>
 
       <!-- Compact prompt row -->
