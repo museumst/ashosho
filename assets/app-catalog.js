@@ -362,6 +362,36 @@ const apps = [
     statusLabel: "실행 가능",
     tags: ["leadership", "goleman", "quiz", "personality"],
   },
+  {
+    title: "커넥트 4",
+    description: "두 명이 번갈아 돌을 놓아 먼저 4개를 연속으로 연결하면 이기는 전략 보드 게임입니다.",
+    i18n: {
+      ko: {
+        title: "커넥트 4",
+        description: "두 명이 번갈아 돌을 놓아 먼저 4개를 연속으로 연결하면 이기는 전략 보드 게임입니다.",
+      },
+      en: {
+        title: "Connect 4",
+        description: "A two-player strategy game where you drop discs to connect four in a row before your opponent.",
+      },
+      ja: {
+        title: "コネクト4",
+        description: "2人で交互に石を置き、先に4つ並べた方が勝つ戦略ボードゲームです。",
+      },
+      zh: {
+        title: "四子棋",
+        description: "两人轮流投入棋子，先连成四个的一方获胜的策略棋盘游戏。",
+      },
+      es: {
+        title: "Conecta 4",
+        description: "Juego de estrategia para dos jugadores donde debes conectar cuatro fichas seguidas antes que tu rival.",
+      },
+    },
+    app_url: "apps/connect4/CONNET4PRO.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["game", "connect4", "strategy", "board"],
+  },
 ];
 
 const uiText = {
