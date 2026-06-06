@@ -664,14 +664,6 @@ function buildPrompt(unitName) {
 }`;
 }
 
-function refreshPrompts() {
-  const nameMain  = document.getElementById('unit-name-input').value;
-  const nameModal = document.getElementById('unit-name-modal').value;
-  // sync both inputs
-  const pd = document.getElementById('prompt-display-modal');
-  if (pd) pd.textContent = buildPrompt(nameModal || nameMain);
-}
-
 // ────────────────────────────────────────────────────────
 // MODAL
 // ────────────────────────────────────────────────────────
@@ -679,10 +671,6 @@ function openManual() {
   const ov = document.getElementById('manual-overlay');
   ov.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  // sync modal prompt with current unit name
-  const mainName = document.getElementById('unit-name-input').value;
-  document.getElementById('unit-name-modal').value = mainName;
-  document.getElementById('prompt-display-modal').textContent = buildPrompt(mainName);
 }
 function closeManual() {
   document.getElementById('manual-overlay').classList.add('hidden');
@@ -992,28 +980,11 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeManual();
 });
 
-// Modal prompt sync
-document.getElementById('unit-name-modal').addEventListener('input', e => {
-  document.getElementById('prompt-display-modal').textContent = buildPrompt(e.target.value);
-  // sync back to main input too
-  document.getElementById('unit-name-input').value = e.target.value;
-});
-document.getElementById('btn-copy-modal').addEventListener('click', () => {
-  const name = document.getElementById('unit-name-modal').value;
-  navigator.clipboard.writeText(buildPrompt(name))
-    .then(() => setStatus('✓ 프롬프트 복사 완료! AI에게 사진과 함께 붙여넣으세요 📸'));
-});
-
 // Tabs
 document.querySelectorAll('.vx-tab').forEach(b =>
   b.addEventListener('click', () => showTab(b.dataset.tab)));
 
-// Main prompt copy
-document.getElementById('unit-name-input').addEventListener('input', e => {
-  // sync modal input if modal is open
-  document.getElementById('unit-name-modal').value = e.target.value;
-  document.getElementById('prompt-display-modal').textContent = buildPrompt(e.target.value);
-});
+// Prompt copy
 document.getElementById('btn-copy-prompt').addEventListener('click', () => {
   const name = document.getElementById('unit-name-input').value;
   navigator.clipboard.writeText(buildPrompt(name))
@@ -1123,7 +1094,6 @@ document.addEventListener('keydown', e => {
 // INIT
 // ────────────────────────────────────────────────────────
 loadData();
-document.getElementById('prompt-display-modal').textContent = buildPrompt('');
 renderAll();
 if (state.book) showTab('study');
 </script>
