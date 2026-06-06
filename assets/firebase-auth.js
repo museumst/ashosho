@@ -25,7 +25,7 @@ const provider = new GoogleAuthProvider();
 // ── 인증 ──────────────────────────────────────────────
 export function loginWithGoogle() { return signInWithPopup(auth, provider); }
 export function logout()          { return signOut(auth); }
-export function onAuthChange(cb)  { return onAuthStateChanged(auth, cb); }
+export function onAuthChange(cb, onError) { return onAuthStateChanged(auth, cb, onError); }
 export function currentUser()     { return auth.currentUser; }
 
 // ── Firestore 헬퍼 ────────────────────────────────────

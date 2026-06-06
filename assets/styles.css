@@ -93,6 +93,11 @@ input {
   cursor: pointer; transition: .15s;
 }
 .auth-login-btn:hover { border-color: var(--accent); background: #e8f4f2; }
+.auth-login-btn:disabled,
+.auth-logout-btn:disabled {
+  cursor: progress;
+  opacity: 0.62;
+}
 .auth-user {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
@@ -112,6 +117,13 @@ input {
   cursor: pointer; transition: .15s; white-space: nowrap;
 }
 .auth-logout-btn:hover { border-color: var(--red,#c24135); color: var(--red,#c24135); }
+.auth-error {
+  margin: 8px 0 0;
+  color: var(--red, #c24135);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
 
 .language-control {
   display: grid;

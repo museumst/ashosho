@@ -8,7 +8,7 @@
       name="description"
       content="로또번호 생성기, 퍼즐게임 같은 작은 바이브코딩 앱을 모아 둔 앱 포털"
     />
-    <link rel="stylesheet" href="assets/styles.css?v=20260519-detail-full-width" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260606-auth-ui" />
   </head>
   <body>
     <main class="app-shell">
@@ -17,7 +17,7 @@
         <!-- 로그인 영역 -->
         <div class="auth-panel" id="auth-panel">
           <!-- 로그인 전 -->
-          <button class="auth-login-btn" id="btn-login" hidden>
+          <button class="auth-login-btn" id="btn-login" type="button" hidden>
             <svg width="16" height="16" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.5 33.7 29.8 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.8 0 20-7.8 20-21 0-1.4-.1-2.7-.5-4z"/>
               <path fill="#34A853" d="M6.3 14.7l7 5.1C15 16.1 19.1 13 24 13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3c-7.7 0-14.4 4.4-17.7 11.7z"/>
@@ -29,10 +29,11 @@
 
           <!-- 로그인 후 -->
           <div class="auth-user" id="auth-user" hidden>
-            <img class="auth-avatar" id="auth-avatar" src="" alt="" width="28" height="28" />
+            <img class="auth-avatar" id="auth-avatar" alt="" width="28" height="28" referrerpolicy="no-referrer" hidden />
             <span class="auth-name" id="auth-name"></span>
-            <button class="auth-logout-btn" id="btn-logout">로그아웃</button>
+            <button class="auth-logout-btn" id="btn-logout" type="button">로그아웃</button>
           </div>
+          <p class="auth-error" id="auth-error" role="alert" hidden></p>
         </div>
 
         <label class="language-control" for="language-select">
@@ -60,30 +61,103 @@
 
     <script src="assets/app-catalog.js?v=20260606-periodic-table"></script>
     <script type="module">
-      import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth.js';
+      import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth.js?v=20260606-auth-ui';
 
       const btnLogin   = document.getElementById('btn-login');
       const btnLogout  = document.getElementById('btn-logout');
       const authUser   = document.getElementById('auth-user');
       const authAvatar = document.getElementById('auth-avatar');
       const authName   = document.getElementById('auth-name');
+      const authError  = document.getElementById('auth-error');
+
+      function setAuthError(message = '') {
+        authError.textContent = message;
+        authError.hidden = !message;
+      }
+
+      function setBusy(isBusy) {
+        btnLogin.disabled = isBusy;
+        btnLogout.disabled = isBusy;
+      }
+
+      function renderSignedOut() {
+        authAvatar.removeAttribute('src');
+        authAvatar.hidden = true;
+        authName.textContent = '';
+        authUser.hidden = true;
+        btnLogin.hidden = false;
+      }
+
+      function renderSignedIn(user) {
+        const displayName = user.displayName || user.email || '로그인됨';
+        if (user.photoURL) {
+          authAvatar.src = user.photoURL;
+          authAvatar.hidden = false;
+        } else {
+          authAvatar.removeAttribute('src');
+          authAvatar.hidden = true;
+        }
+        authName.textContent = displayName;
+        authUser.hidden = false;
+        btnLogin.hidden = true;
+      }
+
+      function getLoginErrorMessage(error) {
+        switch (error?.code) {
+          case 'auth/popup-closed-by-user':
+            return '로그인 창이 닫혔습니다. 다시 시도해 주세요.';
+          case 'auth/popup-blocked':
+            return '팝업이 차단되었습니다. 브라우저 팝업 허용 후 다시 시도해 주세요.';
+          case 'auth/unauthorized-domain':
+            return 'Firebase 승인 도메인에 현재 도메인을 추가해야 합니다.';
+          default:
+            return '로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+        }
+      }
+
+      authAvatar.addEventListener('error', () => {
+        authAvatar.removeAttribute('src');
+        authAvatar.hidden = true;
+      });
 
       // 로그인 상태 변화 감지
       onAuthChange(user => {
+        setBusy(false);
         if (user) {
-          authAvatar.src = user.photoURL || '';
-          authAvatar.hidden = !user.photoURL;
-          authName.textContent = user.displayName || user.email;
-          authUser.hidden = false;
-          btnLogin.hidden = true;
+          setAuthError();
+          renderSignedIn(user);
         } else {
-          authUser.hidden = true;
-          btnLogin.hidden = false;
+          renderSignedOut();
+        }
+      }, error => {
+        setBusy(false);
+        renderSignedOut();
+        setAuthError(getLoginErrorMessage(error));
+      });
+
+      btnLogin.addEventListener('click', async () => {
+        setAuthError();
+        setBusy(true);
+        try {
+          await loginWithGoogle();
+        } catch (error) {
+          setBusy(false);
+          setAuthError(getLoginErrorMessage(error));
+          console.error(error);
         }
       });
 
-      btnLogin.addEventListener('click', () => loginWithGoogle().catch(console.error));
-      btnLogout.addEventListener('click', () => logout());
+      btnLogout.addEventListener('click', async () => {
+        setAuthError();
+        setBusy(true);
+        try {
+          await logout();
+        } catch (error) {
+          setBusy(false);
+          setAuthError('로그아웃에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+          console.error(error);
+        }
+      });
     </script>
   </body>
 </html>
