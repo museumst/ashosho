@@ -271,21 +271,34 @@
       flex-shrink: 0; max-width: 220px;
     }
     .vx-search {
-      flex: 1; min-width: 120px; min-height: 36px; padding: 0 12px;
+      width: 45%; min-width: 100px; min-height: 36px; padding: 0 12px;
       border: 1px solid var(--line); border-radius: 8px;
       background: var(--surface); color: var(--text); font: inherit;
-      font-size: .88rem;
+      font-size: .88rem; margin-left: auto;
     }
     .vx-search:focus, .vx-unit-sel:focus { outline: none; border-color: var(--accent); }
-    /* study edit panel */
-    .vx-study-edit-panel {
-      border: 1px solid var(--line); border-radius: 12px;
-      padding: 16px; background: var(--surface-strong);
-      display: grid; gap: 10px; margin-bottom: 16px;
+    /* edit modal */
+    .vx-edit-modal {
+      background: var(--surface); border-radius: 16px;
+      width: min(680px, 100%); padding: 20px;
+      animation: vxslide .22s ease;
+      display: flex; flex-direction: column; gap: 14px;
     }
-    .vx-study-edit-label {
-      font-size: .83rem; font-weight: 800; color: var(--muted); margin: 0;
+    .vx-edit-modal-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
+    .vx-edit-modal-title { font-size: 1rem; font-weight: 900; margin: 0; }
+    .vx-edit-modal-label {
+      font-size: .82rem; font-weight: 800; color: var(--muted); margin: 0;
+    }
+    .vx-edit-textarea {
+      width: 100%; padding: 14px; border: 2px solid var(--line);
+      border-radius: 10px; background: var(--surface-strong); color: var(--text);
+      font: inherit; font-size: .82rem; line-height: 1.6; resize: vertical;
+      min-height: 340px; font-family: monospace; transition: border-color .15s;
+      box-sizing: border-box;
+    }
+    .vx-edit-textarea:focus { outline: none; border-color: var(--accent); }
 
     /* entry cards */
     .vx-entry-list { display: grid; gap: 6px; }
@@ -525,23 +538,29 @@
   <div id="screen-study" hidden>
     <div class="vx-study-bar">
       <select class="vx-unit-sel" id="unit-select"></select>
+      <button class="vx-btn" id="btn-study-edit" style="white-space:nowrap;flex-shrink:0;">수정</button>
       <input  class="vx-search" id="study-search" type="search" placeholder="검색" />
-      <button class="vx-btn" id="btn-study-edit" style="white-space:nowrap;">수정</button>
-    </div>
-
-    <!-- 수정 패널 -->
-    <div id="study-edit-panel" hidden class="vx-study-edit-panel">
-      <p class="vx-study-edit-label">AI가 만든 JSON을 붙여넣어 현재 단어장에 추가하세요</p>
-      <textarea id="study-edit-input" class="vx-paste-area"
-                placeholder='JSON을 여기에 붙여넣으세요'
-                rows="7" spellcheck="false"></textarea>
-      <div class="vx-toolbar">
-        <button class="vx-btn primary" id="btn-study-edit-save">단어장에 추가</button>
-        <button class="vx-btn" id="btn-study-edit-cancel">취소</button>
-      </div>
     </div>
 
     <div class="vx-entry-list" id="entry-list"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       EDIT MODAL (수정)
+  ══════════════════════════════════════ -->
+  <div class="vx-overlay hidden" id="edit-overlay">
+    <div class="vx-edit-modal">
+      <div class="vx-edit-modal-head">
+        <h2 class="vx-edit-modal-title" id="edit-modal-title">단어장 수정</h2>
+        <button class="vx-modal-close" id="btn-edit-close">✕</button>
+      </div>
+      <p class="vx-edit-modal-label">JSON을 직접 편집하여 오탈자 수정, 단어 추가·삭제가 가능합니다.</p>
+      <textarea id="edit-json-input" class="vx-edit-textarea" spellcheck="false"></textarea>
+      <div class="vx-toolbar">
+        <button class="vx-btn primary" id="btn-edit-save">저장</button>
+        <button class="vx-btn" id="btn-edit-cancel">취소</button>
+      </div>
+    </div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -971,9 +990,7 @@ document.getElementById('btn-modal-close').addEventListener('click', closeManual
 document.getElementById('manual-overlay').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeManual();
 });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeManual();
-});
+// Escape 키: closeManual / closeEditModal 은 아래 통합 핸들러에서 처리
 
 // Tabs
 document.querySelectorAll('.vx-tab').forEach(b =>
@@ -1038,20 +1055,40 @@ async function handlePaste(text) {
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
 }
 
-// 학습 탭 수정 패널: 현재 단어장에 JSON 추가
-async function handleStudyEdit(text) {
-  if (!text.trim()) { setStatus('붙여넣은 내용이 없습니다.', 'error'); return; }
+// 수정 모달 열기/닫기
+function openEditModal() {
+  if (!state.book) return;
+  const unit = state.book.units[state.unitIndex];
+  // 현재 단어장 데이터를 JSON으로 직렬화해서 편집기에 채움
+  const out = {
+    entries: unit.entries.map(({id:_, ...e}) => e)
+  };
+  document.getElementById('edit-json-input').value = JSON.stringify(out, null, 2);
+  document.getElementById('edit-modal-title').textContent = `수정 — ${unit.title}`;
+  document.getElementById('edit-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('edit-json-input').focus(), 50);
+}
+function closeEditModal() {
+  document.getElementById('edit-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+// 수정 저장: JSON을 파싱해서 현재 유닛 entries 교체
+function handleEditSave() {
+  const text = document.getElementById('edit-json-input').value.trim();
+  if (!text) { setStatus('내용이 비어있습니다.', 'error'); return; }
   try {
     const raws = parseMultipleJSON(text);
+    // 모든 블록의 entries를 합쳐서 현재 유닛에 저장
     const books = raws.map(r => normalize(r));
-    const allEntries = books.flatMap(b => b.units.flatMap(u => u.entries));
-    state.book.units[state.unitIndex].entries.push(...allEntries);
-    setStatus(`${allEntries.length}개 단어 추가 완료! 현재 ${countAll()}개`);
+    const newEntries = books.flatMap(b => b.units.flatMap(u => u.entries));
+    state.book.units[state.unitIndex].entries = newEntries;
+    setStatus(`저장 완료! ${newEntries.length}개 단어`);
     saveBook();
-    document.getElementById('study-edit-input').value = '';
-    document.getElementById('study-edit-panel').hidden = true;
+    closeEditModal();
     renderStudy();
-  } catch(e) { setStatus('추가 실패: ' + e.message, 'error'); }
+  } catch(e) { setStatus('저장 실패: ' + e.message, 'error'); }
 }
 
 document.getElementById('btn-paste-load').addEventListener('click', () => {
@@ -1073,17 +1110,15 @@ document.getElementById('unit-select').addEventListener('change', e => {
 document.getElementById('study-search').addEventListener('input', e => {
   state.studySearch = e.target.value; renderStudy();
 });
-document.getElementById('btn-study-edit').addEventListener('click', () => {
-  const panel = document.getElementById('study-edit-panel');
-  panel.hidden = !panel.hidden;
-  if (!panel.hidden) document.getElementById('study-edit-input').focus();
+document.getElementById('btn-study-edit').addEventListener('click', openEditModal);
+document.getElementById('btn-edit-save').addEventListener('click', handleEditSave);
+document.getElementById('btn-edit-cancel').addEventListener('click', closeEditModal);
+document.getElementById('btn-edit-close').addEventListener('click', closeEditModal);
+document.getElementById('edit-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeEditModal();
 });
-document.getElementById('btn-study-edit-save').addEventListener('click', () => {
-  handleStudyEdit(document.getElementById('study-edit-input').value);
-});
-document.getElementById('btn-study-edit-cancel').addEventListener('click', () => {
-  document.getElementById('study-edit-panel').hidden = true;
-  document.getElementById('study-edit-input').value = '';
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeManual(); closeEditModal(); }
 });
 document.getElementById('entry-list').addEventListener('click', e => {
   const play = e.target.closest('[data-speak]');
