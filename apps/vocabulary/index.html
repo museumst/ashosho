@@ -329,13 +329,15 @@
       line-height: 1.6; margin: 3px 0 0;
     }
     .vx-play {
-      flex-shrink: 0; width: 30px; height: 30px; border-radius: 7px;
+      flex-shrink: 0; min-width: 58px; height: 30px; padding: 0 10px; border-radius: 7px;
       border: 1px solid var(--line); background: var(--surface-strong);
-      color: var(--muted); font: inherit; font-size: .75rem;
-      cursor: pointer; display: grid; place-items: center; transition: .15s;
+      color: var(--muted); font: inherit; font-size: .75rem; white-space: nowrap;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      gap: 4px; transition: .15s;
     }
     .vx-play:hover:not(:disabled) { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
     .vx-play:disabled { opacity: .35; cursor: not-allowed; }
+    .vx-play-icon { min-width: 30px; width: 30px; padding: 0; }
     .vx-no-entry {
       display: grid; place-items: center; gap: 10px;
       min-height: 160px; border: 2px dashed var(--line);
@@ -652,10 +654,29 @@ function setStatus(msg, type='ok') {
   el.className = 'vx-status' + (type==='error' ? ' error' : '');
   if (type==='ok' && msg) setTimeout(() => { if(el.textContent===msg) el.textContent=''; }, 3500);
 }
+function getBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  // 선호 순서: Google US English > Microsoft > 로컬 en-US > 기타 en
+  const preferred = [
+    v => v.name === 'Google US English',
+    v => v.name.includes('Microsoft') && v.lang.startsWith('en'),
+    v => v.lang === 'en-US' && !v.name.toLowerCase().includes('compact'),
+    v => v.lang.startsWith('en'),
+  ];
+  for (const fn of preferred) {
+    const found = voices.find(fn);
+    if (found) return found;
+  }
+  return null;
+}
 function speak(text) {
   if (!hasTTS) return;
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text); u.lang='en-US';
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  const voice = getBestVoice();
+  if (voice) u.voice = voice;
+  u.rate = 0.92;
   window.speechSynthesis.speak(u);
 }
 function allEntries() {
@@ -856,13 +877,13 @@ function renderStudy() {
           <span class="vx-word">${esc(e.word)}</span>
           ${e.pronunciation ? `<span class="vx-pron">${esc(e.pronunciation)}</span>` : ''}
         </div>
-        <button class="vx-play" data-speak="${esc(e.word)}" ${hasTTS?'':'disabled'} title="단어 듣기">▶</button>
+        <button class="vx-play vx-play-icon" data-speak="${esc(e.word)}" ${hasTTS?'':'disabled'} title="단어 듣기">▶</button>
       </div>
       <p class="vx-meaning">${esc(e.meaning)}</p>
       ${e.example ? `
         <div class="vx-example-row">
           <p class="vx-example">${esc(e.example)}</p>
-          <button class="vx-play" data-speak="${esc(e.example)}" ${hasTTS?'':'disabled'} title="예문 듣기">▶</button>
+          <button class="vx-play vx-play-icon" data-speak="${esc(e.example)}" ${hasTTS?'':'disabled'} title="예문 듣기">▶</button>
         </div>` : ''}
       ${e.translation ? `<p class="vx-translation">${esc(e.translation)}</p>` : ''}
     </article>`).join('');
