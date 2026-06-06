@@ -498,13 +498,13 @@
 
       <!-- Merge option (shown when book exists) -->
       <div id="merge-opts" hidden>
-        <p style="font-size:.83rem;font-weight:800;color:var(--muted);margin:0 0 8px;">이미 단어장이 있습니다. 어떻게 할까요?</p>
+        <p id="merge-opts-info" style="font-size:.83rem;font-weight:800;color:var(--muted);margin:0 0 8px;"></p>
         <div class="vx-merge-opts">
-          <button class="vx-merge-btn primary" id="btn-mode-replace">
-            <strong>새 단어장으로 시작</strong>기존 내용을 지우고 새로 시작
-          </button>
           <button class="vx-merge-btn" id="btn-mode-add">
-            <strong>유닛 추가</strong>현재 단어장에 새 유닛을 추가
+            <strong>유닛 추가</strong>현재 단어장에 이어서 추가
+          </button>
+          <button class="vx-merge-btn" id="btn-mode-replace">
+            <strong>새 단어장으로 시작</strong>기존 내용을 지우고 새로 시작
           </button>
         </div>
       </div>
@@ -744,7 +744,8 @@ async function handleFile(file) {
     } else {
       state.book = incoming;
       state.unitIndex = 0;
-      setStatus(`"${state.book.title}" 불러오기 완료! ${countAll()}개 단어`);
+      state.uploadMode = 'add';
+      setStatus(`"${state.book.title}" 단어장 생성 완료! ${countAll()}개 단어`);
     }
     saveBook(); renderAll(); showTab('study');
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
@@ -795,10 +796,18 @@ function renderUpload() {
   const hasBook = Boolean(state.book);
   document.getElementById('merge-opts').hidden = !hasBook;
   if (hasBook) {
-    document.getElementById('btn-mode-replace').className =
-      'vx-merge-btn' + (state.uploadMode==='replace' ? ' primary' : '');
+    // 단어장이 생긴 직후엔 기본값을 'add'로
+    if (state.uploadMode === 'replace-explicit' || state.uploadMode === 'replace') {
+      // 사용자가 명시적으로 replace를 선택한 경우 유지
+    } else {
+      state.uploadMode = 'add';
+    }
+    document.getElementById('merge-opts-info').textContent =
+      `📚 현재 단어장: "${state.book.title}" — ${countAll()}개 단어`;
     document.getElementById('btn-mode-add').className =
       'vx-merge-btn' + (state.uploadMode==='add' ? ' primary' : '');
+    document.getElementById('btn-mode-replace').className =
+      'vx-merge-btn' + (state.uploadMode!=='add' ? ' primary' : '');
   }
 }
 
@@ -992,8 +1001,8 @@ document.getElementById('btn-copy-prompt').addEventListener('click', () => {
 });
 
 // Upload mode
-document.getElementById('btn-mode-replace').addEventListener('click', () => { state.uploadMode='replace'; renderUpload(); });
-document.getElementById('btn-mode-add').addEventListener('click',     () => { state.uploadMode='add';     renderUpload(); });
+document.getElementById('btn-mode-replace').addEventListener('click', () => { state.uploadMode='replace-explicit'; renderUpload(); });
+document.getElementById('btn-mode-add').addEventListener('click',     () => { state.uploadMode='add'; renderUpload(); });
 
 // File upload (secondary)
 const dz = document.getElementById('drop-zone');
@@ -1043,7 +1052,8 @@ async function handlePaste(text) {
     } else {
       state.book = incoming;
       state.unitIndex = 0;
-      setStatus(`"${state.book.title}" 불러오기 완료! ${countAll()}개 단어`);
+      state.uploadMode = 'add'; // 첫 생성 후 이후엔 자동으로 추가 모드
+      setStatus(`"${state.book.title}" 단어장 생성 완료! ${countAll()}개 단어`);
     }
     saveBook();
     document.getElementById('paste-input').value = '';
