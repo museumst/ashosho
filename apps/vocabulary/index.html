@@ -74,6 +74,7 @@
       text-decoration: none; transition: .15s;
     }
     .vx-ai-link:hover { border-color: var(--accent); color: var(--accent-strong); background: #e8f4f2; }
+    .vx-ai-logo { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; }
 
     /* drop filename badge */
     .vx-drop-filename {
@@ -483,9 +484,9 @@
       <!-- AI links + prompt copy (same row) -->
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
         <div class="vx-ai-links">
-          <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener">💬 ChatGPT</a>
-          <a class="vx-ai-link" href="https://claude.ai"       target="_blank" rel="noopener">✨ Claude</a>
-          <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener">🔷 Gemini</a>
+          <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener"><img src="chatgpt.png" class="vx-ai-logo" alt="ChatGPT"> ChatGPT</a>
+          <a class="vx-ai-link" href="https://claude.ai"       target="_blank" rel="noopener"><img src="claude.png"  class="vx-ai-logo" alt="Claude"> Claude</a>
+          <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener"><img src="gemini.png" class="vx-ai-logo" alt="Gemini"> Gemini</a>
         </div>
         <button class="vx-btn primary" id="btn-copy-prompt" style="white-space:nowrap;flex-shrink:0;">📋 프롬프트 복사</button>
       </div>
