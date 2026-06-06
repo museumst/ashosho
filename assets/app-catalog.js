@@ -1,5 +1,38 @@
 const apps = [
   {
+    title: "원소주기율표",
+    description: "118개 원소의 기호, 이름, 계열, 설명을 보고 외우며 객관식 퀴즈와 빈칸 퍼즐로 복습하는 학습 앱입니다.",
+    i18n: {
+      ko: {
+        title: "원소주기율표",
+        description: "118개 원소의 기호, 이름, 계열, 설명을 보고 외우며 객관식 퀴즈와 빈칸 퍼즐로 복습하는 학습 앱입니다.",
+      },
+      en: {
+        title: "Periodic Table",
+        description: "Study all 118 elements with symbols, names, groups, descriptions, quizzes, and placement puzzles.",
+      },
+      ja: {
+        title: "元素周期表",
+        description: "118元素の記号、名前、分類、説明を学び、クイズと穴埋めパズルで復習する学習アプリです。",
+      },
+      zh: {
+        title: "元素周期表",
+        description: "学习全部118种元素的符号、名称、类别与说明，并通过测验和填空拼图复习。",
+      },
+      es: {
+        title: "Tabla Periódica",
+        description: "Aprende los 118 elementos con símbolos, nombres, familias, descripciones, quizzes y puzzles de ubicación.",
+      },
+    },
+    category: "study",
+    categoryLabel: "학습",
+    thumbnail: "periodic-table",
+    app_url: "apps/periodic_table/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["chemistry", "periodic-table", "study", "quiz"],
+  },
+  {
     title: "로또번호 생성기",
     description: "겹치지 않는 6개 번호를 빠르게 뽑고 조합을 다시 만들 수 있는 간단한 도구입니다.",
     i18n: {
