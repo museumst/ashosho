@@ -560,6 +560,7 @@
     <div class="vx-study-bar">
       <select class="vx-unit-sel" id="unit-select"></select>
       <button class="vx-btn" id="btn-study-edit" style="white-space:nowrap;flex-shrink:0;">수정</button>
+      <button class="vx-btn danger" id="btn-study-delete" style="white-space:nowrap;flex-shrink:0;">삭제</button>
       <input  class="vx-search" id="study-search" type="search" placeholder="검색" />
     </div>
 
@@ -653,7 +654,7 @@ const state = {
 };
 
 // cloud 헬퍼 (firebase-auth.js 로드 후 채워짐)
-let _saveCloud = null, _loadCloud = null;
+let _saveCloud = null, _loadCloud = null, _deleteCloud = null;
 
 function saveBook() {
   if (!state.book) return;
@@ -1247,6 +1248,23 @@ document.getElementById('study-search').addEventListener('input', e => {
   state.studySearch = e.target.value; renderStudy();
 });
 document.getElementById('btn-study-edit').addEventListener('click', openEditModal);
+document.getElementById('btn-study-delete').addEventListener('click', () => {
+  if (!state.book) return;
+  const unitTitle = state.book.units[state.unitIndex]?.title || '이 단어장';
+  if (!confirm(`"${unitTitle}"을(를) 정말 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) return;
+  state.book = null;
+  state.unitIndex = 0;
+  state.excl = {};
+  localStorage.removeItem(SK.BOOK);
+  localStorage.removeItem(SK.EXCL);
+  if (_deleteCloud) {
+    _deleteCloud('vocabulary/book').catch(console.error);
+    _deleteCloud('vocabulary/excl').catch(console.error);
+  }
+  setStatus('단어장이 삭제되었습니다.');
+  renderAll();
+  showTab('upload');
+});
 document.getElementById('btn-edit-save').addEventListener('click', handleEditSave);
 document.getElementById('btn-edit-cancel').addEventListener('click', closeEditModal);
 document.getElementById('btn-edit-close').addEventListener('click', closeEditModal);
@@ -1338,11 +1356,12 @@ if (state.book) showTab('study');
 
 <!-- Firebase 연동 (로그인 상태에 따라 클라우드 동기화) -->
 <script type="module">
-import { onAuthChange, saveCloud, loadCloud } from '../../assets/firebase-auth.js';
+import { onAuthChange, saveCloud, loadCloud, deleteCloud } from '../../assets/firebase-auth.js';
 
 // 전역 스크립트에서 접근할 수 있도록 노출
 _saveCloud = saveCloud;
 _loadCloud = loadCloud;
+_deleteCloud = deleteCloud;
 
 let prevUid = null;
 onAuthChange(async user => {
