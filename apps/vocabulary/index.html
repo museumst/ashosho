@@ -554,6 +554,13 @@
         <h2 class="vx-edit-modal-title" id="edit-modal-title">단어장 수정</h2>
         <button class="vx-modal-close" id="btn-edit-close">✕</button>
       </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="font-size:.82rem;font-weight:800;color:var(--muted);white-space:nowrap;">단어장 이름</label>
+        <input id="edit-unit-name" type="text"
+               style="flex:1;min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:.88rem;"
+               onfocus="this.style.outline='none';this.style.borderColor='var(--accent)'"
+               onblur="this.style.borderColor='var(--line)'" />
+      </div>
       <p class="vx-edit-modal-label">JSON을 직접 편집하여 오탈자 수정, 단어 추가·삭제가 가능합니다.</p>
       <textarea id="edit-json-input" class="vx-edit-textarea" spellcheck="false"></textarea>
       <div class="vx-toolbar">
@@ -1064,6 +1071,7 @@ function openEditModal() {
     entries: unit.entries.map(({id:_, ...e}) => e)
   };
   document.getElementById('edit-json-input').value = JSON.stringify(out, null, 2);
+  document.getElementById('edit-unit-name').value = unit.title;
   document.getElementById('edit-modal-title').textContent = `수정 — ${unit.title}`;
   document.getElementById('edit-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -1083,6 +1091,11 @@ function handleEditSave() {
     // 모든 블록의 entries를 합쳐서 현재 유닛에 저장
     const books = raws.map(r => normalize(r));
     const newEntries = books.flatMap(b => b.units.flatMap(u => u.entries));
+    const newName = document.getElementById('edit-unit-name').value.trim();
+    if (newName) {
+      state.book.units[state.unitIndex].title = newName;
+      if (state.book.units.length === 1) state.book.title = newName;
+    }
     state.book.units[state.unitIndex].entries = newEntries;
     setStatus(`저장 완료! ${newEntries.length}개 단어`);
     saveBook();
