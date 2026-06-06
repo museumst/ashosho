@@ -309,10 +309,10 @@
     }
     .vx-entry:hover { border-color: #b8d0cc; }
     .vx-entry-top {
-      display: flex; align-items: baseline;
-      justify-content: space-between; gap: 10px; margin-bottom: 4px;
+      display: flex; align-items: center;
+      gap: 8px; margin-bottom: 4px;
     }
-    .vx-entry-head { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+    .vx-entry-head { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; flex: 1; }
     .vx-word  { font-size: 1.25rem; font-weight: 900; line-height: 1.2; }
     .vx-pron  { font-size: .82rem; color: var(--muted); font-weight: 600; }
     .vx-meaning {
@@ -358,17 +358,11 @@
     .vx-entry-list.hide-ko .vx-entry.revealed .vx-translation { color: var(--muted); }
 
     /* ── entry checkbox ── */
-    .vx-entry-top { position: relative; }
     .vx-excl-cb {
-      position: absolute; right: 36px; top: 0;
-      width: 18px; height: 18px; accent-color: var(--accent);
+      width: 16px; height: 16px; accent-color: var(--accent);
       cursor: pointer; flex-shrink: 0;
     }
     .vx-entry.excluded { opacity: .45; }
-    .vx-excl-label {
-      font-size: .7rem; color: var(--muted); font-weight: 700;
-      position: absolute; right: 58px; top: 3px; white-space: nowrap;
-    }
 
     /* ── quiz screen ── */
     .vx-quiz-modes { display: flex; gap: 6px; margin-bottom: 14px; }
