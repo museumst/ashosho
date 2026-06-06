@@ -157,16 +157,15 @@
 
     .vx-modal {
       background: var(--surface); border-radius: 16px;
-      width: min(740px, 100%); padding: 24px;
+      width: min(560px, 100%); padding: 16px;
       animation: vxslide .22s ease;
     }
     @keyframes vxslide { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
 
     .vx-modal-head {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: flex-end;
+      margin-bottom: 10px;
     }
-    .vx-modal-title { font-size: 1.25rem; font-weight: 900; margin: 0; }
     .vx-modal-close {
       width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line);
       background: var(--surface-strong); color: var(--muted); font: inherit;
@@ -447,72 +446,10 @@
 <div class="vx-overlay hidden" id="manual-overlay" role="dialog" aria-modal="true">
   <div class="vx-modal">
     <div class="vx-modal-head">
-      <h2 class="vx-modal-title">📖 사용설명서</h2>
+      <div></div>
       <button class="vx-modal-close" id="btn-modal-close" aria-label="닫기">✕</button>
     </div>
-
-    <div class="vx-cards">
-
-      <!-- CARD 1 : 촬영 -->
-      <div class="vx-ccard">
-        <div class="vx-ccard-img">
-          <span class="vx-ccard-img-icon">📷</span>
-          <p class="vx-ccard-img-label">여기에 촬영 예시<br>이미지를 넣으세요</p>
-        </div>
-        <div class="vx-ccard-body">
-          <div class="vx-ccard-head">
-            <div class="vx-ccard-num">1</div>
-            <p class="vx-ccard-title">교재 페이지를<br>스마트폰으로 촬영하세요</p>
-          </div>
-          <p class="vx-ccard-desc">
-            단어가 잘 보이는 페이지를 선택하고<br>
-            아래 조건을 맞춰 사진을 찍으세요.
-          </p>
-          <div class="vx-tips">
-            <span class="vx-tip">☀️ 밝은 곳에서</span>
-            <span class="vx-tip">📄 페이지 전체</span>
-            <span class="vx-tip">🔍 텍스트 선명하게</span>
-            <span class="vx-tip">📐 정면에서 촬영</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- CARD 2 : AI 전송 -->
-      <div class="vx-ccard">
-        <div class="vx-ccard-img">
-          <span class="vx-ccard-img-icon">🤖</span>
-          <p class="vx-ccard-img-label">여기에 AI 사용 예시<br>이미지를 넣으세요</p>
-        </div>
-        <div class="vx-ccard-body">
-          <div class="vx-ccard-head">
-            <div class="vx-ccard-num">2</div>
-            <p class="vx-ccard-title">AI에게 사진과 함께<br>프롬프트를 보내세요</p>
-          </div>
-          <p class="vx-ccard-desc">
-            단원명을 입력하면 프롬프트에 자동 반영됩니다.<br>
-            아래 AI 서비스에 사진 + 프롬프트를 함께 보내세요.
-          </p>
-          <div class="vx-prompt-wrap">
-            <div class="vx-prompt-head">
-              <div class="vx-prompt-head-left">
-                <span class="vx-prompt-head-label">단어장 이름</span>
-                <input id="unit-name-modal" class="vx-unit-input-modal"
-                       type="text" placeholder="예: Unit 01" />
-              </div>
-              <button class="vx-btn primary" id="btn-copy-modal"
-                      style="min-height:30px;padding:0 11px;font-size:.8rem;">📋 복사</button>
-            </div>
-            <pre class="vx-prompt-text" id="prompt-display-modal"></pre>
-          </div>
-          <div class="vx-ai-links">
-            <a class="vx-ai-link" href="https://chat.openai.com" target="_blank" rel="noopener">💬 ChatGPT</a>
-            <a class="vx-ai-link" href="https://claude.ai"       target="_blank" rel="noopener">✨ Claude</a>
-            <a class="vx-ai-link" href="https://gemini.google.com" target="_blank" rel="noopener">🔷 Gemini</a>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /vx-cards -->
+    <img src="myvoca.jpg" alt="사용설명서" style="width:100%;border-radius:10px;display:block;" />
   </div>
 </div>
 
