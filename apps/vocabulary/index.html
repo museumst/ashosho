@@ -276,14 +276,15 @@
       font-size: .88rem;
     }
     .vx-search:focus, .vx-unit-sel:focus { outline: none; border-color: var(--accent); }
-    .vx-toggle {
-      min-height: 36px; padding: 0 12px; border-radius: 8px;
-      border: 1px solid var(--line); background: var(--surface);
-      color: var(--muted); font: inherit; font-size: .82rem; font-weight: 800;
-      cursor: pointer; transition: .15s; white-space: nowrap;
+    /* study edit panel */
+    .vx-study-edit-panel {
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px; background: var(--surface-strong);
+      display: grid; gap: 10px; margin-bottom: 16px;
     }
-    .vx-toggle.is-on { border-color: var(--accent); background: #e8f4f2; color: var(--accent-strong); }
-    .vx-toggle:hover { border-color: var(--accent); color: var(--accent-strong); }
+    .vx-study-edit-label {
+      font-size: .83rem; font-weight: 800; color: var(--muted); margin: 0;
+    }
 
     /* entry cards */
     .vx-entry-list { display: grid; gap: 6px; }
@@ -496,19 +497,6 @@
                type="text" placeholder="예: Unit 01, 1단원, 여행 영어" />
       </div>
 
-      <!-- Merge option (shown when book exists) -->
-      <div id="merge-opts" hidden>
-        <p id="merge-opts-info" style="font-size:.83rem;font-weight:800;color:var(--muted);margin:0 0 8px;"></p>
-        <div class="vx-merge-opts">
-          <button class="vx-merge-btn" id="btn-mode-add">
-            <strong>유닛 추가</strong>현재 단어장에 이어서 추가
-          </button>
-          <button class="vx-merge-btn" id="btn-mode-replace">
-            <strong>새 단어장으로 시작</strong>기존 내용을 지우고 새로 시작
-          </button>
-        </div>
-      </div>
-
       <!-- Paste zone — MAIN -->
       <div class="vx-paste-wrap">
         <textarea id="paste-input" class="vx-paste-area"
@@ -537,8 +525,21 @@
     <div class="vx-study-bar">
       <select class="vx-unit-sel" id="unit-select"></select>
       <input  class="vx-search" id="study-search" type="search" placeholder="검색" />
-      <button class="vx-toggle is-on" id="btn-always-show">항상 표시</button>
+      <button class="vx-btn" id="btn-study-edit" style="white-space:nowrap;">수정</button>
     </div>
+
+    <!-- 수정 패널 -->
+    <div id="study-edit-panel" hidden class="vx-study-edit-panel">
+      <p class="vx-study-edit-label">AI가 만든 JSON을 붙여넣어 현재 단어장에 추가하세요</p>
+      <textarea id="study-edit-input" class="vx-paste-area"
+                placeholder='JSON을 여기에 붙여넣으세요'
+                rows="7" spellcheck="false"></textarea>
+      <div class="vx-toolbar">
+        <button class="vx-btn primary" id="btn-study-edit-save">단어장에 추가</button>
+        <button class="vx-btn" id="btn-study-edit-cancel">취소</button>
+      </div>
+    </div>
+
     <div class="vx-entry-list" id="entry-list"></div>
   </div>
 
@@ -639,8 +640,7 @@ function countAll() { return allEntries().length; }
 // ────────────────────────────────────────────────────────
 // PROMPT BUILDER
 // ────────────────────────────────────────────────────────
-function buildPrompt(unitName) {
-  const title = (unitName||'').trim() || '단원명';
+function buildPrompt() {
   return `아래 사진은 영어 교재 페이지입니다.
 이 페이지의 영어 단어 정보를 추출하여 JSON으로 만들어주세요.
 
@@ -651,7 +651,6 @@ function buildPrompt(unitName) {
 
 형식:
 {
-  "title": "${title}",
   "entries": [
     {
       "word": "영어단어",
@@ -735,18 +734,16 @@ function showFilename(name) {
 async function handleFile(file) {
   if (!file) return;
   showFilename(file.name);
+  const bookTitle = document.getElementById('unit-name-input').value.trim();
+  if (!bookTitle) { setStatus('단어장 이름을 입력하세요.', 'error'); return; }
   try {
     const raw = JSON.parse(await file.text());
     const incoming = normalize(raw);
-    if (state.uploadMode === 'add' && state.book) {
-      state.book.units.push(...incoming.units);
-      setStatus(`유닛 추가 완료! 현재 ${countAll()}개 단어`);
-    } else {
-      state.book = incoming;
-      state.unitIndex = 0;
-      state.uploadMode = 'add';
-      setStatus(`"${state.book.title}" 단어장 생성 완료! ${countAll()}개 단어`);
-    }
+    incoming.title = bookTitle;
+    incoming.units[0].title = bookTitle;
+    state.book = incoming;
+    state.unitIndex = 0;
+    setStatus(`"${bookTitle}" 단어장 생성 완료! ${countAll()}개 단어`);
     saveBook(); renderAll(); showTab('study');
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
   finally { document.getElementById('file-input').value = ''; }
@@ -793,21 +790,10 @@ function rateCard(level) {
 // RENDER — UPLOAD
 // ────────────────────────────────────────────────────────
 function renderUpload() {
-  const hasBook = Boolean(state.book);
-  document.getElementById('merge-opts').hidden = !hasBook;
-  if (hasBook) {
-    // 단어장이 생긴 직후엔 기본값을 'add'로
-    if (state.uploadMode === 'replace-explicit' || state.uploadMode === 'replace') {
-      // 사용자가 명시적으로 replace를 선택한 경우 유지
-    } else {
-      state.uploadMode = 'add';
-    }
-    document.getElementById('merge-opts-info').textContent =
-      `📚 현재 단어장: "${state.book.title}" — ${countAll()}개 단어`;
-    document.getElementById('btn-mode-add').className =
-      'vx-merge-btn' + (state.uploadMode==='add' ? ' primary' : '');
-    document.getElementById('btn-mode-replace').className =
-      'vx-merge-btn' + (state.uploadMode!=='add' ? ' primary' : '');
+  // 현재 단어장이 있으면 이름 필드에 자동으로 채워줌 (수정 가능)
+  if (state.book) {
+    const input = document.getElementById('unit-name-input');
+    if (!input.value) input.value = state.book.title;
   }
 }
 
@@ -828,9 +814,8 @@ function renderStudy() {
   const entries = unit.entries.filter(e =>
     !q || [e.word,e.meaning,e.example,e.translation].join(' ').toLowerCase().includes(q));
 
-  document.getElementById('btn-always-show').classList.toggle('is-on', state.alwaysShow);
   const list = document.getElementById('entry-list');
-  list.className = 'vx-entry-list' + (state.alwaysShow ? '' : ' hide-ko');
+  list.className = 'vx-entry-list';
 
   if (!entries.length) {
     list.innerHTML = `<div class="vx-no-entry"><p>표시할 단어가 없습니다.</p></div>`;
@@ -995,14 +980,10 @@ document.querySelectorAll('.vx-tab').forEach(b =>
 
 // Prompt copy
 document.getElementById('btn-copy-prompt').addEventListener('click', () => {
-  const name = document.getElementById('unit-name-input').value;
-  navigator.clipboard.writeText(buildPrompt(name))
+  navigator.clipboard.writeText(buildPrompt())
     .then(() => setStatus('✓ 프롬프트 복사 완료! AI에게 사진과 함께 붙여넣으세요 📸'));
 });
 
-// Upload mode
-document.getElementById('btn-mode-replace').addEventListener('click', () => { state.uploadMode='replace-explicit'; renderUpload(); });
-document.getElementById('btn-mode-add').addEventListener('click',     () => { state.uploadMode='add'; renderUpload(); });
 
 // File upload (secondary)
 const dz = document.getElementById('drop-zone');
@@ -1034,31 +1015,42 @@ function parseMultipleJSON(text) {
 
 async function handlePaste(text) {
   if (!text.trim()) { setStatus('붙여넣은 내용이 없습니다.', 'error'); return; }
+  const bookTitle = document.getElementById('unit-name-input').value.trim();
+  if (!bookTitle) { setStatus('단어장 이름을 입력하세요.', 'error'); return; }
   try {
     const raws = parseMultipleJSON(text);
-    // 여러 JSON을 합쳐서 하나의 normalize된 book으로 만들기
     const books = raws.map(r => normalize(r));
     const merged = books[0];
-    // 첫 번째 이후 나머지 units/entries를 첫 unit에 합치기
     for (let i = 1; i < books.length; i++) {
-      const addedEntries = books[i].units.flatMap(u => u.entries);
-      merged.units[0].entries.push(...addedEntries);
+      merged.units[0].entries.push(...books[i].units.flatMap(u => u.entries));
     }
+    // 사용자가 입력한 이름으로 덮어쓰기
+    merged.title = bookTitle;
+    merged.units[0].title = bookTitle;
 
-    const incoming = merged;
-    if (state.uploadMode === 'add' && state.book) {
-      state.book.units.push(...incoming.units);
-      setStatus(`유닛 추가 완료! 현재 ${countAll()}개 단어`);
-    } else {
-      state.book = incoming;
-      state.unitIndex = 0;
-      state.uploadMode = 'add'; // 첫 생성 후 이후엔 자동으로 추가 모드
-      setStatus(`"${state.book.title}" 단어장 생성 완료! ${countAll()}개 단어`);
-    }
+    state.book = merged;
+    state.unitIndex = 0;
+    setStatus(`"${bookTitle}" 단어장 생성 완료! ${countAll()}개 단어`);
     saveBook();
     document.getElementById('paste-input').value = '';
     renderAll(); showTab('study');
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
+}
+
+// 학습 탭 수정 패널: 현재 단어장에 JSON 추가
+async function handleStudyEdit(text) {
+  if (!text.trim()) { setStatus('붙여넣은 내용이 없습니다.', 'error'); return; }
+  try {
+    const raws = parseMultipleJSON(text);
+    const books = raws.map(r => normalize(r));
+    const allEntries = books.flatMap(b => b.units.flatMap(u => u.entries));
+    state.book.units[state.unitIndex].entries.push(...allEntries);
+    setStatus(`${allEntries.length}개 단어 추가 완료! 현재 ${countAll()}개`);
+    saveBook();
+    document.getElementById('study-edit-input').value = '';
+    document.getElementById('study-edit-panel').hidden = true;
+    renderStudy();
+  } catch(e) { setStatus('추가 실패: ' + e.message, 'error'); }
 }
 
 document.getElementById('btn-paste-load').addEventListener('click', () => {
@@ -1080,16 +1072,21 @@ document.getElementById('unit-select').addEventListener('change', e => {
 document.getElementById('study-search').addEventListener('input', e => {
   state.studySearch = e.target.value; renderStudy();
 });
-document.getElementById('btn-always-show').addEventListener('click', () => {
-  state.alwaysShow = !state.alwaysShow; renderStudy();
+document.getElementById('btn-study-edit').addEventListener('click', () => {
+  const panel = document.getElementById('study-edit-panel');
+  panel.hidden = !panel.hidden;
+  if (!panel.hidden) document.getElementById('study-edit-input').focus();
+});
+document.getElementById('btn-study-edit-save').addEventListener('click', () => {
+  handleStudyEdit(document.getElementById('study-edit-input').value);
+});
+document.getElementById('btn-study-edit-cancel').addEventListener('click', () => {
+  document.getElementById('study-edit-panel').hidden = true;
+  document.getElementById('study-edit-input').value = '';
 });
 document.getElementById('entry-list').addEventListener('click', e => {
   const play = e.target.closest('[data-speak]');
-  if (play) { e.stopPropagation(); speak(play.dataset.speak); return; }
-  if (!state.alwaysShow) {
-    const entry = e.target.closest('.vx-entry');
-    if (entry) entry.classList.toggle('revealed');
-  }
+  if (play) { e.stopPropagation(); speak(play.dataset.speak); }
 });
 
 // Quiz mode
