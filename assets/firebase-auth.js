@@ -9,7 +9,7 @@ import { getFirestore, doc, setDoc, getDoc, deleteDoc }
 
 const firebaseConfig = {
   apiKey:            'AIzaSyC-CfCYCaNa3--RTXChQIY7c-EVURyuO1I',
-  authDomain:        'grayrockclub-51ed3.firebaseapp.com',
+  authDomain:        location.hostname.endsWith('grayrockclub.com') ? 'grayrockclub.com' : 'grayrockclub-51ed3.firebaseapp.com',
   projectId:         'grayrockclub-51ed3',
   storageBucket:     'grayrockclub-51ed3.firebasestorage.app',
   messagingSenderId: '1014728880013',
