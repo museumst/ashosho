@@ -1004,11 +1004,39 @@ fi.addEventListener('change', () => handleFile(fi.files[0]));
 dz.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
 
 // Paste load
+// JSON이 여러 개 붙어 있을 경우 분리해서 파싱
+function parseMultipleJSON(text) {
+  const results = [];
+  let depth = 0, start = -1;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '{') { if (depth === 0) start = i; depth++; }
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0 && start !== -1) {
+        results.push(JSON.parse(text.slice(start, i + 1)));
+        start = -1;
+      }
+    }
+  }
+  if (!results.length) throw new Error('JSON을 찾을 수 없습니다.');
+  return results;
+}
+
 async function handlePaste(text) {
   if (!text.trim()) { setStatus('붙여넣은 내용이 없습니다.', 'error'); return; }
   try {
-    const raw = JSON.parse(text);
-    const incoming = normalize(raw);
+    const raws = parseMultipleJSON(text);
+    // 여러 JSON을 합쳐서 하나의 normalize된 book으로 만들기
+    const books = raws.map(r => normalize(r));
+    const merged = books[0];
+    // 첫 번째 이후 나머지 units/entries를 첫 unit에 합치기
+    for (let i = 1; i < books.length; i++) {
+      const addedEntries = books[i].units.flatMap(u => u.entries);
+      merged.units[0].entries.push(...addedEntries);
+    }
+
+    const incoming = merged;
     if (state.uploadMode === 'add' && state.book) {
       state.book.units.push(...incoming.units);
       setStatus(`유닛 추가 완료! 현재 ${countAll()}개 단어`);
