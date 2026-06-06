@@ -80,6 +80,38 @@ input {
   text-transform: uppercase;
 }
 
+/* ── 로그인 패널 ── */
+.auth-panel {
+  width: 100%;
+}
+.auth-login-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 12px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--surface);
+  color: var(--text); font: inherit; font-size: .83rem; font-weight: 700;
+  cursor: pointer; transition: .15s;
+}
+.auth-login-btn:hover { border-color: var(--accent); background: #e8f4f2; }
+.auth-user {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.auth-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+}
+.auth-name {
+  flex: 1; font-size: .78rem; font-weight: 700;
+  color: var(--text); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.auth-logout-btn {
+  padding: 4px 10px; border-radius: 6px;
+  border: 1px solid var(--line); background: none;
+  color: var(--muted); font: inherit; font-size: .72rem; font-weight: 700;
+  cursor: pointer; transition: .15s; white-space: nowrap;
+}
+.auth-logout-btn:hover { border-color: var(--red,#c24135); color: var(--red,#c24135); }
+
 .language-control {
   display: grid;
   gap: 8px;

@@ -13,6 +13,28 @@
   <body>
     <main class="app-shell">
       <section class="app-list-pane" aria-label="앱 목록">
+
+        <!-- 로그인 영역 -->
+        <div class="auth-panel" id="auth-panel">
+          <!-- 로그인 전 -->
+          <button class="auth-login-btn" id="btn-login" hidden>
+            <svg width="16" height="16" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.5 33.7 29.8 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.8 0 20-7.8 20-21 0-1.4-.1-2.7-.5-4z"/>
+              <path fill="#34A853" d="M6.3 14.7l7 5.1C15 16.1 19.1 13 24 13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3c-7.7 0-14.4 4.4-17.7 11.7z"/>
+              <path fill="#FBBC05" d="M24 45c5.5 0 10.5-1.9 14.4-5l-6.7-5.5C29.6 36 26.9 37 24 37c-5.8 0-10.5-3.3-11.8-8.4l-7 5.4C8.1 40.8 15.5 45 24 45z"/>
+              <path fill="#EA4335" d="M44.5 20H24v8.5h11.8c-.6 2.8-2.3 5.1-4.7 6.6l6.7 5.5C41.8 37.3 45 31.1 45 24c0-1.4-.2-2.7-.5-4z"/>
+            </svg>
+            Google로 로그인
+          </button>
+
+          <!-- 로그인 후 -->
+          <div class="auth-user" id="auth-user" hidden>
+            <img class="auth-avatar" id="auth-avatar" src="" alt="" width="28" height="28" />
+            <span class="auth-name" id="auth-name"></span>
+            <button class="auth-logout-btn" id="btn-logout">로그아웃</button>
+          </div>
+        </div>
+
         <label class="language-control" for="language-select">
           <span id="language-label">언어</span>
           <select id="language-select" aria-label="언어 선택">
@@ -37,5 +59,31 @@
     </main>
 
     <script src="assets/app-catalog.js?v=20260606-periodic-table"></script>
+    <script type="module">
+      import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth.js';
+
+      const btnLogin   = document.getElementById('btn-login');
+      const btnLogout  = document.getElementById('btn-logout');
+      const authUser   = document.getElementById('auth-user');
+      const authAvatar = document.getElementById('auth-avatar');
+      const authName   = document.getElementById('auth-name');
+
+      // 로그인 상태 변화 감지
+      onAuthChange(user => {
+        if (user) {
+          authAvatar.src = user.photoURL || '';
+          authAvatar.hidden = !user.photoURL;
+          authName.textContent = user.displayName || user.email;
+          authUser.hidden = false;
+          btnLogin.hidden = true;
+        } else {
+          authUser.hidden = true;
+          btnLogin.hidden = false;
+        }
+      });
+
+      btnLogin.addEventListener('click', () => loginWithGoogle().catch(console.error));
+      btnLogout.addEventListener('click', () => logout());
+    </script>
   </body>
 </html>

@@ -652,11 +652,43 @@ const state = {
   excl: {},         // id -> true if excluded from quiz
 };
 
-function saveBook() { if(state.book) localStorage.setItem(SK.BOOK, JSON.stringify(state.book)); }
-function saveExcl() { localStorage.setItem(SK.EXCL, JSON.stringify(state.excl)); }
+// cloud 헬퍼 (firebase-auth.js 로드 후 채워짐)
+let _saveCloud = null, _loadCloud = null;
+
+function saveBook() {
+  if (!state.book) return;
+  localStorage.setItem(SK.BOOK, JSON.stringify(state.book));
+  if (_saveCloud) _saveCloud('vocabulary/book', state.book).catch(console.error);
+}
+function saveExcl() {
+  localStorage.setItem(SK.EXCL, JSON.stringify(state.excl));
+  if (_saveCloud) _saveCloud('vocabulary/excl', { excl: state.excl }).catch(console.error);
+}
 function loadData() {
   try { state.book = JSON.parse(localStorage.getItem(SK.BOOK) || 'null'); } catch { state.book = null; }
   try { state.excl = JSON.parse(localStorage.getItem(SK.EXCL) || '{}');  } catch { state.excl = {}; }
+}
+
+// 로그인 후 클라우드에서 불러와 로컬 + 화면에 반영
+async function syncFromCloud() {
+  if (!_loadCloud) return;
+  try {
+    const [bookData, exclData] = await Promise.all([
+      _loadCloud('vocabulary/book'),
+      _loadCloud('vocabulary/excl'),
+    ]);
+    if (bookData) {
+      state.book = bookData;
+      localStorage.setItem(SK.BOOK, JSON.stringify(state.book));
+    }
+    if (exclData) {
+      state.excl = exclData.excl || {};
+      localStorage.setItem(SK.EXCL, JSON.stringify(state.excl));
+    }
+    renderAll();
+    if (state.book) showTab('study');
+    setStatus('☁️ 클라우드에서 단어장을 불러왔습니다.');
+  } catch(e) { console.error('cloud sync failed', e); }
 }
 
 // ────────────────────────────────────────────────────────
@@ -1302,6 +1334,29 @@ document.getElementById('entry-list').addEventListener('change', e => {
 loadData();
 renderAll();
 if (state.book) showTab('study');
+</script>
+
+<!-- Firebase 연동 (로그인 상태에 따라 클라우드 동기화) -->
+<script type="module">
+import { onAuthChange, saveCloud, loadCloud } from '../../assets/firebase-auth.js';
+
+// 전역 스크립트에서 접근할 수 있도록 노출
+_saveCloud = saveCloud;
+_loadCloud = loadCloud;
+
+let prevUid = null;
+onAuthChange(async user => {
+  if (user && user.uid !== prevUid) {
+    prevUid = user.uid;
+    // 로그인 시 클라우드 동기화
+    await syncFromCloud();
+  } else if (!user) {
+    prevUid = null;
+    // 로그아웃 시 로컬 데이터로 복원
+    loadData(); renderAll();
+    if (state.book) showTab('study');
+  }
+});
 </script>
 </body>
 </html>
