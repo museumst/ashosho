@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect 4 Game </title>
+    <style>
+        /* 프리미엄 패밀리룩 컬러 팔레트 */
+        :root {
+            --bg-color: #F6F4F0;       /* 부드러운 웜그레이/아이보리 바탕 */
+            --board-bg: #3B5B4D;       /* 다크 그린 */
+            --player1-color: #D56742;  /* 테라코타 오렌지 (선공) */
+            --player2-color: #DFA956;  /* 딥 옐로우/머스터드 (후공) */
+            --text-dark: #2C332F;      /* 짙은 먹색 텍스트 */
+            --btn-outline: #E0DDD4;    /* 버튼 테두리 */
+            --accent-green: #688071;   /* 뮤트 그린 (서브 텍스트) */
+            --cell-bg: #EAE6DD;        /* 보드 빈 칸 배경색 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- 인트로 스크린 --- */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 300; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .intro-chips-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .intro-chip {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            opacity: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.2);
+            animation: dropIntro 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .intro-chip.c1 { background-color: var(--player1-color); animation-delay: 0.1s; }
+        .intro-chip.c2 { background-color: var(--player2-color); animation-delay: 0.3s; }
+        .intro-chip.c3 { background-color: var(--player1-color); animation-delay: 0.5s; }
+        .intro-chip.c4 { background-color: var(--player2-color); animation-delay: 0.7s; }
+
+        @keyframes dropIntro {
+            0% { transform: translateY(-100px); opacity: 0; }
+            60% { transform: translateY(10px); opacity: 1; }
+            80% { transform: translateY(-5px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .intro-title-box {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInTitle 1s ease forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes fadeInTitle {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .intro-title-box h1 {
+            font-size: 3rem;
+            color: var(--board-bg);
+            margin-bottom: 5px;
+        }
+
+        .intro-title-box p {
+            color: var(--accent-green);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .intro-buttons {
+            display: flex;
+            gap: 15px;
+            opacity: 0;
+            animation: fadeInTitle 1s ease forwards;
+            animation-delay: 1.3s;
+        }
+
+        .intro-buttons button {
+            padding: 15px 24px;
+            font-size: 1.1rem;
+            border-width: 2px;
+            background-color: #FFFFFF;
+        }
+
+        /* --- 메인 게임 영역 --- */
+        header { text-align: center; margin-bottom: 24px; z-index: 10; position: relative; }
+        .category-label { font-size: 0.85rem; color: var(--board-bg); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 8px; display: block; }
+        h1.main-title { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; color: var(--text-dark); margin-bottom: 0;}
+
+        .controls { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; max-width: 450px; z-index: 10; position: relative;}
+        
+        button { background-color: #FFFFFF; border: 1px solid var(--btn-outline); color: var(--text-dark); padding: 10px 18px; font-size: 0.95rem; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        button:hover:not(:disabled) { border-color: var(--board-bg); transform: translateY(-1px); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.active { background-color: var(--board-bg); color: #FFFFFF; border-color: var(--board-bg); }
+        button#soundToggle { display: flex; align-items: center; gap: 6px; }
+
+        .status-container {
+            background-color: #FFFFFF; border: 1px solid var(--btn-outline); padding: 12px 24px; border-radius: 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; opacity: 0; z-index: 10; position: relative;
+        }
+        .status-container.visible { opacity: 1; }
+        .status-dot { width: 14px; height: 14px; border-radius: 50%; transition: background-color 0.3s ease; background-color: var(--btn-outline); }
+
+        .board-wrapper {
+            background-color: var(--board-bg); padding: 12px; border-radius: 16px; box-shadow: 0 10px 30px rgba(59, 91, 77, 0.2); position: relative; z-index: 10;
+        }
+        .board { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; background-color: transparent; }
+        .cell { width: 50px; height: 50px; background-color: var(--cell-bg); border-radius: 50%; cursor: pointer; position: relative; box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1); }
+
+        @media (max-width: 480px) {
+            .cell { width: 40px; height: 40px; }
+            .board { gap: 6px; }
+            .board-wrapper { padding: 10px; }
+            h1.main-title { font-size: 1.8rem; }
+            .intro-title-box h1 { font-size: 2.2rem; }
+            .intro-buttons { flex-direction: column; width: 80%; }
+        }
+
+        .cell.filled::after {
+            content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; border-radius: 50%; animation: dropBounce 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+        .cell.player1::after { background-color: var(--player1-color); }
+        .cell.player2::after { background-color: var(--player2-color); }
+
+        @keyframes dropBounce {
+            0% { transform: translateY(-200px); opacity: 0; }
+            60% { transform: translateY(10px); opacity: 1; }
+            80% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        .cell.win-highlight::after { animation: pulseWin 1s infinite alternate; box-shadow: 0 0 0 4px #FFFFFF, 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
+        @keyframes pulseWin { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+        /* 가위바위보 모달 */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(44, 51, 47, 0.6); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 1; transition: opacity 0.3s ease; }
+        .modal-overlay.hidden { opacity: 0; pointer-events: none; }
+        .modal-content { background-color: #FFFFFF; padding: 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); text-align: center; max-width: 90%; width: 350px; transform: translateY(0); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay.hidden .modal-content { transform: translateY(20px); }
+        .modal-content h2 { font-size: 1.5rem; color: var(--board-bg); margin-bottom: 10px; }
+        .modal-content p { color: var(--accent-green); margin-bottom: 24px; font-weight: 600; font-size: 1.1rem; }
+        .rps-buttons { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+        .rps-buttons button { font-size: 1.5rem; padding: 15px 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; background-color: var(--cell-bg); border: none; }
+        .rps-buttons button span { font-size: 0.9rem; color: var(--text-dark); font-weight: 700; }
+        .rps-result { min-height: 40px; font-size: 1.2rem; font-weight: 800; color: var(--player1-color); margin-top: 15px; }
+        .com-choice-emoji { font-size: 2rem; display: inline-block; vertical-align: middle; margin-left: 8px; }
+
+        /* --- 결과 이펙트 레이어 (폭죽 / 유령) --- */
+        .effect-layer {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background-color 1s ease;
+        }
+
+        .effect-layer.dark-mode {
+            background-color: rgba(20, 25, 22, 0.85); /* 혼이 빠져나갈 때 어두운 배경 */
+        }
+
+        /* 승리/패배 텍스트 오버레이 (모바일 대응 개선) */
+        .result-text-overlay {
+            position: absolute;
+            font-size: clamp(2rem, 10vw, 6rem); /* 반응형 폰트 크기: 데스크탑 6rem ~ 모바일 10vw, 최소 2rem */
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            opacity: 0;
+            transform: scale(0.5);
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            width: 100%;             /* 전체 너비를 차지하게 하여 중앙 정렬을 도움 */
+            text-align: center;      /* 텍스트 가로 중앙 정렬 */
+            padding: 0 10px;         /* 혹시 모를 좌우 여백 */
+        }
+
+        .result-text-overlay.show-win {
+            color: #FFD700;
+            animation: textPopWin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .result-text-overlay.show-lose {
+            color: #8C9993;
+            animation: textPopLose 4s ease-out forwards;
+        }
+
+        @keyframes textPopWin {
+            0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+            30% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+            50% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 0; }
+        }
+
+        @keyframes textPopLose {
+            0% { transform: scale(0.8) translateY(50px); opacity: 0; filter: blur(10px); }
+            20% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0px); }
+            80% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0px); }
+            100% { transform: scale(0.9) translateY(-100px); opacity: 0; filter: blur(5px); }
+        }
+
+        /* 폭죽 파티클 */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--player1-color);
+            opacity: 0;
+        }
+
+        @keyframes fireworkPop {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* 혼 (유령) 파티클 */
+        .ghost {
+            position: absolute;
+            bottom: -50px;
+            font-size: 3rem;
+            opacity: 0;
+            filter: grayscale(100%) opacity(0.6);
+        }
+
+        @keyframes floatAway {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) scale(1.5) rotate(var(--rot)); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 이펙트 컨테이너 -->
+    <div id="effectLayer" class="effect-layer">
+        <div id="resultTextOverlay" class="result-text-overlay"></div>
+    </div>
+
+    <!-- 인트로 화면 -->
+    <div id="introScreen" class="intro-screen">
+        <div class="intro-chips-container">
+            <div class="intro-chip c1"></div>
+            <div class="intro-chip c2"></div>
+            <div class="intro-chip c3"></div>
+            <div class="intro-chip c4"></div>
+        </div>
+        <div class="intro-title-box">
+            <h1>CONNECT 4</h1>
+            <p>CLASSIC BOARD GAME</p>
+        </div>
+        <div class="intro-buttons">
+            <button onclick="startFromIntro('1P')">🤖 1P vs 컴퓨터</button>
+            <button onclick="startFromIntro('2P')">🧑‍🤝‍🧑 2P 친구와 대결</button>
+        </div>
+    </div>
+
+    <!-- 가위바위보 모달 -->
+    <div id="rpsModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>선공 정하기 (vs COM)</h2>
+            <p id="rpsStatusText">가위, 바위, 보를 선택하세요!</p>
+            <div class="rps-buttons">
+                <button onclick="playRPS('scissors')">✌️<span>가위</span></button>
+                <button onclick="playRPS('rock')">✊<span>바위</span></button>
+                <button onclick="playRPS('paper')">✋<span>보</span></button>
+            </div>
+            <div id="rpsResult" class="rps-result"></div>
+        </div>
+    </div>
+
+    <header>
+        <span class="category-label">Board Game</span>
+        <h1 class="main-title">CONNECT 4</h1>
+    </header>
+
+    <div class="controls">
+        <button id="btn1P" onclick="setMode('1P')">1P vs COM</button>
+        <button id="btn2P" onclick="setMode('2P')">2P Mode</button>
+        <button id="soundToggle" onclick="toggleSound()">
+            <span id="soundIcon">🔊</span> Sound ON
+        </button>
+        <button id="btnReset" onclick="resetGameBtn()" style="background-color: var(--board-bg); color: white; border: none;">다시 시작</button>
+    </div>
+
+    <div id="statusContainer" class="status-container">
+        <div id="statusDot" class="status-dot"></div>
+        <span id="statusText">모드를 선택해주세요</span>
+    </div>
+
+    <div class="board-wrapper">
+        <div class="board" id="gameBoard"></div>
+    </div>
+
+    <script>
+        const ROWS = 6;
+        const COLS = 7;
+        let boardState = [];
+        
+        let currentPlayer = 1; 
+        let isGameOver = true; 
+        let gameMode = null; 
+        let soundEnabled = true;
+        let aiThinking = false;
+
+        let userPlayer = 1; 
+        let comPlayer = 2;
+
+        const boardElement = document.getElementById('gameBoard');
+        const statusContainer = document.getElementById('statusContainer');
+        const statusText = document.getElementById('statusText');
+        const statusDot = document.getElementById('statusDot');
+        const rpsModal = document.getElementById('rpsModal');
+        const introScreen = document.getElementById('introScreen');
+        const effectLayer = document.getElementById('effectLayer');
+        const resultTextOverlay = document.getElementById('resultTextOverlay');
+
+        // Web Audio API
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'drop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+                gainNode.gain.setValueAtTime(0.5, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'rps-win') {
+                // 가위바위보 승리음 (짧게)
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'game-win') {
+                // 게임 승리 - 경쾌한 아르페지오 (폭죽)
+                osc.type = 'square';
+                const freqs = [392, 493.88, 587.33, 783.99, 987.77, 1174.66]; // G major arpeggio
+                let time = now;
+                freqs.forEach((freq, i) => {
+                    osc.frequency.setValueAtTime(freq, time);
+                    gainNode.gain.setValueAtTime(0.2, time);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+                    time += 0.1;
+                });
+                osc.start(now);
+                osc.stop(time);
+            } else if (type === 'game-lose') {
+                // 게임 패배 - 기운 빠지는 하강음 (유령)
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 2); // 길고 우울하게 떨어짐
+                gainNode.gain.setValueAtTime(0.4, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 2);
+                osc.start(now);
+                osc.stop(now + 2);
+            } else if (type === 'draw') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        function renderEmptyBoard() {
+            boardElement.innerHTML = '';
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell', 'empty');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.addEventListener('click', () => handleColumnClick(c));
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        function startFromIntro(mode) {
+            initAudio(); 
+            playSound('drop');
+            introScreen.classList.add('hidden');
+            statusContainer.classList.add('visible');
+            setMode(mode);
+        }
+
+        function setMode(mode) {
+            gameMode = mode;
+            document.getElementById('btn1P').classList.toggle('active', mode === '1P');
+            document.getElementById('btn2P').classList.toggle('active', mode === '2P');
+            rpsModal.classList.add('hidden'); 
+            
+            clearEffects(); // 모드 변경 시 이전 이펙트 지우기
+
+            if (mode === '1P') startGame(false); 
+            else startGame(true); 
+        }
+
+        function resetGameBtn() {
+            if (!gameMode) return; 
+            clearEffects();
+            if (gameMode === '1P') startGame(false); 
+            else startGame(true); 
+        }
+
+        function showRPS() {
+            rpsModal.classList.remove('hidden');
+            document.getElementById('rpsStatusText').textContent = "가위, 바위, 보를 선택하세요!";
+            document.getElementById('rpsStatusText').style.color = "var(--accent-green)";
+            document.getElementById('rpsResult').innerHTML = "";
+            document.querySelectorAll('.rps-buttons button').forEach(btn => btn.disabled = false);
+            
+            isGameOver = true; 
+            statusDot.style.backgroundColor = 'var(--btn-outline)';
+            statusText.textContent = "선공 결정 중...";
+        }
+
+        function playRPS(userChoice) {
+            initAudio();
+            playSound('drop');
+            
+            const choices = ['scissors', 'rock', 'paper'];
+            const emojis = {'scissors': '✌️', 'rock': '✊', 'paper': '✋'};
+            const comChoice = choices[Math.floor(Math.random() * 3)];
+            
+            let outcome = 0; 
+            if (userChoice === comChoice) outcome = 0;
+            else if ((userChoice === 'rock' && comChoice === 'scissors') || (userChoice === 'paper' && comChoice === 'rock') || (userChoice === 'scissors' && comChoice === 'paper')) outcome = 1;
+            else outcome = -1;
+
+            const resDiv = document.getElementById('rpsResult');
+            const statusDiv = document.getElementById('rpsStatusText');
+            
+            resDiv.innerHTML = `컴퓨터: <span class="com-choice-emoji">${emojis[comChoice]}</span>`;
+
+            if (outcome === 0) {
+                statusDiv.textContent = "앗, 비겼습니다! 다시 선택하세요.";
+                statusDiv.style.color = "var(--player2-color)";
+            } else {
+                document.querySelectorAll('.rps-buttons button').forEach(btn => btn.disabled = true);
+                
+                if (outcome === 1) {
+                    statusDiv.textContent = "🎉 당신이 선공(오렌지)입니다!";
+                    statusDiv.style.color = "var(--player1-color)";
+                    userPlayer = 1; comPlayer = 2;
+                    playSound('rps-win');
+                } else {
+                    statusDiv.textContent = "💻 컴퓨터가 선공(오렌지)입니다.";
+                    statusDiv.style.color = "var(--text-dark)";
+                    userPlayer = 2; comPlayer = 1;
+                }
+
+                setTimeout(() => {
+                    rpsModal.classList.add('hidden');
+                    startGame(true); 
+                }, 1500);
+            }
+        }
+
+        function startGame(skipRPS) {
+            boardState = Array(ROWS).fill(null).map(() => Array(COLS).fill(0));
+            currentPlayer = 1; 
+            isGameOver = false;
+            aiThinking = false;
+            
+            if (gameMode === '2P') {
+                userPlayer = 1; comPlayer = null;
+            }
+
+            renderEmptyBoard();
+            boardElement.classList.remove('game-over');
+
+            if (gameMode === '1P' && !skipRPS) showRPS();
+            else {
+                updateStatusUI();
+                if (gameMode === '1P' && currentPlayer === comPlayer) {
+                    aiThinking = true;
+                    setTimeout(makeAIMove, 600);
+                }
+            }
+        }
+
+        function updateStatusUI() {
+            if (isGameOver && !rpsModal.classList.contains('hidden')) return;
+            if (isGameOver) return; 
+
+            statusDot.style.backgroundColor = currentPlayer === 1 ? 'var(--player1-color)' : 'var(--player2-color)';
+            
+            if (gameMode === '1P') statusText.textContent = (currentPlayer === userPlayer) ? '당신의 차례입니다' : '컴퓨터가 생각중입니다...';
+            else statusText.textContent = `Player ${currentPlayer} 차례`;
+        }
+
+        function handleColumnClick(col) {
+            initAudio(); 
+            if (isGameOver || aiThinking || !gameMode) return;
+            if (gameMode === '1P' && currentPlayer === comPlayer) return; 
+            processMove(col);
+        }
+
+        function processMove(col) {
+            let row = -1;
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (boardState[r][col] === 0) { row = r; break; }
+            }
+            if (row === -1) return false;
+
+            boardState[row][col] = currentPlayer;
+            const cellUI = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+            cellUI.classList.remove('empty');
+            cellUI.classList.add('filled', `player${currentPlayer}`);
+            playSound('drop');
+
+            const winResult = checkWin(row, col, currentPlayer);
+            if (winResult) {
+                handleGameOver(winResult, currentPlayer);
+                return true;
+            }
+
+            if (checkDraw()) {
+                handleGameOver(null, 0);
+                return true;
+            }
+
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            updateStatusUI();
+
+            if (gameMode === '1P' && currentPlayer === comPlayer && !isGameOver) {
+                aiThinking = true;
+                setTimeout(makeAIMove, 600);
+            }
+            return true;
+        }
+
+        function checkWin(r, c, player) {
+            const directions = [[[0, 1], [0, -1]], [[1, 0], [-1, 0]], [[1, 1], [-1, -1]], [[1, -1], [-1, 1]]];
+            for (let dir of directions) {
+                let winCells = [[r, c]];
+                for (let delta of dir) {
+                    let nr = r + delta[0], nc = c + delta[1];
+                    while (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && boardState[nr][nc] === player) {
+                        winCells.push([nr, nc]);
+                        nr += delta[0]; nc += delta[1];
+                    }
+                }
+                if (winCells.length >= 4) return winCells; 
+            }
+            return null;
+        }
+
+        function checkDraw() {
+            return boardState[0].every(cell => cell !== 0);
+        }
+
+        // --- 승패 연출 및 이펙트 처리 ---
+        function clearEffects() {
+            effectLayer.classList.remove('dark-mode');
+            resultTextOverlay.classList.remove('show-win', 'show-lose');
+            resultTextOverlay.textContent = "";
+            // 파티클 삭제
+            const particles = document.querySelectorAll('.confetti, .ghost');
+            particles.forEach(p => p.remove());
+        }
+
+        function createConfetti() {
+            const colors = ['#D56742', '#DFA956', '#3B5B4D', '#688071'];
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = '50%';
+                confetti.style.top = '50%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 랜덤 각도 및 거리 퍼짐 계산
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 300;
+                const tx = Math.cos(angle) * distance + 'px';
+                const ty = Math.sin(angle) * distance + 'px';
+                
+                confetti.style.setProperty('--tx', tx);
+                confetti.style.setProperty('--ty', ty);
+                confetti.style.animation = `fireworkPop ${0.8 + Math.random() * 0.5}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
+                
+                effectLayer.appendChild(confetti);
+            }
+        }
+
+        function createGhosts() {
+            const ghostEmojis = ['👻', '💨', '🕸️'];
+            for (let i = 0; i < 15; i++) {
+                const ghost = document.createElement('div');
+                ghost.classList.add('ghost');
+                ghost.textContent = ghostEmojis[Math.floor(Math.random() * ghostEmojis.length)];
+                ghost.style.left = `${Math.random() * 100}%`;
+                
+                // 회전 및 속도 랜덤
+                const rot = (Math.random() - 0.5) * 60 + 'deg';
+                ghost.style.setProperty('--rot', rot);
+                ghost.style.animation = `floatAway ${3 + Math.random() * 2}s ease-in forwards`;
+                ghost.style.animationDelay = `${Math.random() * 1.5}s`;
+                
+                effectLayer.appendChild(ghost);
+            }
+        }
+
+        function handleGameOver(winCells, winner) {
+            isGameOver = true;
+            boardElement.classList.add('game-over');
+            clearEffects();
+
+            if (winner > 0) {
+                // 승리 하이라이트
+                winCells.forEach(([r, c]) => {
+                    const cell = document.querySelector(`.cell[data-row='${r}'][data-col='${c}']`);
+                    cell.classList.add('win-highlight');
+                });
+
+                if (gameMode === '1P') {
+                    if (winner === userPlayer) {
+                        statusText.textContent = '당신이 이겼습니다!';
+                        playSound('game-win');
+                        resultTextOverlay.textContent = "YOU WIN!";
+                        resultTextOverlay.classList.add('show-win');
+                        createConfetti();
+                    } else {
+                        statusText.textContent = '컴퓨터가 승리했습니다...';
+                        playSound('game-lose');
+                        resultTextOverlay.textContent = "YOU LOSE...";
+                        resultTextOverlay.classList.add('show-lose');
+                        effectLayer.classList.add('dark-mode');
+                        createGhosts();
+                    }
+                } else {
+                    // 2P 모드는 이전과 동일
+                    statusText.textContent = `Player ${winner} 승리!`;
+                    playSound('game-win');
+                    resultTextOverlay.textContent = `P${winner} WINS!`;
+                    resultTextOverlay.classList.add('show-win');
+                    createConfetti();
+                }
+            } else {
+                playSound('draw');
+                statusDot.style.backgroundColor = '#ccc';
+                statusText.textContent = '🤝 무승부입니다!';
+            }
+        }
+
+        // --- AI ---
+        function makeAIMove() {
+            if (isGameOver) return;
+            let bestCol = findWinningMove(comPlayer);
+            if (bestCol === -1) bestCol = findWinningMove(userPlayer);
+            if (bestCol === -1) {
+                const availableCols = [];
+                for (let c = 0; c < COLS; c++) { if (boardState[0][c] === 0) availableCols.push(c); }
+                availableCols.sort((a, b) => Math.abs(a - 3) - Math.abs(b - 3));
+                if(availableCols.length > 0) {
+                    const pickPool = availableCols.slice(0, Math.min(3, availableCols.length));
+                    bestCol = pickPool[Math.floor(Math.random() * pickPool.length)];
+                }
+            }
+            aiThinking = false;
+            if (bestCol !== -1) processMove(bestCol);
+        }
+
+        function findWinningMove(playerNum) {
+            for (let c = 0; c < COLS; c++) {
+                let r = -1;
+                for (let i = ROWS - 1; i >= 0; i--) {
+                    if (boardState[i][c] === 0) { r = i; break; }
+                }
+                if (r !== -1) {
+                    boardState[r][c] = playerNum;
+                    const isWin = checkWin(r, c, playerNum);
+                    boardState[r][c] = 0; 
+                    if (isWin) return c;
+                }
+            }
+            return -1;
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            if (soundEnabled) {
+                btn.innerHTML = `<span id="soundIcon">🔊</span> Sound ON`;
+                initAudio();
+            } else {
+                btn.innerHTML = `<span id="soundIcon">🔇</span> Sound OFF`;
+            }
+        }
+
+        window.onload = () => {
+            renderEmptyBoard();
+            document.getElementById('btn1P').classList.remove('active');
+            document.getElementById('btn2P').classList.remove('active');
+        };
+    </script>
+</body>
+</html>
