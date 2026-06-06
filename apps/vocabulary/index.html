@@ -906,13 +906,13 @@ function renderStudy() {
   list.innerHTML = entries.map(e => `
     <article class="vx-entry${state.excl[e.id] ? ' excluded' : ''}" data-id="${esc(e.id)}">
       <div class="vx-entry-top">
+        <label title="퀴즈에서 제외" style="display:flex;align-items:center;cursor:pointer;flex-shrink:0;margin-right:10px;">
+          <input type="checkbox" class="vx-excl-cb" data-excl="${esc(e.id)}" ${state.excl[e.id]?'checked':''} />
+        </label>
         <div class="vx-entry-head">
           <span class="vx-word">${esc(e.word)}</span>
           ${e.pronunciation ? `<span class="vx-pron">[${esc(e.pronunciation)}]</span>` : ''}
         </div>
-        <label title="퀴즈에서 제외" style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;">
-          <input type="checkbox" class="vx-excl-cb" data-excl="${esc(e.id)}" ${state.excl[e.id]?'checked':''} />
-        </label>
         <button class="vx-play vx-play-icon" data-speak="${esc(e.word)}" ${hasTTS?'':'disabled'} title="단어 듣기">▶</button>
       </div>
       <p class="vx-meaning">${esc(e.meaning)}</p>
