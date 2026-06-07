@@ -66,6 +66,39 @@ const apps = [
     tags: ["lotto", "random", "utility"],
   },
   {
+    title: "공학용 계산기",
+    description: "삼각함수, 로그, 방정식, 미적분, 행렬, 통계, 진법, 단위 변환을 브라우저에서 바로 계산하는 도구입니다.",
+    i18n: {
+      ko: {
+        title: "공학용 계산기",
+        description: "삼각함수, 로그, 방정식, 미적분, 행렬, 통계, 진법, 단위 변환을 브라우저에서 바로 계산하는 도구입니다.",
+      },
+      en: {
+        title: "Scientific Calculator",
+        description: "A browser-based tool for trigonometry, logs, equations, calculus, matrices, statistics, bases, and unit conversion.",
+      },
+      ja: {
+        title: "関数電卓",
+        description: "三角関数、対数、方程式、微積分、行列、統計、進数、単位変換をブラウザーで計算できるツールです。",
+      },
+      zh: {
+        title: "科学计算器",
+        description: "可在浏览器中计算三角函数、对数、方程、微积分、矩阵、统计、进制和单位转换的工具。",
+      },
+      es: {
+        title: "Calculadora Científica",
+        description: "Una herramienta en el navegador para trigonometría, logaritmos, ecuaciones, cálculo, matrices, estadística, bases y unidades.",
+      },
+    },
+    category: "tool",
+    categoryLabel: "도구",
+    thumbnail: "scientific-calculator",
+    app_url: "apps/scientific-calculator/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["calculator", "math", "engineering", "utility"],
+  },
+  {
     title: "4x4 Sliding Puzzle",
     description: "",
     i18n: {

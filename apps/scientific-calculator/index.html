@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>공학용 계산기</title>
+    <link rel="stylesheet" href="../../assets/styles.css?v=20260606-auth-ui" />
+    <style>
+      body.calculator-app {
+        align-items: start;
+        place-items: start center;
+        padding: 16px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(237, 243, 241, 0.96)),
+          var(--bg);
+      }
+
+      .calculator-panel {
+        display: grid;
+        width: min(1180px, 100%);
+        gap: 16px;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .calculator-header {
+        display: flex;
+        gap: 12px;
+        align-items: end;
+        justify-content: space-between;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .calculator-title {
+        display: grid;
+        gap: 4px;
+      }
+
+      .calculator-title h1 {
+        font-size: clamp(1.55rem, 4vw, 2.6rem);
+      }
+
+      .calculator-status {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .angle-toggle,
+      .tab-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .angle-toggle {
+        justify-content: flex-end;
+      }
+
+      .segmented-button,
+      .tab-button,
+      .calc-button,
+      .action-button {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-weight: 900;
+        touch-action: manipulation;
+      }
+
+      .segmented-button,
+      .tab-button {
+        min-height: 38px;
+        padding: 0 12px;
+        font-size: 0.82rem;
+      }
+
+      .segmented-button[aria-pressed="true"],
+      .tab-button.is-active,
+      .calc-button:hover,
+      .calc-button:focus-visible,
+      .action-button:hover,
+      .action-button:focus-visible,
+      .segmented-button:hover,
+      .segmented-button:focus-visible,
+      .tab-button:hover,
+      .tab-button:focus-visible {
+        border-color: var(--accent);
+        color: var(--accent-strong);
+        outline: none;
+      }
+
+      .tab-bar {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--surface);
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+        gap: 16px;
+      }
+
+      .tool-card {
+        display: grid;
+        gap: 14px;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .tool-card h2,
+      .tool-card h3 {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.2;
+      }
+
+      .display {
+        display: grid;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        background: #f8faf9;
+      }
+
+      .expression-input,
+      .field,
+      .text-field,
+      .select-field {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-weight: 800;
+      }
+
+      .expression-input,
+      .field,
+      .select-field {
+        min-height: 42px;
+        padding: 0 11px;
+      }
+
+      .text-field {
+        min-height: 92px;
+        padding: 10px 11px;
+        resize: vertical;
+      }
+
+      .expression-input {
+        font-size: clamp(1.2rem, 3vw, 2rem);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .result-output {
+        min-height: 42px;
+        overflow-wrap: anywhere;
+        color: var(--accent-strong);
+        font-size: clamp(1.35rem, 4vw, 2.5rem);
+        font-weight: 900;
+        line-height: 1.2;
+        text-align: right;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .calc-button {
+        min-height: 48px;
+        padding: 0 6px;
+        font-size: 0.95rem;
+        line-height: 1;
+      }
+
+      .calc-button.operator {
+        background: #e8f4f2;
+      }
+
+      .calc-button.command {
+        background: #f1f5f9;
+        color: var(--muted);
+      }
+
+      .calc-button.equals,
+      .action-button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .calc-button.equals:hover,
+      .calc-button.equals:focus-visible,
+      .action-button.primary:hover,
+      .action-button.primary:focus-visible {
+        background: var(--accent-strong);
+        color: #fff;
+      }
+
+      .history-list,
+      .constant-grid,
+      .result-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .history-list {
+        max-height: 380px;
+        overflow: auto;
+      }
+
+      .history-item,
+      .constant-button,
+      .result-row {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--surface-strong);
+      }
+
+      .history-item {
+        display: grid;
+        gap: 4px;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .history-expression,
+      .result-label {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.75rem;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .history-result,
+      .result-value {
+        margin: 0;
+        overflow-wrap: anywhere;
+        color: var(--text);
+        font-size: 0.98rem;
+        font-weight: 900;
+        line-height: 1.4;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .form-grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .form-grid label,
+      .field-label {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .action-button {
+        min-height: 40px;
+        padding: 0 12px;
+        font-size: 0.82rem;
+      }
+
+      .constant-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .constant-button {
+        display: grid;
+        gap: 3px;
+        text-align: left;
+      }
+
+      .constant-name {
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 900;
+      }
+
+      .constant-value {
+        overflow-wrap: anywhere;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .panel-view[hidden] {
+        display: none;
+      }
+
+      .span-2 {
+        grid-column: span 2;
+      }
+
+      .sr-feedback {
+        min-height: 1.2em;
+        margin: 0;
+        color: var(--red);
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      @media (max-width: 860px) {
+        body.calculator-app {
+          padding: 10px;
+        }
+
+        .calculator-header,
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .calculator-header {
+          display: grid;
+        }
+
+        .angle-toggle {
+          justify-content: start;
+        }
+
+        .button-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .form-grid,
+        .form-grid.three,
+        .constant-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .span-2 {
+          grid-column: auto;
+        }
+      }
+    </style>
+  </head>
+  <body class="mini-app calculator-app">
+    <main class="calculator-panel">
+      <header class="calculator-header">
+        <div class="calculator-title">
+          <p class="eyebrow">Tool</p>
+          <h1>공학용 계산기</h1>
+          <p class="calculator-status" id="library-status">math.js 로딩 중</p>
+        </div>
+        <div class="angle-toggle" aria-label="각도 단위">
+          <button class="segmented-button" type="button" data-angle="deg" aria-pressed="true">DEG</button>
+          <button class="segmented-button" type="button" data-angle="rad" aria-pressed="false">RAD</button>
+        </div>
+      </header>
+
+      <nav class="tab-bar" aria-label="계산 모드">
+        <div class="tab-list">
+          <button class="tab-button is-active" type="button" data-tab="calculator">계산</button>
+          <button class="tab-button" type="button" data-tab="equation">방정식</button>
+          <button class="tab-button" type="button" data-tab="matrix">행렬</button>
+          <button class="tab-button" type="button" data-tab="stats">통계</button>
+          <button class="tab-button" type="button" data-tab="unit">단위</button>
+        </div>
+      </nav>
+
+      <section class="panel-view workspace" data-panel="calculator">
+        <article class="tool-card">
+          <div class="display">
+            <input class="expression-input" id="expression" value="" inputmode="decimal" autocomplete="off" aria-label="수식" />
+            <output class="result-output" id="main-result" aria-live="polite">0</output>
+            <p class="sr-feedback" id="calc-error" role="alert"></p>
+          </div>
+
+          <div class="button-grid" aria-label="계산 버튼">
+            <button class="calc-button command" type="button" data-action="clear">AC</button>
+            <button class="calc-button command" type="button" data-action="backspace">⌫</button>
+            <button class="calc-button command" type="button" data-insert="(">(</button>
+            <button class="calc-button command" type="button" data-insert=")">)</button>
+            <button class="calc-button operator" type="button" data-insert="%">%</button>
+            <button class="calc-button operator" type="button" data-insert="/">÷</button>
+
+            <button class="calc-button" type="button" data-insert="sin(">sin</button>
+            <button class="calc-button" type="button" data-insert="cos(">cos</button>
+            <button class="calc-button" type="button" data-insert="tan(">tan</button>
+            <button class="calc-button" type="button" data-insert="log(">log</button>
+            <button class="calc-button" type="button" data-insert="ln(">ln</button>
+            <button class="calc-button operator" type="button" data-insert="^">x^y</button>
+
+            <button class="calc-button" type="button" data-insert="asin(">asin</button>
+            <button class="calc-button" type="button" data-insert="acos(">acos</button>
+            <button class="calc-button" type="button" data-insert="atan(">atan</button>
+            <button class="calc-button" type="button" data-insert="sqrt(">√</button>
+            <button class="calc-button" type="button" data-insert="abs(">abs</button>
+            <button class="calc-button operator" type="button" data-insert="!">n!</button>
+
+            <button class="calc-button" type="button" data-insert="7">7</button>
+            <button class="calc-button" type="button" data-insert="8">8</button>
+            <button class="calc-button" type="button" data-insert="9">9</button>
+            <button class="calc-button" type="button" data-insert="pi">π</button>
+            <button class="calc-button" type="button" data-insert="e">e</button>
+            <button class="calc-button operator" type="button" data-insert="*">×</button>
+
+            <button class="calc-button" type="button" data-insert="4">4</button>
+            <button class="calc-button" type="button" data-insert="5">5</button>
+            <button class="calc-button" type="button" data-insert="6">6</button>
+            <button class="calc-button" type="button" data-insert="10^(">10^x</button>
+            <button class="calc-button" type="button" data-insert="exp(">e^x</button>
+            <button class="calc-button operator" type="button" data-insert="-">−</button>
+
+            <button class="calc-button" type="button" data-insert="1">1</button>
+            <button class="calc-button" type="button" data-insert="2">2</button>
+            <button class="calc-button" type="button" data-insert="3">3</button>
+            <button class="calc-button" type="button" data-insert="Ans">Ans</button>
+            <button class="calc-button" type="button" data-insert=",">,</button>
+            <button class="calc-button operator" type="button" data-insert="+">+</button>
+
+            <button class="calc-button" type="button" data-insert="0">0</button>
+            <button class="calc-button" type="button" data-insert=".">.</button>
+            <button class="calc-button" type="button" data-insert="mod(">mod</button>
+            <button class="calc-button" type="button" data-action="reciprocal">1/x</button>
+            <button class="calc-button" type="button" data-action="square">x²</button>
+            <button class="calc-button equals" type="button" data-action="evaluate">=</button>
+          </div>
+        </article>
+
+        <aside class="tool-card">
+          <h2>기록</h2>
+          <div class="history-list" id="history-list" aria-live="polite"></div>
+          <div class="action-row">
+            <button class="action-button" type="button" id="clear-history">기록 삭제</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel-view workspace" data-panel="equation" hidden>
+        <article class="tool-card">
+          <h2>방정식</h2>
+          <label class="field-label">
+            f(x)=0
+            <input class="field" id="equation-input" value="x^2 - 2 = 0" autocomplete="off" />
+          </label>
+          <div class="form-grid three">
+            <label>
+              시작 x
+              <input class="field" id="root-start" value="-10" inputmode="decimal" />
+            </label>
+            <label>
+              끝 x
+              <input class="field" id="root-end" value="10" inputmode="decimal" />
+            </label>
+            <label>
+              간격
+              <input class="field" id="root-step" value="0.25" inputmode="decimal" />
+            </label>
+          </div>
+          <div class="action-row">
+            <button class="action-button primary" type="button" id="solve-root">해 찾기</button>
+          </div>
+          <div class="result-list" id="root-results"></div>
+        </article>
+
+        <aside class="tool-card">
+          <h2>미적분</h2>
+          <label class="field-label">
+            f(x)
+            <input class="field" id="calculus-input" value="sin(x)" autocomplete="off" />
+          </label>
+          <div class="form-grid three">
+            <label>
+              x
+              <input class="field" id="derivative-x" value="1" inputmode="decimal" />
+            </label>
+            <label>
+              a
+              <input class="field" id="integral-a" value="0" inputmode="decimal" />
+            </label>
+            <label>
+              b
+              <input class="field" id="integral-b" value="3.1415926535" inputmode="decimal" />
+            </label>
+          </div>
+          <div class="action-row">
+            <button class="action-button" type="button" id="run-derivative">미분</button>
+            <button class="action-button" type="button" id="run-integral">적분</button>
+          </div>
+          <div class="result-list" id="calculus-results"></div>
+        </aside>
+      </section>
+
+      <section class="panel-view workspace" data-panel="matrix" hidden>
+        <article class="tool-card">
+          <h2>행렬</h2>
+          <div class="form-grid">
+            <label>
+              A
+              <textarea class="text-field" id="matrix-a">1, 2
+3, 4</textarea>
+            </label>
+            <label>
+              B
+              <textarea class="text-field" id="matrix-b">5, 6
+7, 8</textarea>
+            </label>
+          </div>
+          <div class="action-row">
+            <button class="action-button" type="button" data-matrix="detA">det(A)</button>
+            <button class="action-button" type="button" data-matrix="invA">A⁻¹</button>
+            <button class="action-button" type="button" data-matrix="transposeA">Aᵀ</button>
+            <button class="action-button" type="button" data-matrix="add">A+B</button>
+            <button class="action-button" type="button" data-matrix="multiply">A×B</button>
+          </div>
+          <div class="result-list" id="matrix-results"></div>
+        </article>
+
+        <aside class="tool-card">
+          <h2>벡터</h2>
+          <div class="form-grid">
+            <label>
+              u
+              <input class="field" id="vector-u" value="1, 2, 3" />
+            </label>
+            <label>
+              v
+              <input class="field" id="vector-v" value="4, 5, 6" />
+            </label>
+          </div>
+          <div class="action-row">
+            <button class="action-button" type="button" id="dot-product">내적</button>
+            <button class="action-button" type="button" id="cross-product">외적</button>
+          </div>
+          <div class="result-list" id="vector-results"></div>
+        </aside>
+      </section>
+
+      <section class="panel-view workspace" data-panel="stats" hidden>
+        <article class="tool-card">
+          <h2>통계</h2>
+          <label class="field-label">
+            데이터
+            <textarea class="text-field" id="stats-data">12, 15, 15, 18, 21, 24</textarea>
+          </label>
+          <div class="action-row">
+            <button class="action-button primary" type="button" id="run-stats">계산</button>
+          </div>
+          <div class="result-list" id="stats-results"></div>
+        </article>
+
+        <aside class="tool-card">
+          <h2>확률 · 복소수 · 진법</h2>
+          <div class="form-grid">
+            <label>
+              n
+              <input class="field" id="prob-n" value="10" inputmode="numeric" />
+            </label>
+            <label>
+              r
+              <input class="field" id="prob-r" value="3" inputmode="numeric" />
+            </label>
+            <label class="span-2">
+              복소수 식
+              <input class="field" id="complex-input" value="(2 + 3i) * (1 - i)" />
+            </label>
+            <label>
+              값
+              <input class="field" id="base-value" value="255" />
+            </label>
+            <label>
+              현재 진법
+              <select class="select-field" id="base-from">
+                <option value="2">2</option>
+                <option value="8">8</option>
+                <option value="10" selected>10</option>
+                <option value="16">16</option>
+              </select>
+            </label>
+          </div>
+          <div class="action-row">
+            <button class="action-button" type="button" id="run-probability">nPr/nCr</button>
+            <button class="action-button" type="button" id="run-complex">복소수</button>
+            <button class="action-button" type="button" id="run-base">진법 변환</button>
+          </div>
+          <div class="result-list" id="advanced-results"></div>
+        </aside>
+      </section>
+
+      <section class="panel-view workspace" data-panel="unit" hidden>
+        <article class="tool-card">
+          <h2>단위 변환</h2>
+          <div class="form-grid">
+            <label>
+              종류
+              <select class="select-field" id="unit-category"></select>
+            </label>
+            <label>
+              값
+              <input class="field" id="unit-value" value="1" inputmode="decimal" />
+            </label>
+            <label>
+              From
+              <select class="select-field" id="unit-from"></select>
+            </label>
+            <label>
+              To
+              <select class="select-field" id="unit-to"></select>
+            </label>
+          </div>
+          <div class="action-row">
+            <button class="action-button primary" type="button" id="run-unit">변환</button>
+          </div>
+          <div class="result-list" id="unit-results"></div>
+        </article>
+
+        <aside class="tool-card">
+          <h2>과학 상수</h2>
+          <div class="constant-grid" id="constant-grid"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@13.0.3/lib/browser/math.js"></script>
+    <script>
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+      const state = {
+        angle: "deg",
+        ans: 0,
+        history: JSON.parse(localStorage.getItem("grayrockclub-calculator-history") || "[]"),
+      };
+
+      const expressionInput = $("#expression");
+      const mainResult = $("#main-result");
+      const calcError = $("#calc-error");
+      const historyList = $("#history-list");
+      const libraryStatus = $("#library-status");
+
+      const constants = [
+        ["빛의 속도 c", "299792458"],
+        ["중력가속도 g", "9.80665"],
+        ["플랑크 상수 h", "6.62607015e-34"],
+        ["아보가드로 NA", "6.02214076e23"],
+        ["기체상수 R", "8.314462618"],
+        ["전자전하 e", "1.602176634e-19"],
+        ["볼츠만 k", "1.380649e-23"],
+        ["진공 유전율 ε0", "8.8541878128e-12"],
+      ];
+
+      const unitData = {
+        길이: {
+          m: 1,
+          km: 1000,
+          cm: 0.01,
+          mm: 0.001,
+          in: 0.0254,
+          ft: 0.3048,
+          yd: 0.9144,
+          mi: 1609.344,
+        },
+        질량: {
+          kg: 1,
+          g: 0.001,
+          mg: 0.000001,
+          lb: 0.45359237,
+          oz: 0.028349523125,
+        },
+        시간: {
+          s: 1,
+          min: 60,
+          h: 3600,
+          day: 86400,
+        },
+        속도: {
+          "m/s": 1,
+          "km/h": 1 / 3.6,
+          mph: 0.44704,
+          knot: 0.514444,
+        },
+        에너지: {
+          J: 1,
+          kJ: 1000,
+          cal: 4.184,
+          kcal: 4184,
+          Wh: 3600,
+          kWh: 3600000,
+          eV: 1.602176634e-19,
+        },
+        온도: {
+          Celsius: "temperature",
+          Fahrenheit: "temperature",
+          Kelvin: "temperature",
+        },
+      };
+
+      function hasMath() {
+        return typeof math !== "undefined";
+      }
+
+      function formatValue(value) {
+        if (Array.isArray(value)) return `[${value.map(formatValue).join(", ")}]`;
+        if (hasMath() && math.typeOf(value) === "Matrix") return formatValue(value.toArray());
+        if (hasMath() && math.typeOf(value) === "Complex") return value.toString();
+        if (typeof value === "number") {
+          if (!Number.isFinite(value)) return String(value);
+          if (Math.abs(value) >= 1e10 || (Math.abs(value) < 1e-6 && value !== 0)) {
+            return Number(value.toPrecision(12)).toExponential();
+          }
+          return Number(value.toPrecision(12)).toString();
+        }
+        return String(value);
+      }
+
+      function angleIn(value) {
+        return state.angle === "deg" ? Number(value) * Math.PI / 180 : Number(value);
+      }
+
+      function angleOut(value) {
+        return state.angle === "deg" ? Number(value) * 180 / Math.PI : Number(value);
+      }
+
+      function scope() {
+        return {
+          Ans: state.ans,
+          pi: Math.PI,
+          e: Math.E,
+          sin: (x) => Math.sin(angleIn(x)),
+          cos: (x) => Math.cos(angleIn(x)),
+          tan: (x) => Math.tan(angleIn(x)),
+          asin: (x) => angleOut(Math.asin(x)),
+          acos: (x) => angleOut(Math.acos(x)),
+          atan: (x) => angleOut(Math.atan(x)),
+          ln: (x) => Math.log(x),
+          log: (x) => Math.log10(x),
+          mod: (x, y) => Number(x) % Number(y),
+        };
+      }
+
+      function evaluateExpression(expression, extraScope = {}) {
+        if (!hasMath()) throw new Error("math.js를 불러오지 못했습니다.");
+        return math.evaluate(expression, { ...scope(), ...extraScope });
+      }
+
+      function saveHistory() {
+        localStorage.setItem("grayrockclub-calculator-history", JSON.stringify(state.history.slice(0, 30)));
+      }
+
+      function renderHistory() {
+        if (state.history.length === 0) {
+          historyList.innerHTML = `<p class="history-expression">-</p>`;
+          return;
+        }
+        historyList.innerHTML = state.history
+          .slice(0, 30)
+          .map((item, index) => `
+            <button class="history-item" type="button" data-history-index="${index}">
+              <span class="history-expression">${item.expression}</span>
+              <span class="history-result">${item.result}</span>
+            </button>
+          `)
+          .join("");
+      }
+
+      function setError(message = "") {
+        calcError.textContent = message;
+      }
+
+      function runMainEvaluation() {
+        const expression = expressionInput.value.trim();
+        if (!expression) return;
+        try {
+          const value = evaluateExpression(expression);
+          const formatted = formatValue(value);
+          state.ans = Number(value?.valueOf?.() ?? value);
+          mainResult.textContent = formatted;
+          state.history.unshift({ expression, result: formatted });
+          state.history = state.history.slice(0, 30);
+          saveHistory();
+          renderHistory();
+          setError();
+        } catch (error) {
+          setError("계산할 수 없는 수식입니다.");
+        }
+      }
+
+      function insertAtCursor(text) {
+        const start = expressionInput.selectionStart ?? expressionInput.value.length;
+        const end = expressionInput.selectionEnd ?? expressionInput.value.length;
+        expressionInput.value = expressionInput.value.slice(0, start) + text + expressionInput.value.slice(end);
+        const next = start + text.length;
+        expressionInput.focus();
+        expressionInput.setSelectionRange(next, next);
+      }
+
+      function parseMatrix(text) {
+        return text
+          .trim()
+          .split(/\n|;/)
+          .filter(Boolean)
+          .map((row) => row.split(/[,\s]+/).filter(Boolean).map(Number));
+      }
+
+      function parseVector(text) {
+        return text.split(/[,\s]+/).filter(Boolean).map(Number);
+      }
+
+      function renderRows(target, rows) {
+        target.innerHTML = rows
+          .map(([label, value]) => `
+            <div class="result-row">
+              <p class="result-label">${label}</p>
+              <p class="result-value">${formatValue(value)}</p>
+            </div>
+          `)
+          .join("");
+      }
+
+      function normalizeEquation(text) {
+        const parts = text.split("=");
+        return parts.length === 2 ? `(${parts[0]}) - (${parts[1]})` : text;
+      }
+
+      function findRoots(expression, start, end, step) {
+        const roots = [];
+        const fn = (x) => Number(evaluateExpression(expression, { x }));
+        let prevX = start;
+        let prevY = fn(prevX);
+        for (let x = start + step; x <= end + step / 2; x += step) {
+          const y = fn(x);
+          if (Number.isFinite(y) && Math.abs(y) < 1e-9) roots.push(x);
+          if (Number.isFinite(prevY) && Number.isFinite(y) && prevY * y < 0) {
+            let lo = prevX;
+            let hi = x;
+            for (let i = 0; i < 80; i += 1) {
+              const mid = (lo + hi) / 2;
+              const midY = fn(mid);
+              if (Math.abs(midY) < 1e-12) {
+                lo = mid;
+                hi = mid;
+                break;
+              }
+              if (fn(lo) * midY <= 0) hi = mid;
+              else lo = mid;
+            }
+            roots.push((lo + hi) / 2);
+          }
+          prevX = x;
+          prevY = y;
+        }
+        return [...new Set(roots.map((root) => Number(root.toPrecision(12))))];
+      }
+
+      function derivative(expression, x) {
+        const h = Math.max(1e-5, Math.abs(x) * 1e-5);
+        const f = (value) => Number(evaluateExpression(expression, { x: value }));
+        return (f(x + h) - f(x - h)) / (2 * h);
+      }
+
+      function integral(expression, a, b) {
+        const n = 1000;
+        const evenN = n % 2 === 0 ? n : n + 1;
+        const h = (b - a) / evenN;
+        const f = (value) => Number(evaluateExpression(expression, { x: value }));
+        let total = f(a) + f(b);
+        for (let i = 1; i < evenN; i += 1) {
+          total += f(a + i * h) * (i % 2 === 0 ? 2 : 4);
+        }
+        return total * h / 3;
+      }
+
+      function factorial(n) {
+        if (n < 0 || !Number.isInteger(n)) throw new Error("invalid n");
+        let result = 1;
+        for (let i = 2; i <= n; i += 1) result *= i;
+        return result;
+      }
+
+      function nPr(n, r) {
+        return factorial(n) / factorial(n - r);
+      }
+
+      function nCr(n, r) {
+        return factorial(n) / (factorial(r) * factorial(n - r));
+      }
+
+      function convertTemperature(value, from, to) {
+        const celsius = from === "Celsius" ? value : from === "Fahrenheit" ? (value - 32) * 5 / 9 : value - 273.15;
+        if (to === "Celsius") return celsius;
+        if (to === "Fahrenheit") return celsius * 9 / 5 + 32;
+        return celsius + 273.15;
+      }
+
+      function populateUnits() {
+        const categorySelect = $("#unit-category");
+        categorySelect.innerHTML = Object.keys(unitData).map((name) => `<option value="${name}">${name}</option>`).join("");
+        const updateUnitOptions = () => {
+          const units = Object.keys(unitData[categorySelect.value]);
+          $("#unit-from").innerHTML = units.map((unit) => `<option value="${unit}">${unit}</option>`).join("");
+          $("#unit-to").innerHTML = units.map((unit, index) => `<option value="${unit}" ${index === 1 ? "selected" : ""}>${unit}</option>`).join("");
+        };
+        categorySelect.addEventListener("change", updateUnitOptions);
+        updateUnitOptions();
+      }
+
+      function renderConstants() {
+        $("#constant-grid").innerHTML = constants
+          .map(([name, value]) => `
+            <button class="constant-button" type="button" data-constant="${value}">
+              <span class="constant-name">${name}</span>
+              <span class="constant-value">${value}</span>
+            </button>
+          `)
+          .join("");
+      }
+
+      $$(".tab-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          $$(".tab-button").forEach((item) => item.classList.toggle("is-active", item === button));
+          $$(".panel-view").forEach((panel) => {
+            panel.hidden = panel.dataset.panel !== button.dataset.tab;
+          });
+        });
+      });
+
+      $$(".segmented-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.angle = button.dataset.angle;
+          $$(".segmented-button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        });
+      });
+
+      $$(".calc-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.action;
+          if (button.dataset.insert) insertAtCursor(button.dataset.insert);
+          if (action === "clear") {
+            expressionInput.value = "";
+            mainResult.textContent = "0";
+            setError();
+          }
+          if (action === "backspace") {
+            expressionInput.value = expressionInput.value.slice(0, -1);
+          }
+          if (action === "reciprocal") {
+            expressionInput.value = `1/(${expressionInput.value || "Ans"})`;
+          }
+          if (action === "square") {
+            expressionInput.value = `(${expressionInput.value || "Ans"})^2`;
+          }
+          if (action === "evaluate") runMainEvaluation();
+        });
+      });
+
+      expressionInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") runMainEvaluation();
+      });
+
+      historyList.addEventListener("click", (event) => {
+        const item = event.target.closest("[data-history-index]");
+        if (!item) return;
+        expressionInput.value = state.history[Number(item.dataset.historyIndex)].expression;
+        expressionInput.focus();
+      });
+
+      $("#clear-history").addEventListener("click", () => {
+        state.history = [];
+        saveHistory();
+        renderHistory();
+      });
+
+      $("#solve-root").addEventListener("click", () => {
+        try {
+          const expression = normalizeEquation($("#equation-input").value);
+          const roots = findRoots(expression, Number($("#root-start").value), Number($("#root-end").value), Number($("#root-step").value));
+          renderRows($("#root-results"), roots.length ? roots.map((root, index) => [`x${index + 1}`, root]) : [["결과", "구간에서 해를 찾지 못했습니다."]]);
+        } catch (error) {
+          renderRows($("#root-results"), [["오류", "방정식을 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("#run-derivative").addEventListener("click", () => {
+        try {
+          const expression = $("#calculus-input").value;
+          const x = Number($("#derivative-x").value);
+          renderRows($("#calculus-results"), [["f'(x)", derivative(expression, x)]]);
+        } catch (error) {
+          renderRows($("#calculus-results"), [["오류", "미분값을 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("#run-integral").addEventListener("click", () => {
+        try {
+          const expression = $("#calculus-input").value;
+          renderRows($("#calculus-results"), [["∫ f(x) dx", integral(expression, Number($("#integral-a").value), Number($("#integral-b").value))]]);
+        } catch (error) {
+          renderRows($("#calculus-results"), [["오류", "적분값을 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("[data-panel='matrix']").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-matrix]");
+        if (!button) return;
+        try {
+          const A = parseMatrix($("#matrix-a").value);
+          const B = parseMatrix($("#matrix-b").value);
+          const op = button.dataset.matrix;
+          const value = {
+            detA: () => math.det(A),
+            invA: () => math.inv(A),
+            transposeA: () => math.transpose(A),
+            add: () => math.add(A, B),
+            multiply: () => math.multiply(A, B),
+          }[op]();
+          renderRows($("#matrix-results"), [[button.textContent, value]]);
+        } catch (error) {
+          renderRows($("#matrix-results"), [["오류", "행렬을 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("#dot-product").addEventListener("click", () => {
+        try {
+          renderRows($("#vector-results"), [["u · v", math.dot(parseVector($("#vector-u").value), parseVector($("#vector-v").value))]]);
+        } catch (error) {
+          renderRows($("#vector-results"), [["오류", "벡터를 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("#cross-product").addEventListener("click", () => {
+        try {
+          renderRows($("#vector-results"), [["u × v", math.cross(parseVector($("#vector-u").value), parseVector($("#vector-v").value))]]);
+        } catch (error) {
+          renderRows($("#vector-results"), [["오류", "3차원 벡터만 외적을 계산할 수 있습니다."]]);
+        }
+      });
+
+      $("#run-stats").addEventListener("click", () => {
+        try {
+          const data = parseVector($("#stats-data").value).sort((a, b) => a - b);
+          renderRows($("#stats-results"), [
+            ["개수", data.length],
+            ["합계", math.sum(data)],
+            ["평균", math.mean(data)],
+            ["중앙값", math.median(data)],
+            ["분산", math.variance(data, "uncorrected")],
+            ["표준편차", math.std(data, "uncorrected")],
+            ["최솟값", Math.min(...data)],
+            ["최댓값", Math.max(...data)],
+          ]);
+        } catch (error) {
+          renderRows($("#stats-results"), [["오류", "통계를 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("#run-probability").addEventListener("click", () => {
+        try {
+          const n = Number($("#prob-n").value);
+          const r = Number($("#prob-r").value);
+          renderRows($("#advanced-results"), [["nPr", nPr(n, r)], ["nCr", nCr(n, r)]]);
+        } catch (error) {
+          renderRows($("#advanced-results"), [["오류", "n과 r을 확인해 주세요."]]);
+        }
+      });
+
+      $("#run-complex").addEventListener("click", () => {
+        try {
+          renderRows($("#advanced-results"), [["복소수 결과", evaluateExpression($("#complex-input").value)]]);
+        } catch (error) {
+          renderRows($("#advanced-results"), [["오류", "복소수 식을 계산할 수 없습니다."]]);
+        }
+      });
+
+      $("#run-base").addEventListener("click", () => {
+        try {
+          const value = parseInt($("#base-value").value, Number($("#base-from").value));
+          renderRows($("#advanced-results"), [
+            ["2진수", value.toString(2)],
+            ["8진수", value.toString(8)],
+            ["10진수", value.toString(10)],
+            ["16진수", value.toString(16).toUpperCase()],
+          ]);
+        } catch (error) {
+          renderRows($("#advanced-results"), [["오류", "값과 진법을 확인해 주세요."]]);
+        }
+      });
+
+      $("#run-unit").addEventListener("click", () => {
+        try {
+          const category = $("#unit-category").value;
+          const value = Number($("#unit-value").value);
+          const from = $("#unit-from").value;
+          const to = $("#unit-to").value;
+          const converted = category === "온도"
+            ? convertTemperature(value, from, to)
+            : value * unitData[category][from] / unitData[category][to];
+          renderRows($("#unit-results"), [[`${from} → ${to}`, converted]]);
+        } catch (error) {
+          renderRows($("#unit-results"), [["오류", "단위를 변환할 수 없습니다."]]);
+        }
+      });
+
+      $("#constant-grid").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-constant]");
+        if (!button) return;
+        expressionInput.value = expressionInput.value ? `${expressionInput.value}${button.dataset.constant}` : button.dataset.constant;
+        $("[data-tab='calculator']").click();
+        expressionInput.focus();
+      });
+
+      window.addEventListener("load", () => {
+        libraryStatus.textContent = hasMath() ? "브라우저 계산 엔진 준비됨" : "math.js 로딩 실패";
+      });
+
+      populateUnits();
+      renderConstants();
+      renderHistory();
+    </script>
+  </body>
+</html>
