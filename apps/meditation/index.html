@@ -162,10 +162,16 @@
       .error {
         min-height: 20px;
         margin: 18px 0 0;
-        color: #fb7185;
+        color: #9ca3b4;
         font-size: 13px;
         font-weight: 700;
+        letter-spacing: 0.08em;
         text-align: center;
+      }
+
+      .error.is-error {
+        color: #fb7185;
+        letter-spacing: 0;
       }
 
       @media (max-width: 420px) {
@@ -341,15 +347,17 @@
 
           state.currentTrackIndex = index;
           musicAudio.src = bgmTracks[index].uri;
+          showLoading();
           await musicAudio.play();
           state.playing = true;
           scrollMusicTileIntoView(index);
           updateMusicTiles();
           updateMediaSession();
+          clearStatus();
         } catch (error) {
           state.playing = false;
           updateMusicTiles();
-          showError("음악을 재생하지 못했어요.");
+          showLoading();
         }
       }
 
@@ -500,7 +508,18 @@
       }
 
       function showError(message) {
+        dom.errorLine.classList.toggle("is-error", Boolean(message));
         dom.errorLine.textContent = message;
+      }
+
+      function showLoading() {
+        dom.errorLine.classList.remove("is-error");
+        dom.errorLine.textContent = "LOADING...";
+      }
+
+      function clearStatus() {
+        dom.errorLine.classList.remove("is-error");
+        dom.errorLine.textContent = "";
       }
 
       function refreshLucideIcons() {
@@ -538,7 +557,7 @@
         dom.musicCarousel.addEventListener("click", (event) => {
           const tile = event.target.closest(".music-tile");
           if (!tile) return;
-          showError("");
+          clearStatus();
           playTrack(Number(tile.dataset.trackIndex));
         });
 
@@ -555,7 +574,7 @@
         dom.soundGrid.addEventListener("pointerdown", (event) => {
           const tile = event.target.closest(".sound-tile");
           if (!tile) return;
-          showError("");
+          clearStatus();
           event.preventDefault();
           state.activeSoundPointerId = event.pointerId;
           state.activeSoundTile = tile;
@@ -585,7 +604,7 @@
             const tile = event.target.closest(".sound-tile");
             if (!touch || !tile) return;
             event.preventDefault();
-            showError("");
+            clearStatus();
             state.activeSoundTile = tile;
             setLevelFromPointer(tile, touch.clientY);
           }, { passive: false });
@@ -608,6 +627,20 @@
         musicAudio.addEventListener("ended", () => {
           state.playing = false;
           nextTrack();
+        });
+        musicAudio.addEventListener("loadstart", () => {
+          if (state.currentTrackIndex >= 0 && !state.playing) showLoading();
+        });
+        musicAudio.addEventListener("waiting", () => {
+          if (state.currentTrackIndex >= 0) showLoading();
+        });
+        musicAudio.addEventListener("stalled", () => {
+          if (state.currentTrackIndex >= 0) showLoading();
+        });
+        musicAudio.addEventListener("playing", () => {
+          state.playing = true;
+          updateMusicTiles();
+          clearStatus();
         });
         musicAudio.addEventListener("pause", () => {
           if (!musicAudio.ended) {
