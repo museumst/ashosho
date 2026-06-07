@@ -600,7 +600,7 @@
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
           <label class="vx-file-alt-btn" id="drop-zone" for="file-input">
             <span id="drop-filename-text">📂 파일 선택</span>
-            <input id="file-input" type="file" accept="application/json,.json" style="display:none;" />
+            <input id="file-input" type="file" accept="application/json,.json" multiple style="display:none;" />
           </label>
           <button class="vx-btn primary" id="btn-file-load" style="min-height:38px;padding:0 18px;font-size:.9rem;" disabled>만들기</button>
         </div>
@@ -914,12 +914,6 @@ async function handleFile(file) {
     setStatus(`"${bookTitle}" 단어장 생성 완료! ${countAll()}개 단어`);
     saveBooks(); renderAll(); showTab('study');
   } catch(e) { setStatus('불러오기 실패: ' + e.message, 'error'); }
-  finally {
-    document.getElementById('file-input').value = '';
-    _pendingFile = null;
-    if (typeof btnFileLoad !== 'undefined') btnFileLoad.disabled = true;
-    showFilename(null);
-  }
 }
 
 // ────────────────────────────────────────────────────────
@@ -1208,34 +1202,69 @@ document.getElementById('btn-copy-prompt').addEventListener('click', () => {
 });
 
 
-// File upload (secondary)
+// File upload (secondary) — 다중 파일 지원
 const dz = document.getElementById('drop-zone');
 const fi = document.getElementById('file-input');
 const btnFileLoad = document.getElementById('btn-file-load');
-let _pendingFile = null;
+let _pendingFiles = [];
 
-function setFileReady(file) {
-  _pendingFile = file || null;
-  showFilename(file ? file.name : null);
-  // 이름 자동 채우기 (비어있을 때만)
-  if (file) {
+function setFilesReady(files) {
+  _pendingFiles = files ? Array.from(files) : [];
+  if (_pendingFiles.length === 0) {
+    showFilename(null);
+    btnFileLoad.disabled = true;
+  } else if (_pendingFiles.length === 1) {
+    showFilename(_pendingFiles[0].name);
     const nameInput = document.getElementById('unit-name-input');
-    if (!nameInput.value.trim()) {
-      nameInput.value = file.name.replace(/\.json$/i, '');
-    }
+    if (!nameInput.value.trim()) nameInput.value = _pendingFiles[0].name.replace(/\.json$/i, '');
     btnFileLoad.disabled = false;
   } else {
-    btnFileLoad.disabled = true;
+    showFilename(`${_pendingFiles.length}개 파일 선택됨`);
+    btnFileLoad.disabled = false;
   }
 }
 
-fi.addEventListener('change', () => setFileReady(fi.files[0] || null));
-btnFileLoad.addEventListener('click', () => {
-  if (_pendingFile) handleFile(_pendingFile);
-});
+async function handleFiles(files) {
+  if (!files.length) return;
+  let successCount = 0, lastTitle = '';
+  for (const file of files) {
+    try {
+      const raw = JSON.parse(await file.text());
+      const incoming = normalize(raw);
+      // 단어장 이름: 파일명 → 이름 입력창(파일 1개일 때만)
+      const nameInput = document.getElementById('unit-name-input');
+      const rawTitle = files.length === 1
+        ? (nameInput.value.trim() || file.name.replace(/\.json$/i, ''))
+        : file.name.replace(/\.json$/i, '');
+      const bookTitle = uniqueTitle(rawTitle);
+      incoming.title = bookTitle;
+      incoming.units[0].title = bookTitle;
+      state.books.push(incoming);
+      state.bookIndex = state.books.length - 1;
+      lastTitle = bookTitle;
+      successCount++;
+    } catch(e) {
+      setStatus(`"${file.name}" 불러오기 실패: ${e.message}`, 'error');
+    }
+  }
+  if (successCount > 0) {
+    saveBooks(); renderAll(); showTab('study');
+    const msg = successCount === 1
+      ? `"${lastTitle}" 단어장 생성 완료! ${countAll()}개 단어`
+      : `${successCount}개 단어장 생성 완료!`;
+    setStatus(msg);
+  }
+  fi.value = '';
+  _pendingFiles = [];
+  btnFileLoad.disabled = true;
+  showFilename(null);
+}
+
+fi.addEventListener('change', () => setFilesReady(fi.files));
+btnFileLoad.addEventListener('click', () => handleFiles(_pendingFiles));
 ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('over'); }));
 ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('over'); }));
-dz.addEventListener('drop', e => { setFileReady(e.dataTransfer.files[0]); });
+dz.addEventListener('drop', e => { setFilesReady(e.dataTransfer.files); });
 
 // Paste load
 // JSON이 여러 개 붙어 있을 경우 분리해서 파싱
