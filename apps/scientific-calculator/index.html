@@ -75,7 +75,6 @@
       .tab-button,
       .calc-button,
       .action-button,
-      .tutorial-toggle,
       .modal-close {
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -88,8 +87,7 @@
       }
 
       .segmented-button,
-      .tab-button,
-      .tutorial-toggle {
+      .tab-button {
         min-height: 38px;
         padding: 0 12px;
         font-size: 0.82rem;
@@ -101,8 +99,6 @@
       .calc-button:focus-visible,
       .action-button:hover,
       .action-button:focus-visible,
-      .tutorial-toggle:hover,
-      .tutorial-toggle:focus-visible,
       .segmented-button:hover,
       .segmented-button:focus-visible,
       .tab-button:hover,
@@ -112,16 +108,71 @@
         outline: none;
       }
 
-      .tutorial-toggle[aria-pressed="true"] {
-        border-color: var(--accent);
-        background: var(--accent);
-        color: #fff;
+      .tutorial-toggle {
+        display: inline-flex;
+        min-height: 36px;
+        align-items: center;
+        gap: 8px;
+        border: 0;
+        border-radius: 999px;
+        padding: 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 900;
+        touch-action: manipulation;
+      }
+
+      .tutorial-toggle:focus-visible {
+        outline: 3px solid rgba(249, 115, 22, 0.28);
+        outline-offset: 3px;
+      }
+
+      .tutorial-switch-track {
+        position: relative;
+        display: block;
+        width: 54px;
+        height: 30px;
+        border: 1px solid #cfd6d2;
+        border-radius: 999px;
+        background: #e6ebe8;
+        transition:
+          background 0.16s ease,
+          border-color 0.16s ease;
+      }
+
+      .tutorial-switch-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(20, 24, 28, 0.22);
+        transition: transform 0.16s ease;
+      }
+
+      .tutorial-toggle[aria-checked="true"] {
+        color: #c2410c;
+      }
+
+      .tutorial-toggle[aria-checked="true"] .tutorial-switch-track {
+        border-color: #f97316;
+        background: #f97316;
+      }
+
+      .tutorial-toggle[aria-checked="true"] .tutorial-switch-thumb {
+        transform: translateX(24px);
       }
 
       .calculator-panel.is-tutorial .calc-button,
       .calculator-panel.is-tutorial .action-button,
       .calculator-panel.is-tutorial .segmented-button,
       .calculator-panel.is-tutorial .constant-button {
+        border-color: #fdba74;
         border-style: dashed;
       }
 
@@ -429,6 +480,25 @@
         font-size: 0.86rem;
       }
 
+      .modal-preferences {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        width: fit-content;
+        max-width: 100%;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 900;
+        line-height: 1.3;
+      }
+
+      .modal-preferences input {
+        width: 18px;
+        height: 18px;
+        accent-color: #f97316;
+      }
+
       .modal-close {
         display: grid;
         width: 36px;
@@ -485,7 +555,12 @@
           <p class="eyebrow">Tool</p>
           <div class="title-row">
             <h1>공학용 계산기</h1>
-            <button class="tutorial-toggle" type="button" id="tutorial-toggle" aria-pressed="false">튜토리얼 OFF</button>
+            <button class="tutorial-toggle" type="button" id="tutorial-toggle" role="switch" aria-checked="false">
+              <span class="tutorial-switch-track" aria-hidden="true">
+                <span class="tutorial-switch-thumb"></span>
+              </span>
+              <span class="tutorial-toggle-text" id="tutorial-toggle-text">튜토리얼 OFF</span>
+            </button>
           </div>
           <p class="calculator-status" id="library-status">math.js 로딩 중</p>
         </div>
@@ -771,6 +846,10 @@
         <p class="modal-body" id="tutorial-modal-body"></p>
         <p class="modal-example" id="tutorial-modal-example"></p>
         <p class="modal-context" id="tutorial-modal-context"></p>
+        <label class="modal-preferences" id="tutorial-intro-preferences" hidden>
+          <input type="checkbox" id="tutorial-intro-dismiss" />
+          <span>다시 보지 않기</span>
+        </label>
       </div>
     </dialog>
 
@@ -797,6 +876,10 @@
       const tutorialBody = $("#tutorial-modal-body");
       const tutorialExample = $("#tutorial-modal-example");
       const tutorialContext = $("#tutorial-modal-context");
+      const tutorialToggleText = $("#tutorial-toggle-text");
+      const tutorialIntroPreferences = $("#tutorial-intro-preferences");
+      const tutorialIntroDismiss = $("#tutorial-intro-dismiss");
+      const tutorialIntroDismissKey = "grayrockclub-calculator-tutorial-intro-dismissed";
 
       const tutorialByInsert = {
         "(": ["괄호", "계산 순서를 직접 정할 때 씁니다. 괄호 안의 계산이 먼저 처리됩니다.", "예: (2 + 3) * 4 = 20", "복잡한 수식을 입력할 때 가장 먼저 익숙해져야 하는 기본 도구입니다."],
@@ -925,21 +1008,35 @@
 
       function applyTutorialState() {
         $(".calculator-panel").classList.toggle("is-tutorial", state.tutorial);
-        tutorialToggle.textContent = state.tutorial ? "튜토리얼 ON" : "튜토리얼 OFF";
-        tutorialToggle.setAttribute("aria-pressed", String(state.tutorial));
+        tutorialToggleText.textContent = state.tutorial ? "튜토리얼 ON" : "튜토리얼 OFF";
+        tutorialToggle.setAttribute("aria-checked", String(state.tutorial));
         localStorage.setItem("grayrockclub-calculator-tutorial", String(state.tutorial));
       }
 
-      function showTutorial([title, body, example, context]) {
+      function showTutorial([title, body, example, context], options = {}) {
         tutorialTitle.textContent = title;
         tutorialBody.textContent = body;
         tutorialExample.textContent = example;
         tutorialContext.textContent = context;
+        tutorialModal.dataset.kind = options.kind || "feature";
+        tutorialIntroPreferences.hidden = !options.showIntroPreference;
+        tutorialIntroDismiss.checked = false;
         if (typeof tutorialModal.showModal === "function") {
           tutorialModal.showModal();
         } else {
           tutorialModal.setAttribute("open", "");
         }
+      }
+
+      function shouldShowTutorialIntro() {
+        return localStorage.getItem(tutorialIntroDismissKey) !== "true";
+      }
+
+      function closeTutorialModal() {
+        if (tutorialModal.dataset.kind === "intro" && tutorialIntroDismiss.checked) {
+          localStorage.setItem(tutorialIntroDismissKey, "true");
+        }
+        tutorialModal.close();
       }
 
       function numberTutorial(label) {
@@ -1233,22 +1330,28 @@
       tutorialToggle.addEventListener("click", () => {
         state.tutorial = !state.tutorial;
         applyTutorialState();
-        if (state.tutorial) {
+        if (state.tutorial && shouldShowTutorialIntro()) {
           showTutorial([
             "튜토리얼 모드",
             "이 모드에서는 계산 버튼을 눌러도 바로 실행하지 않고, 먼저 그 버튼이 어떤 개념인지 설명합니다.",
             "예: Ans를 누르면 직전 계산 결과를 다시 쓰는 기능이라는 설명이 뜹니다.",
             "탭 버튼은 다른 학습 영역을 볼 수 있도록 이동을 유지하고, 계산·변환·삭제 같은 실행 버튼은 설명만 보여줍니다.",
-          ]);
+          ], { kind: "intro", showIntroPreference: true });
         }
       });
 
       $("#tutorial-close").addEventListener("click", () => {
-        tutorialModal.close();
+        closeTutorialModal();
       });
 
       tutorialModal.addEventListener("click", (event) => {
-        if (event.target === tutorialModal) tutorialModal.close();
+        if (event.target === tutorialModal) closeTutorialModal();
+      });
+
+      tutorialModal.addEventListener("cancel", () => {
+        if (tutorialModal.dataset.kind === "intro" && tutorialIntroDismiss.checked) {
+          localStorage.setItem(tutorialIntroDismissKey, "true");
+        }
       });
 
       $$(".tab-button").forEach((button) => {
