@@ -42,6 +42,13 @@
         gap: 4px;
       }
 
+      .title-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
       .calculator-title h1 {
         font-size: clamp(1.55rem, 4vw, 2.6rem);
       }
@@ -67,7 +74,9 @@
       .segmented-button,
       .tab-button,
       .calc-button,
-      .action-button {
+      .action-button,
+      .tutorial-toggle,
+      .modal-close {
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--surface);
@@ -79,7 +88,8 @@
       }
 
       .segmented-button,
-      .tab-button {
+      .tab-button,
+      .tutorial-toggle {
         min-height: 38px;
         padding: 0 12px;
         font-size: 0.82rem;
@@ -91,6 +101,8 @@
       .calc-button:focus-visible,
       .action-button:hover,
       .action-button:focus-visible,
+      .tutorial-toggle:hover,
+      .tutorial-toggle:focus-visible,
       .segmented-button:hover,
       .segmented-button:focus-visible,
       .tab-button:hover,
@@ -98,6 +110,19 @@
         border-color: var(--accent);
         color: var(--accent-strong);
         outline: none;
+      }
+
+      .tutorial-toggle[aria-pressed="true"] {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .calculator-panel.is-tutorial .calc-button,
+      .calculator-panel.is-tutorial .action-button,
+      .calculator-panel.is-tutorial .segmented-button,
+      .calculator-panel.is-tutorial .constant-button {
+        border-style: dashed;
       }
 
       .tab-bar {
@@ -337,6 +362,84 @@
         font-weight: 800;
       }
 
+      .tutorial-modal {
+        width: min(520px, calc(100% - 32px));
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0;
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: var(--shadow);
+      }
+
+      .tutorial-modal::backdrop {
+        background: rgba(20, 24, 28, 0.42);
+      }
+
+      .modal-content {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .modal-header {
+        display: flex;
+        gap: 12px;
+        align-items: start;
+        justify-content: space-between;
+      }
+
+      .modal-title-group {
+        display: grid;
+        gap: 4px;
+      }
+
+      .modal-kicker {
+        margin: 0;
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .modal-title {
+        margin: 0;
+        font-size: 1.28rem;
+        line-height: 1.25;
+      }
+
+      .modal-body,
+      .modal-example,
+      .modal-context {
+        margin: 0;
+        color: var(--text);
+        font-size: 0.95rem;
+        font-weight: 750;
+        line-height: 1.55;
+      }
+
+      .modal-example,
+      .modal-context {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--surface-strong);
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .modal-close {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 auto;
+        place-items: center;
+        padding: 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
       @media (max-width: 860px) {
         body.calculator-app {
           padding: 10px;
@@ -349,6 +452,10 @@
 
         .calculator-header {
           display: grid;
+        }
+
+        .title-row {
+          align-items: start;
         }
 
         .angle-toggle {
@@ -376,7 +483,10 @@
       <header class="calculator-header">
         <div class="calculator-title">
           <p class="eyebrow">Tool</p>
-          <h1>공학용 계산기</h1>
+          <div class="title-row">
+            <h1>공학용 계산기</h1>
+            <button class="tutorial-toggle" type="button" id="tutorial-toggle" aria-pressed="false">튜토리얼 OFF</button>
+          </div>
           <p class="calculator-status" id="library-status">math.js 로딩 중</p>
         </div>
         <div class="angle-toggle" aria-label="각도 단위">
@@ -649,6 +759,21 @@
       </section>
     </main>
 
+    <dialog class="tutorial-modal" id="tutorial-modal" aria-labelledby="tutorial-modal-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <p class="modal-kicker">Tutorial</p>
+            <h2 class="modal-title" id="tutorial-modal-title">기능 설명</h2>
+          </div>
+          <button class="modal-close" type="button" id="tutorial-close" aria-label="설명 닫기">×</button>
+        </div>
+        <p class="modal-body" id="tutorial-modal-body"></p>
+        <p class="modal-example" id="tutorial-modal-example"></p>
+        <p class="modal-context" id="tutorial-modal-context"></p>
+      </div>
+    </dialog>
+
     <script src="https://cdn.jsdelivr.net/npm/mathjs@13.0.3/lib/browser/math.js"></script>
     <script>
       const $ = (selector) => document.querySelector(selector);
@@ -658,6 +783,7 @@
         angle: "deg",
         ans: 0,
         history: JSON.parse(localStorage.getItem("grayrockclub-calculator-history") || "[]"),
+        tutorial: localStorage.getItem("grayrockclub-calculator-tutorial") === "true",
       };
 
       const expressionInput = $("#expression");
@@ -665,6 +791,80 @@
       const calcError = $("#calc-error");
       const historyList = $("#history-list");
       const libraryStatus = $("#library-status");
+      const tutorialToggle = $("#tutorial-toggle");
+      const tutorialModal = $("#tutorial-modal");
+      const tutorialTitle = $("#tutorial-modal-title");
+      const tutorialBody = $("#tutorial-modal-body");
+      const tutorialExample = $("#tutorial-modal-example");
+      const tutorialContext = $("#tutorial-modal-context");
+
+      const tutorialByInsert = {
+        "(": ["괄호", "계산 순서를 직접 정할 때 씁니다. 괄호 안의 계산이 먼저 처리됩니다.", "예: (2 + 3) * 4 = 20", "복잡한 수식을 입력할 때 가장 먼저 익숙해져야 하는 기본 도구입니다."],
+        ")": ["괄호 닫기", "열어 둔 괄호를 닫습니다. 괄호 개수가 맞지 않으면 계산 오류가 납니다.", "예: sin(30)처럼 함수 입력도 괄호로 값을 감쌉니다.", "공학용 계산기에서는 함수와 괄호를 세트로 쓰는 경우가 많습니다."],
+        "%": ["퍼센트", "100분의 몇인지를 표현합니다. 계산기마다 동작 방식이 조금 다를 수 있어 수식 안에서는 의미를 확인해야 합니다.", "예: 50%는 0.5와 같은 값으로 다룰 수 있습니다.", "비율, 오차율, 증가율 계산에서 자주 나옵니다."],
+        "/": ["나누기", "앞의 값을 뒤의 값으로 나눕니다.", "예: 10 / 4 = 2.5", "0으로 나누면 정의되지 않아 오류가 납니다."],
+        "sin(": ["sin", "사인 함수입니다. 직각삼각형, 파동, 회전 운동에서 각도와 비율을 연결합니다.", "DEG 모드 예: sin(30) = 0.5", "입력 각도가 도인지 라디안인지 DEG/RAD 상태를 먼저 확인해야 합니다."],
+        "cos(": ["cos", "코사인 함수입니다. 사인과 함께 삼각함수의 기본 축을 이룹니다.", "DEG 모드 예: cos(60) = 0.5", "벡터의 성분 분해, 진동, 회전 문제에서 자주 쓰입니다."],
+        "tan(": ["tan", "탄젠트 함수입니다. 기울기나 각도에 따른 비율을 다룰 때 씁니다.", "DEG 모드 예: tan(45) = 1", "90도 근처에서는 값이 급격히 커지므로 결과 해석에 주의해야 합니다."],
+        "log(": ["log", "상용로그입니다. 밑이 10인 로그를 계산합니다.", "예: log(1000) = 3", "데시벨, pH, 지수적으로 커지는 값을 다룰 때 자주 등장합니다."],
+        "ln(": ["ln", "자연로그입니다. 밑이 자연상수 e인 로그입니다.", "예: ln(e) = 1", "미적분, 성장/감쇠 모델, 확률분포에서 매우 자주 쓰입니다."],
+        "^": ["거듭제곱", "왼쪽 값을 오른쪽 값만큼 거듭제곱합니다.", "예: 2^3 = 8", "제곱, 세제곱뿐 아니라 지수 모델 계산에도 사용합니다."],
+        "asin(": ["asin", "사인의 역함수입니다. 사인값을 알고 있을 때 각도를 구합니다.", "DEG 모드 예: asin(0.5) = 30", "결과 각도의 단위도 DEG/RAD 설정을 따릅니다."],
+        "acos(": ["acos", "코사인의 역함수입니다. 코사인값에서 각도를 역으로 찾습니다.", "DEG 모드 예: acos(0.5) = 60", "벡터 사이 각도를 구할 때 자주 씁니다."],
+        "atan(": ["atan", "탄젠트의 역함수입니다. 기울기나 비율에서 각도를 구합니다.", "DEG 모드 예: atan(1) = 45", "좌표 변화량으로 방향각을 추정할 때 유용합니다."],
+        "sqrt(": ["제곱근", "어떤 수를 제곱해서 입력값이 되는 수를 구합니다.", "예: sqrt(16) = 4", "거리 공식, 표준편차, 크기 계산에서 자주 쓰입니다."],
+        "abs(": ["절댓값", "수의 부호를 제거하고 0으로부터의 거리만 남깁니다.", "예: abs(-7) = 7", "오차 크기처럼 방향보다 크기가 중요한 값에 씁니다."],
+        "!": ["팩토리얼", "1부터 n까지의 정수를 모두 곱합니다.", "예: 5! = 120", "순열과 조합, 확률 계산의 기초입니다. 보통 음수나 소수에는 쓰지 않습니다."],
+        "pi": ["원주율 π", "원의 둘레와 지름의 비율입니다.", "예: 2 * pi * r", "각도, 원, 파동, 회전 문제에서 계속 등장합니다."],
+        "e": ["자연상수 e", "자연로그의 밑이 되는 상수입니다.", "예: e^1 = e", "연속 성장, 감쇠, 미분방정식에서 핵심 상수입니다."],
+        "*": ["곱하기", "두 값을 곱합니다.", "예: 6 * 7 = 42", "컴퓨터식 수식에서는 × 대신 * 기호를 자주 씁니다."],
+        "10^(": ["10의 거듭제곱", "10을 입력한 값만큼 거듭제곱합니다.", "예: 10^(3) = 1000", "과학적 표기법과 로그 계산을 이해할 때 자주 씁니다."],
+        "exp(": ["지수 함수", "자연상수 e를 입력한 값만큼 거듭제곱합니다.", "예: exp(1) = e", "성장률, 감쇠, 정규분포 같은 모델에서 많이 씁니다."],
+        "-": ["빼기 / 음수", "값을 빼거나 음수를 입력할 때 사용합니다.", "예: 7 - 3 = 4, -2", "음수를 함수에 넣을 때는 괄호를 쓰면 실수를 줄일 수 있습니다."],
+        "Ans": ["Ans", "직전 계산 결과를 다시 불러오는 버튼입니다. Answer의 줄임말입니다.", "예: 2 + 3 = 5를 계산한 뒤 Ans * 4 = 20", "중간 결과를 종이에 옮겨 적지 않고 이어서 계산할 때 유용합니다."],
+        ",": ["쉼표", "함수에 여러 값을 넣을 때 인자를 구분합니다.", "예: mod(17, 5) = 2", "행렬·통계·일부 함수 입력에서 값의 경계를 알려줍니다."],
+        "+": ["더하기", "두 값을 더합니다.", "예: 2 + 3 = 5", "가장 기본 연산이지만 복잡한 수식에서는 괄호와 함께 정확히 입력하는 것이 중요합니다."],
+        ".": ["소수점", "정수가 아닌 값을 입력할 때 씁니다.", "예: 3.14", "측정값과 공학 계산은 소수 입력이 많은 편입니다."],
+        "mod(": ["mod", "나눗셈의 나머지를 구합니다.", "예: mod(17, 5) = 2", "주기, 나머지 분류, 컴퓨터 공학 기초 계산에서 사용합니다."],
+      };
+
+      const tutorialByAction = {
+        clear: ["AC", "입력한 수식과 표시 결과를 초기화합니다.", "계산을 새로 시작하고 싶을 때 누릅니다.", "튜토리얼 모드에서는 실제로 지우지 않고 설명만 보여줍니다."],
+        backspace: ["Backspace", "입력한 수식의 마지막 글자를 하나 지웁니다.", "예: sin(30))처럼 괄호를 하나 더 입력했을 때 수정합니다.", "긴 수식을 처음부터 다시 쓰지 않도록 도와줍니다."],
+        reciprocal: ["역수 1/x", "현재 값의 역수를 만듭니다. x가 0이면 계산할 수 없습니다.", "예: 4의 역수는 1/4 = 0.25", "저항 병렬 계산, 비율 변환 등에서 자주 보입니다."],
+        square: ["제곱 x²", "현재 값을 두 번 곱합니다.", "예: 5² = 25", "거리, 면적, 분산처럼 제곱이 들어가는 계산에서 자주 씁니다."],
+        evaluate: ["계산 실행 =", "입력한 수식을 실제로 계산합니다.", "예: sin(30)+sqrt(16)을 입력한 뒤 =를 누릅니다.", "튜토리얼 모드에서는 계산 대신 이 설명이 뜹니다."],
+      };
+
+      const tutorialByTab = {
+        calculator: ["계산 탭", "일반 공학용 계산기처럼 수식을 입력하고 결과를 확인하는 영역입니다.", "삼각함수, 로그, 거듭제곱, Ans 같은 버튼을 먼저 익히기 좋습니다.", "튜토리얼 모드에서도 탭 이동은 허용해서 다른 학습 영역을 둘러볼 수 있습니다."],
+        equation: ["방정식 탭", "f(x)=0 형태의 해를 구하고, 함수의 미분값과 정적분값을 수치적으로 확인합니다.", "예: x^2 - 2 = 0은 약 ±1.414를 해로 가집니다.", "정확한 기호 풀이가 아니라 지정한 구간에서 수치적으로 찾는 방식입니다."],
+        matrix: ["행렬 탭", "행렬식, 역행렬, 전치행렬, 행렬 연산과 벡터 내적/외적을 다룹니다.", "예: det(A)는 행렬 A의 행렬식을 계산합니다.", "선형대수 초반에 계산기 버튼이 어떤 개념과 연결되는지 익히기 좋습니다."],
+        stats: ["통계 탭", "데이터의 평균, 중앙값, 분산, 표준편차와 순열/조합, 복소수, 진법 변환을 확인합니다.", "예: nCr은 순서를 무시하고 r개를 고르는 경우의 수입니다.", "확률·통계와 컴퓨터 공학 기초 계산을 묶어 둔 영역입니다."],
+        unit: ["단위 탭", "길이, 질량, 시간, 속도, 에너지, 온도 단위를 변환하고 과학 상수를 삽입합니다.", "예: 1 m는 0.001 km입니다.", "공학 문제에서는 숫자보다 단위 해석이 더 중요한 경우가 많습니다."],
+      };
+
+      const tutorialById = {
+        "clear-history": ["기록 삭제", "계산 기록을 모두 지웁니다.", "실제 계산 모드에서는 오른쪽 기록 목록이 비워집니다.", "튜토리얼 모드에서는 기록을 지우지 않고 설명만 보여줍니다."],
+        "solve-root": ["해 찾기", "입력한 방정식이 0이 되는 x값을 지정 구간에서 찾습니다.", "예: x^2 - 2 = 0, 구간 -10부터 10까지", "구간과 간격 설정에 따라 찾는 해가 달라질 수 있습니다."],
+        "run-derivative": ["미분", "지정한 x에서 함수의 순간 변화율을 수치적으로 근사합니다.", "예: f(x)=sin(x), x=1에서 f'(x)를 계산", "여기서는 작은 간격을 이용한 근사값이므로 교재의 정확한 기호 미분과 약간 다를 수 있습니다."],
+        "run-integral": ["적분", "a부터 b까지 함수 아래 면적을 수치적으로 근사합니다.", "예: sin(x)를 0부터 π까지 적분하면 약 2", "정적분의 의미를 값으로 확인하는 학습용 기능입니다."],
+        "dot-product": ["내적", "두 벡터의 같은 위치 성분을 곱해 모두 더합니다.", "예: [1,2,3] · [4,5,6] = 32", "벡터의 유사도, 투영, 각도 계산과 연결됩니다."],
+        "cross-product": ["외적", "두 3차원 벡터에 모두 수직인 새 벡터를 구합니다.", "예: [1,0,0] × [0,1,0] = [0,0,1]", "물리의 토크, 자기력, 3D 그래픽스에서 자주 등장합니다."],
+        "run-stats": ["통계 계산", "입력한 데이터의 개수, 합계, 평균, 중앙값, 분산, 표준편차를 계산합니다.", "예: 12, 15, 15, 18, 21, 24", "표준편차는 데이터가 평균 주변에 얼마나 퍼져 있는지 보여줍니다."],
+        "run-probability": ["nPr / nCr", "순열 nPr은 순서를 고려하고, 조합 nCr은 순서를 고려하지 않습니다.", "예: 10명 중 3명을 줄 세우면 nPr, 대표 3명을 뽑으면 nCr", "확률 문제에서 두 개념을 구분하는 것이 중요합니다."],
+        "run-complex": ["복소수", "i를 포함한 수식을 계산합니다. i는 제곱하면 -1이 되는 수입니다.", "예: (2 + 3i) * (1 - i)", "전기전자, 신호처리, 제어공학에서 자주 쓰입니다."],
+        "run-base": ["진법 변환", "2진수, 8진수, 10진수, 16진수 표현을 서로 바꿔 봅니다.", "예: 255는 16진수로 FF입니다.", "컴퓨터 구조와 프로그래밍 기초에서 자주 필요합니다."],
+        "run-unit": ["단위 변환", "같은 물리량을 다른 단위로 바꿉니다.", "예: 1 m = 0.001 km", "공학 문제에서는 단위가 맞지 않으면 계산식이 맞아도 답이 틀립니다."],
+      };
+
+      const tutorialByMatrix = {
+        detA: ["det(A)", "행렬 A의 행렬식을 계산합니다.", "2x2 행렬 [[a,b],[c,d]]의 행렬식은 ad - bc입니다.", "행렬식이 0이면 역행렬이 없고, 선형변환의 면적/부피 변화와도 연결됩니다."],
+        invA: ["A⁻¹", "행렬 A의 역행렬을 구합니다.", "A × A⁻¹ = I가 되면 A⁻¹이 역행렬입니다.", "연립방정식 풀이와 선형대수 계산에서 핵심입니다."],
+        transposeA: ["Aᵀ", "행과 열을 서로 바꾼 전치행렬을 만듭니다.", "예: 첫 번째 행이 첫 번째 열이 됩니다.", "내적, 선형회귀, 행렬 표현을 정리할 때 자주 씁니다."],
+        add: ["A+B", "같은 위치의 원소끼리 더합니다.", "두 행렬의 크기가 같아야 합니다.", "데이터 표나 벡터 공간 연산의 기본입니다."],
+        multiply: ["A×B", "행렬 곱셈을 계산합니다. A의 열 개수와 B의 행 개수가 맞아야 합니다.", "앞 행렬의 행과 뒤 행렬의 열을 내적해 새 원소를 만듭니다.", "선형변환을 연속으로 적용하는 의미를 가집니다."],
+      };
 
       const constants = [
         ["빛의 속도 c", "299792458"],
@@ -722,6 +922,91 @@
           Kelvin: "temperature",
         },
       };
+
+      function applyTutorialState() {
+        $(".calculator-panel").classList.toggle("is-tutorial", state.tutorial);
+        tutorialToggle.textContent = state.tutorial ? "튜토리얼 ON" : "튜토리얼 OFF";
+        tutorialToggle.setAttribute("aria-pressed", String(state.tutorial));
+        localStorage.setItem("grayrockclub-calculator-tutorial", String(state.tutorial));
+      }
+
+      function showTutorial([title, body, example, context]) {
+        tutorialTitle.textContent = title;
+        tutorialBody.textContent = body;
+        tutorialExample.textContent = example;
+        tutorialContext.textContent = context;
+        if (typeof tutorialModal.showModal === "function") {
+          tutorialModal.showModal();
+        } else {
+          tutorialModal.setAttribute("open", "");
+        }
+      }
+
+      function numberTutorial(label) {
+        return [
+          `${label} 숫자`,
+          "수식에 숫자를 입력하는 기본 버튼입니다.",
+          `예: ${label} + 2처럼 다른 연산자와 함께 사용합니다.`,
+          "공학용 계산기에서도 숫자 입력 자체는 일반 계산기와 같습니다. 차이는 함수와 괄호를 함께 쓴다는 점입니다.",
+        ];
+      }
+
+      function getTutorialForButton(button) {
+        if (button.classList.contains("tab-button")) {
+          return tutorialByTab[button.dataset.tab];
+        }
+
+        if (button.classList.contains("segmented-button")) {
+          return button.dataset.angle === "deg"
+            ? ["DEG", "각도를 도 단위로 해석합니다.", "예: DEG에서 sin(30) = 0.5", "학교 수학에서 30도, 45도, 60도처럼 배운 각도 표기는 보통 DEG 모드가 자연스럽습니다."]
+            : ["RAD", "각도를 라디안 단위로 해석합니다.", "예: RAD에서 sin(pi / 2) = 1", "미적분, 물리, 공학 수식에서는 라디안이 기본 단위로 쓰이는 경우가 많습니다."];
+        }
+
+        if (button.classList.contains("constant-button")) {
+          const name = button.querySelector(".constant-name")?.textContent || "과학 상수";
+          const value = button.dataset.constant;
+          return [name, "자주 쓰는 과학 상수를 수식에 바로 넣는 버튼입니다.", `삽입값: ${value}`, "상수의 의미와 단위를 함께 기억해야 실제 문제에서 올바르게 사용할 수 있습니다."];
+        }
+
+        if (button.dataset.matrix) {
+          return tutorialByMatrix[button.dataset.matrix];
+        }
+
+        if (button.id && tutorialById[button.id]) {
+          return tutorialById[button.id];
+        }
+
+        if (button.dataset.action && tutorialByAction[button.dataset.action]) {
+          return tutorialByAction[button.dataset.action];
+        }
+
+        if (button.dataset.insert) {
+          if (/^\d$/.test(button.dataset.insert)) return numberTutorial(button.dataset.insert);
+          return tutorialByInsert[button.dataset.insert];
+        }
+
+        if (button.classList.contains("history-item")) {
+          return ["계산 기록", "이전에 계산한 수식을 다시 불러옵니다.", "복잡한 계산을 이어서 검토할 때 사용합니다.", "학습할 때는 내가 어떤 순서로 계산했는지 되짚어 보는 용도로도 좋습니다."];
+        }
+
+        return null;
+      }
+
+      function handleTutorialClick(event) {
+        if (!state.tutorial) return;
+        const button = event.target.closest("button");
+        if (!button || button === tutorialToggle || button === $("#tutorial-close")) return;
+        if (tutorialModal.contains(button)) return;
+        const tutorial = getTutorialForButton(button);
+        if (!tutorial) return;
+
+        showTutorial(tutorial);
+
+        if (!button.classList.contains("tab-button")) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      }
 
       function hasMath() {
         return typeof math !== "undefined";
@@ -943,6 +1228,29 @@
           .join("");
       }
 
+      document.addEventListener("click", handleTutorialClick, true);
+
+      tutorialToggle.addEventListener("click", () => {
+        state.tutorial = !state.tutorial;
+        applyTutorialState();
+        if (state.tutorial) {
+          showTutorial([
+            "튜토리얼 모드",
+            "이 모드에서는 계산 버튼을 눌러도 바로 실행하지 않고, 먼저 그 버튼이 어떤 개념인지 설명합니다.",
+            "예: Ans를 누르면 직전 계산 결과를 다시 쓰는 기능이라는 설명이 뜹니다.",
+            "탭 버튼은 다른 학습 영역을 볼 수 있도록 이동을 유지하고, 계산·변환·삭제 같은 실행 버튼은 설명만 보여줍니다.",
+          ]);
+        }
+      });
+
+      $("#tutorial-close").addEventListener("click", () => {
+        tutorialModal.close();
+      });
+
+      tutorialModal.addEventListener("click", (event) => {
+        if (event.target === tutorialModal) tutorialModal.close();
+      });
+
       $$(".tab-button").forEach((button) => {
         button.addEventListener("click", () => {
           $$(".tab-button").forEach((item) => item.classList.toggle("is-active", item === button));
@@ -982,7 +1290,14 @@
       });
 
       expressionInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") runMainEvaluation();
+        if (event.key === "Enter") {
+          if (state.tutorial) {
+            event.preventDefault();
+            showTutorial(tutorialByAction.evaluate);
+            return;
+          }
+          runMainEvaluation();
+        }
       });
 
       historyList.addEventListener("click", (event) => {
@@ -1143,6 +1458,7 @@
       populateUnits();
       renderConstants();
       renderHistory();
+      applyTutorialState();
     </script>
   </body>
 </html>
