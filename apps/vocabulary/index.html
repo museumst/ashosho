@@ -827,6 +827,12 @@ function getBestVoice() {
 function speak(text) {
   if (!hasTTS) return;
   window.speechSynthesis.cancel();
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) {
+    // 목소리 아직 로딩 중 — 로드 완료 후 재실행
+    window.speechSynthesis.addEventListener('voiceschanged', () => speak(text), { once: true });
+    return;
+  }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'en-US';
   const voice = getBestVoice();
