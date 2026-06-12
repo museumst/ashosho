@@ -660,6 +660,7 @@
     <div class="vx-quiz-opts">
       <select class="vx-quiz-unit" id="quiz-unit-select"></select>
       <button class="vx-btn" id="btn-quiz-restart" style="min-height:32px;padding:0 10px;font-size:.8rem;">🔄 다시 시작</button>
+      <button class="vx-btn" id="btn-auto-excl" title="켜면 정답 맞춘 단어가 자동으로 퀴즈에서 제외됩니다" style="min-height:32px;padding:0 10px;font-size:.8rem;">✓ 자동 제외: 끔</button>
       <span class="vx-quiz-score" id="quiz-score"></span>
     </div>
     <div id="quiz-area"></div>
@@ -686,6 +687,7 @@ const state = {
   quizAnswered: false,
   quizChoices: [],
   excl: {},
+  autoExcl: false,
 };
 
 function curBook() { return state.books[state.bookIndex] || null; }
@@ -965,9 +967,15 @@ function answerQuiz(chosenId) {
   if (state.quizAnswered) return;
   state.quizAnswered = true;
   state.quizTotal++;
-  const pool = quizPool();
   const currentId = state.quizQueue[0];
-  if (chosenId === currentId) state.quizCorrect++;
+  const correct = chosenId === currentId;
+  if (correct) {
+    state.quizCorrect++;
+    if (state.autoExcl) {
+      state.excl[currentId] = true;
+      saveExcl();
+    }
+  }
   renderQuiz();
 }
 
@@ -1412,6 +1420,14 @@ document.getElementById('quiz-unit-select').addEventListener('change', e => {
 document.getElementById('btn-quiz-restart').addEventListener('click', () => {
   state.quizQueue = []; state.quizTotal = 0; state.quizCorrect = 0; state.quizAnswered = false;
   renderQuiz();
+});
+
+const btnAutoExcl = document.getElementById('btn-auto-excl');
+btnAutoExcl.addEventListener('click', () => {
+  state.autoExcl = !state.autoExcl;
+  btnAutoExcl.textContent = `✓ 자동 제외: ${state.autoExcl ? '켬' : '끔'}`;
+  btnAutoExcl.style.color = state.autoExcl ? 'var(--accent, #4f8ef7)' : '';
+  btnAutoExcl.style.borderColor = state.autoExcl ? 'var(--accent, #4f8ef7)' : '';
 });
 
 // Quiz area (delegation)
