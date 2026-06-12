@@ -28,6 +28,54 @@
       width: 960px; /* 고정 기준폭 */
     }
 
+    .element-cell {
+      min-width: 0;
+      padding: 4px;
+    }
+
+    .element-number {
+      align-self: flex-start;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1;
+      opacity: 0.62;
+    }
+
+    .element-symbol {
+      margin: 1px 0;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .element-name {
+      display: -webkit-box;
+      max-width: 100%;
+      min-height: 1.9em;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      color: currentColor;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 0.95;
+      overflow-wrap: anywhere;
+      text-align: center;
+      white-space: normal;
+      word-break: keep-all;
+    }
+
+    .element-name.is-compact {
+      font-size: 9px;
+      line-height: 0.95;
+    }
+
+    .element-name.is-tiny {
+      font-size: 8px;
+      line-height: 0.95;
+    }
+
     /* 모바일 맞춤 스케일 컨테이너 */
     .scale-wrapper {
       width: 100%;
@@ -35,7 +83,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 5px 0;
+      padding: 5px 0 18px;
       transition: height 0.15s ease-out;
     }
 
@@ -2431,7 +2479,7 @@
           if (scale > 1) scale = 1;
           
           content.style.transform = `scale(${scale})`;
-          const realHeight = content.getBoundingClientRect().height;
+          const realHeight = Math.ceil(content.scrollHeight * scale) + 24;
           wrapper.style.height = `${realHeight}px`;
         }
       }
@@ -2446,7 +2494,7 @@
           if (scale > 1) scale = 1;
           
           content.style.transform = `scale(${scale})`;
-          const realHeight = content.getBoundingClientRect().height;
+          const realHeight = Math.ceil(content.scrollHeight * scale) + 24;
           wrapper.style.height = `${realHeight}px`;
         }
       }
@@ -2467,14 +2515,15 @@
           const el = tableMap[r][c];
           if (el) {
             const cell = document.createElement('button');
-            cell.className = `p-1.5 aspect-square rounded-lg flex flex-col justify-between items-center transition-all duration-150 border cursor-pointer hover:shadow hover:-translate-y-0.5 active:scale-95 ${el.color}`;
+            cell.className = `element-cell aspect-square rounded-lg flex flex-col justify-between items-center transition-colors duration-150 border cursor-pointer ${el.color}`;
+            cell.title = `${el.name} (${el.symbol})`;
             cell.onclick = () => {
               showElementDetail(el);
             };
             cell.innerHTML = `
-              <span class="text-[9px] font-bold font-eng opacity-60 self-start">${el.num}</span>
-              <span class="text-base font-black tracking-wide font-eng my-0.5 leading-none">${el.symbol}</span>
-              <span class="text-[10px] font-bold block truncate max-w-full">${el.name}</span>
+              <span class="element-number font-eng">${el.num}</span>
+              <span class="element-symbol font-eng">${el.symbol}</span>
+              <span class="${getElementNameClass(el.name)}">${el.name}</span>
             `;
             container.appendChild(cell);
           } else {
@@ -2484,6 +2533,12 @@
           }
         }
       }
+    }
+
+    function getElementNameClass(name) {
+      if (name.length >= 6) return "element-name is-tiny";
+      if (name.length >= 4) return "element-name is-compact";
+      return "element-name";
     }
 
     function getCategoryMeta(category) {
@@ -2673,7 +2728,7 @@
       displayTargets.forEach(el => {
         const card = document.createElement('button');
         // ★ 핵심 개선: 대기 카드의 원자 번호(숫자)와 한글 이름을 과감히 제거하여 오직 원소 기호만 표기!
-        card.className = "px-4 py-2.5 bg-white text-slate-800 font-extrabold rounded-xl border border-slate-300 shadow-sm hover:scale-105 active:scale-95 transition-all text-sm font-eng tracking-wider cursor-pointer";
+        card.className = "px-4 py-2.5 bg-white text-slate-800 font-extrabold rounded-xl border border-slate-300 shadow-sm transition-colors text-sm font-eng tracking-wider cursor-pointer";
         card.innerHTML = `${el.symbol}`;
         card.onclick = () => selectDragCard(el, card);
         dragCardsContainer.appendChild(card);
@@ -2751,11 +2806,12 @@
         document.getElementById('hintCard').classList.add('hidden'); // 힌트 닫기
         
         cellDom.onclick = null;
-        cellDom.className = `p-1.5 aspect-square rounded-lg flex flex-col justify-between items-center transition-all duration-300 border shadow scale-105 ${targetEl.color}`;
+        cellDom.className = `element-cell aspect-square rounded-lg flex flex-col justify-between items-center transition-colors duration-150 border ${targetEl.color}`;
+        cellDom.title = `${targetEl.name} (${targetEl.symbol})`;
         cellDom.innerHTML = `
-          <span class="text-[8px] font-bold font-eng opacity-75 self-start leading-none">${targetEl.num}</span>
-          <span class="text-base font-black font-eng tracking-wide leading-none my-0.5">${targetEl.symbol}</span>
-          <span class="text-[10px] font-medium block truncate max-w-full">${targetEl.name}</span>
+          <span class="element-number font-eng">${targetEl.num}</span>
+          <span class="element-symbol font-eng">${targetEl.symbol}</span>
+          <span class="${getElementNameClass(targetEl.name)}">${targetEl.name}</span>
         `;
 
         matchTargets = matchTargets.filter(item => item.num !== targetEl.num);
