@@ -442,6 +442,30 @@
     .vx-mode-btn.is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
 
     .vx-quiz-opts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+
+    /* auto-exclude toggle switch */
+    .vx-toggle-label {
+      display: flex; align-items: center; gap: 7px;
+      font-size: .82rem; font-weight: 700; color: var(--muted);
+      cursor: pointer; user-select: none; white-space: nowrap;
+    }
+    .vx-toggle-label input { display: none; }
+    .vx-toggle-track {
+      position: relative; width: 36px; height: 20px;
+      border-radius: 20px; background: var(--line);
+      transition: background .2s;
+    }
+    .vx-toggle-track::after {
+      content: ''; position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+      transition: transform .2s;
+    }
+    .vx-toggle-label input:checked + .vx-toggle-track { background: #ff9900; }
+    .vx-toggle-label input:checked + .vx-toggle-track::after { transform: translateX(16px); }
+    .vx-toggle-label input:checked ~ .vx-toggle-text { color: #ff9900; }
     .vx-quiz-unit {
       min-height: 32px; padding: 0 10px; border-radius: 7px;
       border: 1px solid var(--line); background: var(--surface);
@@ -660,7 +684,11 @@
     <div class="vx-quiz-opts">
       <select class="vx-quiz-unit" id="quiz-unit-select"></select>
       <button class="vx-btn" id="btn-quiz-restart" style="min-height:32px;padding:0 10px;font-size:.8rem;">🔄 다시 시작</button>
-      <button class="vx-btn" id="btn-auto-excl" title="켜면 정답 맞춘 단어가 자동으로 퀴즈에서 제외됩니다" style="min-height:32px;padding:0 10px;font-size:.8rem;">✓ 자동 제외: 끔</button>
+      <label class="vx-toggle-label" title="켜면 정답 맞춘 단어가 자동으로 퀴즈에서 제외됩니다">
+        <input type="checkbox" id="btn-auto-excl" />
+        <span class="vx-toggle-track"></span>
+        <span class="vx-toggle-text">자동 제외</span>
+      </label>
       <span class="vx-quiz-score" id="quiz-score"></span>
     </div>
     <div id="quiz-area"></div>
@@ -1423,11 +1451,8 @@ document.getElementById('btn-quiz-restart').addEventListener('click', () => {
 });
 
 const btnAutoExcl = document.getElementById('btn-auto-excl');
-btnAutoExcl.addEventListener('click', () => {
-  state.autoExcl = !state.autoExcl;
-  btnAutoExcl.textContent = `✓ 자동 제외: ${state.autoExcl ? '켬' : '끔'}`;
-  btnAutoExcl.style.color = state.autoExcl ? 'var(--accent, #4f8ef7)' : '';
-  btnAutoExcl.style.borderColor = state.autoExcl ? 'var(--accent, #4f8ef7)' : '';
+btnAutoExcl.addEventListener('change', () => {
+  state.autoExcl = btnAutoExcl.checked;
 });
 
 // Quiz area (delegation)
