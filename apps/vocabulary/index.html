@@ -324,6 +324,7 @@
       font-size: .88rem; margin-left: auto;
     }
     .vx-search:focus, .vx-unit-sel:focus { outline: none; border-color: var(--accent); }
+    #btn-sort-unmemorized.is-active { border-color: #ff9900; color: #ff9900; }
     @media (max-width: 640px) {
       .vx-search {
         width: 100%;
@@ -642,6 +643,7 @@
       <select class="vx-unit-sel" id="unit-select"></select>
       <button class="vx-btn" id="btn-study-edit" style="white-space:nowrap;flex-shrink:0;">수정</button>
       <button class="vx-btn danger" id="btn-study-delete" style="white-space:nowrap;flex-shrink:0;">삭제</button>
+      <button class="vx-btn" id="btn-sort-unmemorized" style="white-space:nowrap;flex-shrink:0;">미암기</button>
       <input  class="vx-search" id="study-search" type="search" placeholder="검색" />
     </div>
 
@@ -708,6 +710,7 @@ const state = {
   bookIndex: 0,     // 현재 선택된 단어장
   tab: 'upload',
   studySearch: '',
+  sortUnmemorized: false,
   quizMode: 'ko',
   quizQueue: [],
   quizCorrect: 0,
@@ -1041,8 +1044,15 @@ function renderStudy() {
   const book = curBook();
   const unit = book.units[0];
   const q = state.studySearch.trim().toLowerCase();
-  const entries = unit.entries.filter(e =>
+  let entries = unit.entries.filter(e =>
     !q || [e.word,e.meaning,e.example,e.translation].join(' ').toLowerCase().includes(q));
+  if (state.sortUnmemorized) {
+    entries = [...entries].sort((a, b) => {
+      const aExcl = state.excl[a.id] ? 1 : 0;
+      const bExcl = state.excl[b.id] ? 1 : 0;
+      return aExcl - bExcl;
+    });
+  }
 
 
   const list = document.getElementById('entry-list');
@@ -1413,6 +1423,11 @@ document.getElementById('unit-select').addEventListener('change', e => {
 });
 document.getElementById('study-search').addEventListener('input', e => {
   state.studySearch = e.target.value; renderStudy();
+});
+document.getElementById('btn-sort-unmemorized').addEventListener('click', () => {
+  state.sortUnmemorized = !state.sortUnmemorized;
+  document.getElementById('btn-sort-unmemorized').classList.toggle('is-active', state.sortUnmemorized);
+  renderStudy();
 });
 document.getElementById('btn-study-edit').addEventListener('click', openEditModal);
 document.getElementById('btn-study-delete').addEventListener('click', () => {
