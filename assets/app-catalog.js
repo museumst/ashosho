@@ -425,6 +425,36 @@ const apps = [
     statusLabel: "실행 가능",
     tags: ["game", "connect4", "strategy", "board"],
   },
+  {
+    title: "건의 · 오류 게시판",
+    description: "사이트 개선 건의사항이나 오류를 제보하는 게시판입니다.",
+    i18n: {
+      ko: {
+        title: "건의 · 오류 게시판",
+        description: "사이트 개선 건의사항이나 오류를 제보하는 게시판입니다.",
+      },
+      en: {
+        title: "Feedback & Bug Report",
+        description: "Leave suggestions for improvement or report bugs you've found.",
+      },
+      ja: {
+        title: "ご意見・バグ報告",
+        description: "サイトへのご意見や不具合の報告はこちらからどうぞ。",
+      },
+      zh: {
+        title: "建议与错误反馈",
+        description: "欢迎提交改进建议或报告您发现的错误。",
+      },
+      es: {
+        title: "Sugerencias y Errores",
+        description: "Deja sugerencias de mejora o reporta errores que hayas encontrado.",
+      },
+    },
+    app_url: "apps/feedback/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["feedback", "board"],
+  },
 ];
 
 const uiText = {

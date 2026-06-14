@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>건의 · 오류 게시판</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #f4f4f2;
+      --surface: #ffffff;
+      --line:    #e4e4e0;
+      --text:    #1a1a18;
+      --muted:   #888880;
+      --accent:  #4f8ef7;
+      --radius:  12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100dvh; padding-bottom: 60px;
+    }
+
+    /* ── header ── */
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--line);
+      padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .hd-back {
+      font-size: .85rem; color: var(--muted); text-decoration: none;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .hd-back:hover { color: var(--text); }
+    .hd-title { font-size: 1rem; font-weight: 800; }
+    .hd-auth  { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+    /* ── auth ── */
+    [hidden] { display: none !important; }
+    .auth-login-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--surface);
+      font: inherit; font-size: .82rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+    }
+    .auth-login-btn:hover { border-color: var(--accent); }
+    .auth-user  { display: flex; align-items: center; gap: 8px; }
+    .auth-avatar { width: 28px; height: 28px; border-radius: 50%; }
+    .auth-name  { font-size: .82rem; font-weight: 700; max-width: 120px;
+                  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .auth-logout-btn {
+      padding: 5px 10px; border-radius: 7px;
+      border: 1px solid var(--line); background: transparent;
+      font: inherit; font-size: .78rem; cursor: pointer; color: var(--muted);
+    }
+    .auth-logout-btn:hover { color: var(--text); border-color: var(--text); }
+
+    /* ── layout ── */
+    .wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px; }
+
+    /* ── write form ── */
+    .write-box {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 28px;
+    }
+    .write-box h2 { font-size: .95rem; font-weight: 800; margin-bottom: 14px; }
+    .write-login-hint {
+      font-size: .85rem; color: var(--muted); padding: 14px 0;
+      text-align: center;
+    }
+    .cat-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .cat-btn {
+      flex: 1; padding: 8px 0; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--surface);
+      font: inherit; font-size: .83rem; font-weight: 700;
+      color: var(--muted); cursor: pointer; transition: .15s;
+    }
+    .cat-btn.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+    textarea {
+      width: 100%; min-height: 100px; padding: 12px;
+      border: 1px solid var(--line); border-radius: 9px;
+      background: var(--bg); color: var(--text);
+      font: inherit; font-size: .9rem; resize: vertical;
+      margin-bottom: 12px;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); }
+    .submit-row { display: flex; justify-content: flex-end; }
+    .btn-submit {
+      padding: 9px 22px; border-radius: 9px;
+      border: none; background: var(--accent); color: #fff;
+      font: inherit; font-size: .9rem; font-weight: 800;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-submit:disabled { opacity: .4; cursor: default; }
+    .btn-submit:not(:disabled):hover { opacity: .85; }
+
+    /* ── toast ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1a1a18; color: #fff; padding: 10px 22px;
+      border-radius: 30px; font-size: .88rem; font-weight: 700;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+      white-space: nowrap; z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ── post list ── */
+    .list-header {
+      font-size: .8rem; font-weight: 800; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em;
+      margin-bottom: 12px;
+    }
+    .post-list { display: grid; gap: 10px; }
+    .post {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .post-meta {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .post-avatar { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
+    .post-name { font-size: .8rem; font-weight: 700; }
+    .post-cat {
+      font-size: .72rem; font-weight: 800; padding: 2px 9px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .post-cat.suggestion { background: #eef4ff; color: #3a6ed4; }
+    .post-cat.bug        { background: #fff0f0; color: #d43a3a; }
+    .post-date { font-size: .75rem; color: var(--muted); margin-left: auto; }
+    .post-content {
+      font-size: .9rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+    }
+    .empty { text-align: center; color: var(--muted); font-size: .9rem; padding: 40px 0; }
+    .loading { text-align: center; color: var(--muted); font-size: .88rem; padding: 30px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="hd-back" href="../../index.html">← 홈</a>
+  <span class="hd-title">건의 · 오류 게시판</span>
+  <div class="hd-auth">
+    <button class="auth-login-btn" id="btn-login" hidden>
+      <svg width="14" height="14" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.5 33.7 29.8 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.8 0 20-7.8 20-21 0-1.4-.1-2.7-.5-4z"/>
+        <path fill="#34A853" d="M6.3 14.7l7 5.1C15 16.1 19.1 13 24 13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 5.1 29.6 3 24 3c-7.7 0-14.4 4.4-17.7 11.7z"/>
+        <path fill="#FBBC05" d="M24 45c5.5 0 10.5-1.9 14.4-5l-6.7-5.5C29.6 36 26.9 37 24 37c-5.8 0-10.5-3.3-11.8-8.4l-7 5.4C8.1 40.8 15.5 45 24 45z"/>
+        <path fill="#EA4335" d="M44.5 20H24v8.5h11.8c-.6 2.8-2.3 5.1-4.7 6.6l6.7 5.5C41.8 37.3 45 31.1 45 24c0-1.4-.2-2.7-.5-4z"/>
+      </svg>
+      Google로 로그인
+    </button>
+    <div class="auth-user" id="auth-user" hidden>
+      <img class="auth-avatar" id="auth-avatar" alt="" referrerpolicy="no-referrer" hidden />
+      <span class="auth-name" id="auth-name"></span>
+      <button class="auth-logout-btn" id="btn-logout">로그아웃</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 글쓰기 폼 -->
+  <div class="write-box">
+    <h2>글 남기기</h2>
+    <div id="write-login-hint" class="write-login-hint">로그인 후 글을 남길 수 있습니다.</div>
+    <div id="write-form" hidden>
+      <div class="cat-row">
+        <button class="cat-btn selected" data-cat="suggestion">💡 건의사항</button>
+        <button class="cat-btn" data-cat="bug">🐛 오류 제보</button>
+      </div>
+      <textarea id="content-input" placeholder="내용을 입력하세요..." maxlength="1000"></textarea>
+      <div class="submit-row">
+        <button class="btn-submit" id="btn-submit">등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 게시글 목록 -->
+  <div class="list-header">게시글</div>
+  <div class="post-list" id="post-list">
+    <div class="loading">불러오는 중...</div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp }         from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import {
+  getFirestore,
+  collection, addDoc, getDocs,
+  query, orderBy, serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey:            'AIzaSyC-CfCYCaNa3--RTXChQIY7c-EVURyuO1I',
+  authDomain:        'grayrockclub-51ed3.firebaseapp.com',
+  projectId:         'grayrockclub-51ed3',
+  storageBucket:     'grayrockclub-51ed3.firebasestorage.app',
+  messagingSenderId: '1014728880013',
+  appId:             '1:1014728880013:web:ad27fb41c8834c870c97c4',
+};
+
+const app  = initializeApp(firebaseConfig, 'feedback');
+const auth = getAuth(app);
+const db   = getFirestore(app);
+const col  = collection(db, 'feedback');
+const provider = new GoogleAuthProvider();
+
+// ── DOM refs ──
+const btnLogin   = document.getElementById('btn-login');
+const btnLogout  = document.getElementById('btn-logout');
+const authUser   = document.getElementById('auth-user');
+const authAvatar = document.getElementById('auth-avatar');
+const authName   = document.getElementById('auth-name');
+const writeHint  = document.getElementById('write-login-hint');
+const writeForm  = document.getElementById('write-form');
+const contentEl  = document.getElementById('content-input');
+const btnSubmit  = document.getElementById('btn-submit');
+const postList   = document.getElementById('post-list');
+const toastEl    = document.getElementById('toast');
+
+let selectedCat = 'suggestion';
+let currentUser = null;
+
+// ── toast ──
+let _toastTimer = null;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
+}
+
+// ── auth ──
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
+    if (user.photoURL) { authAvatar.src = user.photoURL; authAvatar.hidden = false; }
+    else authAvatar.hidden = true;
+    authName.textContent = user.displayName || user.email || '사용자';
+    authUser.hidden  = false;
+    btnLogin.hidden  = true;
+    writeHint.hidden = true;
+    writeForm.hidden = false;
+  } else {
+    authAvatar.hidden = true;
+    authUser.hidden   = true;
+    btnLogin.hidden   = false;
+    writeHint.hidden  = false;
+    writeForm.hidden  = true;
+  }
+});
+
+btnLogin.addEventListener('click', () => signInWithPopup(auth, provider).catch(console.error));
+btnLogout.addEventListener('click', () => signOut(auth).catch(console.error));
+
+// ── 카테고리 선택 ──
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedCat = btn.dataset.cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('selected', b === btn));
+  });
+});
+
+// ── 등록 ──
+btnSubmit.addEventListener('click', async () => {
+  if (!currentUser) return;
+  const text = contentEl.value.trim();
+  if (!text) { showToast('내용을 입력하세요.'); return; }
+
+  btnSubmit.disabled = true;
+  try {
+    await addDoc(col, {
+      uid:         currentUser.uid,
+      displayName: currentUser.displayName || currentUser.email || '익명',
+      photoURL:    currentUser.photoURL || '',
+      category:    selectedCat,
+      content:     text,
+      createdAt:   serverTimestamp(),
+    });
+    contentEl.value = '';
+    showToast('등록됐습니다. 감사합니다!');
+    loadPosts();
+  } catch(e) {
+    console.error(e);
+    showToast('등록에 실패했습니다: ' + e.message);
+  } finally {
+    btnSubmit.disabled = false;
+  }
+});
+
+// ── 목록 불러오기 ──
+function formatDate(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadPosts() {
+  try {
+    const snap = await getDocs(query(col, orderBy('createdAt', 'desc')));
+    if (snap.empty) {
+      postList.innerHTML = '<div class="empty">아직 게시글이 없습니다.</div>';
+      return;
+    }
+    postList.innerHTML = snap.docs.map(d => {
+      const p = d.data();
+      const isBug = p.category === 'bug';
+      const catLabel = isBug ? '🐛 오류 제보' : '💡 건의사항';
+      const catClass = isBug ? 'bug' : 'suggestion';
+      const avatar = p.photoURL
+        ? `<img class="post-avatar" src="${esc(p.photoURL)}" alt="" referrerpolicy="no-referrer" />`
+        : `<span class="post-avatar" style="background:var(--line);display:inline-block;"></span>`;
+      return `
+        <div class="post">
+          <div class="post-meta">
+            ${avatar}
+            <span class="post-name">${esc(p.displayName)}</span>
+            <span class="post-cat ${catClass}">${catLabel}</span>
+            <span class="post-date">${formatDate(p.createdAt)}</span>
+          </div>
+          <div class="post-content">${esc(p.content)}</div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.error(e);
+    postList.innerHTML = `<div class="empty">불러오기 실패: ${esc(e.message)}</div>`;
+  }
+}
+
+loadPosts();
+</script>
+</body>
+</html>
