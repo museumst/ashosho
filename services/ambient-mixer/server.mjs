@@ -61,6 +61,16 @@ export function mixKey(mix) {
     .slice(0, 20);
 }
 
+export function mixFromSearchParams(searchParams) {
+  return normalizeMix(
+    Object.fromEntries(
+      SOUND_IDS
+        .filter((soundId) => searchParams.has(soundId))
+        .map((soundId) => [soundId, searchParams.get(soundId)]),
+    ),
+  );
+}
+
 export function parseRange(rangeHeader, size) {
   if (!rangeHeader) return null;
   const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader);
@@ -305,6 +315,19 @@ export async function handleRequest(request, response) {
         durationSeconds: MIX_DURATION_SECONDS,
         url: `${publicBaseUrl(request)}/mix/${key}.mp3`,
       });
+    } catch (error) {
+      console.error(error);
+      sendJson(request, response, 400, { error: error.message || "could not create mix" });
+    }
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/mix.mp3") {
+    try {
+      const mix = mixFromSearchParams(url.searchParams);
+      const key = mixKey(mix);
+      await generateMix(mix, key);
+      await serveAudio(request, response, key);
     } catch (error) {
       console.error(error);
       sendJson(request, response, 400, { error: error.message || "could not create mix" });

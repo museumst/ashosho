@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mixKey, normalizeMix, parseRange } from "./server.mjs";
+import { mixFromSearchParams, mixKey, normalizeMix, parseRange } from "./server.mjs";
 
 test("normalizeMix keeps allowed non-zero levels at two decimals", () => {
   assert.deepEqual(
@@ -17,6 +17,11 @@ test("mixKey is stable regardless of unknown input fields", () => {
   const left = mixKey(normalizeMix({ rain: 0.35, waves: 0.51 }));
   const right = mixKey(normalizeMix({ waves: 0.51, rain: 0.35, extra: 1 }));
   assert.equal(left, right);
+});
+
+test("mixFromSearchParams reads allowed levels in canonical order", () => {
+  const params = new URLSearchParams("waves=0.51&unknown=1&rain=0.354");
+  assert.deepEqual(mixFromSearchParams(params), { rain: 0.35, waves: 0.51 });
 });
 
 test("parseRange supports explicit and suffix byte ranges", () => {

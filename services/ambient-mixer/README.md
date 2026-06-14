@@ -28,5 +28,13 @@ The response includes a cached MP3 URL:
 }
 ```
 
+```http
+GET /mix.mp3?rain=0.35&waves=0.51
+```
+
+This route generates the same mix when needed and returns the MP3 directly. It
+allows a browser to call `HTMLAudioElement.play()` during the original user
+gesture while an uncached mix is still being generated.
+
 Generated files are stored in Railway's ephemeral `/tmp` filesystem. They can
 be regenerated after a service restart.

@@ -253,6 +253,7 @@
       const SOUND_BASE_URL = `${ASSET_CDN_BASE_URL}/sound`;
       const BGM_BASE_URL = `${ASSET_CDN_BASE_URL}/bgm`;
       const BGM_ART_BASE_URL = `${ASSET_CDN_BASE_URL}/bgm-art`;
+      const AMBIENT_MIXER_URL = "https://meditation-ambient-mixer-production.up.railway.app";
 
       const ambientSounds = [
         { id: "rain", label: "빗소리", icon: "cloud-rain-wind", accentColor: "#5A9FE0", uri: `${SOUND_BASE_URL}/rain.mp3` },
@@ -295,11 +296,19 @@
       musicAudio.preload = "metadata";
       musicAudio.setAttribute("playsinline", "");
 
-      const needsWebAudioVolume = /iPad|iPhone|iPod/.test(navigator.userAgent)
-        || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      const ambientAudioElements = new Map();
-      const ambientGainNodes = new Map();
-      let ambientAudioContext = null;
+      function createAmbientAudio() {
+        const audio = new Audio();
+        audio.crossOrigin = "anonymous";
+        audio.loop = true;
+        audio.preload = "auto";
+        audio.setAttribute("playsinline", "");
+        return audio;
+      }
+
+      let ambientAudio = createAmbientAudio();
+      let pendingAmbientAudio = null;
+      let ambientHasMix = false;
+      let ambientMixRequestId = 0;
       let soundViewRafId = 0;
       let musicCarouselSettleTimer = 0;
 
@@ -370,75 +379,67 @@
         playTrack((state.currentTrackIndex + 1) % bgmTracks.length);
       }
 
-      function ensureAmbientAudioContext() {
-        if (!needsWebAudioVolume) return null;
-        if (!ambientAudioContext) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContextClass) return null;
-          try {
-            ambientAudioContext = new AudioContextClass();
-          } catch (error) {
-            return null;
-          }
-        }
-        if (ambientAudioContext.state === "suspended") {
-          ambientAudioContext.resume().catch(() => {});
-        }
-        return ambientAudioContext;
+      function currentAmbientMix() {
+        return Object.fromEntries(
+          Object.entries(state.ambientLevels)
+            .map(([soundId, level]) => [soundId, Math.round(clamp(level, 0, 1) * 100) / 100])
+            .filter(([, level]) => level > 0),
+        );
       }
 
-      function ensureAmbientGain(soundId, audio) {
-        if (!needsWebAudioVolume) return null;
-        if (ambientGainNodes.has(soundId)) {
-          return ambientGainNodes.get(soundId);
+      function stopAmbientMix() {
+        ambientMixRequestId += 1;
+        pendingAmbientAudio?.pause();
+        pendingAmbientAudio?.removeAttribute("src");
+        pendingAmbientAudio?.load();
+        pendingAmbientAudio = null;
+        ambientAudio.pause();
+        ambientAudio.removeAttribute("src");
+        ambientAudio.load();
+        ambientHasMix = false;
+        clearStatus();
+      }
+
+      async function loadAmbientMix() {
+        const mix = currentAmbientMix();
+        if (Object.keys(mix).length === 0) {
+          stopAmbientMix();
+          return;
         }
-        const context = ensureAmbientAudioContext();
-        if (!context) return null;
+
+        const requestId = ++ambientMixRequestId;
+        if (pendingAmbientAudio) {
+          pendingAmbientAudio.pause();
+          pendingAmbientAudio.removeAttribute("src");
+          pendingAmbientAudio.load();
+        }
+        const nextAudio = createAmbientAudio();
+        const query = new URLSearchParams(
+          Object.entries(mix).map(([soundId, level]) => [soundId, String(level)]),
+        );
+        nextAudio.src = `${AMBIENT_MIXER_URL}/mix.mp3?${query}`;
+        pendingAmbientAudio = nextAudio;
+        showLoading();
+
         try {
-          const source = context.createMediaElementSource(audio);
-          const gain = context.createGain();
-          gain.gain.value = 0;
-          source.connect(gain);
-          gain.connect(context.destination);
-          ambientGainNodes.set(soundId, gain);
-          return gain;
+          await nextAudio.play();
+          if (requestId !== ambientMixRequestId) {
+            nextAudio.pause();
+            return;
+          }
+          ambientAudio.pause();
+          ambientAudio = nextAudio;
+          pendingAmbientAudio = null;
+          ambientHasMix = true;
+          clearStatus();
         } catch (error) {
-          return null;
-        }
-      }
-
-      function ensureAmbient(sound) {
-        if (ambientAudioElements.has(sound.id)) {
-          return ambientAudioElements.get(sound.id);
-        }
-
-        const audio = new Audio(sound.uri);
-        audio.crossOrigin = "anonymous";
-        audio.loop = true;
-        audio.preload = "auto";
-        audio.volume = 0;
-        audio.setAttribute("playsinline", "");
-        ensureAmbientGain(sound.id, audio);
-        audio.addEventListener("error", () => {
-          showError(`${sound.label} 파일을 불러오지 못했어요.`);
-        });
-        ambientAudioElements.set(sound.id, audio);
-        return audio;
-      }
-
-      function applyAmbientLevel(soundId) {
-        const audio = ambientAudioElements.get(soundId);
-        if (!audio) return;
-        const level = clamp(state.ambientLevels[soundId] || 0, 0, 1);
-        const gain = ambientGainNodes.get(soundId);
-        if (gain && ambientAudioContext) {
-          gain.gain.setValueAtTime(level, ambientAudioContext.currentTime);
-          audio.volume = 1;
-        } else {
-          audio.volume = level;
-        }
-        if (level === 0) {
-          audio.pause();
+          if (requestId !== ambientMixRequestId) return;
+          console.error("Ambient mix playback failed", error);
+          showError("수딩사운드를 불러오지 못했어요.");
+        } finally {
+          if (requestId === ambientMixRequestId && pendingAmbientAudio === nextAudio) {
+            pendingAmbientAudio = null;
+          }
         }
       }
 
@@ -461,16 +462,6 @@
         const sound = ambientSounds.find((item) => item.id === soundId);
         if (!sound) return;
         state.ambientLevels[soundId] = clamp(level, 0, 1);
-        if (state.ambientLevels[soundId] > 0) {
-          ensureAmbientAudioContext();
-          const audio = ensureAmbient(sound);
-          applyAmbientLevel(soundId);
-          if (audio.paused) {
-            audio.play().catch(() => showError("사운드를 재생하지 못했어요."));
-          }
-        } else {
-          applyAmbientLevel(soundId);
-        }
         if (!soundViewRafId) {
           soundViewRafId = requestAnimationFrame(() => {
             soundViewRafId = 0;
@@ -625,7 +616,6 @@
           if (!tile) return;
           clearStatus();
           event.preventDefault();
-          ensureAmbientAudioContext();
           state.activeSoundPointerId = event.pointerId;
           state.activeSoundTile = tile;
           tile.setPointerCapture?.(event.pointerId);
@@ -642,6 +632,7 @@
           if (event.pointerId !== state.activeSoundPointerId) return;
           state.activeSoundPointerId = null;
           state.activeSoundTile = null;
+          loadAmbientMix();
         };
 
         dom.soundGrid.addEventListener("pointerup", clearSoundPointer);
@@ -655,7 +646,6 @@
             if (!touch || !tile) return;
             event.preventDefault();
             clearStatus();
-            ensureAmbientAudioContext();
             state.activeSoundTile = tile;
             setLevelFromPointer(tile, touch.clientY);
           }, { passive: false });
@@ -669,6 +659,7 @@
 
           dom.soundGrid.addEventListener("touchend", () => {
             state.activeSoundTile = null;
+            loadAmbientMix();
           });
           dom.soundGrid.addEventListener("touchcancel", () => {
             state.activeSoundTile = null;
@@ -707,15 +698,9 @@
 
         document.addEventListener("visibilitychange", () => {
           if (document.hidden) return;
-          ensureAmbientAudioContext();
-          ambientSounds.forEach((sound) => {
-            if ((state.ambientLevels[sound.id] || 0) > 0) {
-              const audio = ambientAudioElements.get(sound.id);
-              if (audio && audio.paused) {
-                audio.play().catch(() => {});
-              }
-            }
-          });
+          if (ambientHasMix && ambientAudio.paused) {
+            ambientAudio.play().catch(() => {});
+          }
         });
       }
 
