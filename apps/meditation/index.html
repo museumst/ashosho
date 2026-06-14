@@ -295,7 +295,11 @@
       musicAudio.preload = "metadata";
       musicAudio.setAttribute("playsinline", "");
 
+      const needsWebAudioVolume = /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
       const ambientAudioElements = new Map();
+      const ambientGainNodes = new Map();
+      let ambientAudioContext = null;
       let soundViewRafId = 0;
       let musicCarouselSettleTimer = 0;
 
@@ -366,6 +370,43 @@
         playTrack((state.currentTrackIndex + 1) % bgmTracks.length);
       }
 
+      function ensureAmbientAudioContext() {
+        if (!needsWebAudioVolume) return null;
+        if (!ambientAudioContext) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return null;
+          try {
+            ambientAudioContext = new AudioContextClass();
+          } catch (error) {
+            return null;
+          }
+        }
+        if (ambientAudioContext.state === "suspended") {
+          ambientAudioContext.resume().catch(() => {});
+        }
+        return ambientAudioContext;
+      }
+
+      function ensureAmbientGain(soundId, audio) {
+        if (!needsWebAudioVolume) return null;
+        if (ambientGainNodes.has(soundId)) {
+          return ambientGainNodes.get(soundId);
+        }
+        const context = ensureAmbientAudioContext();
+        if (!context) return null;
+        try {
+          const source = context.createMediaElementSource(audio);
+          const gain = context.createGain();
+          gain.gain.value = 0;
+          source.connect(gain);
+          gain.connect(context.destination);
+          ambientGainNodes.set(soundId, gain);
+          return gain;
+        } catch (error) {
+          return null;
+        }
+      }
+
       function ensureAmbient(sound) {
         if (ambientAudioElements.has(sound.id)) {
           return ambientAudioElements.get(sound.id);
@@ -377,6 +418,7 @@
         audio.preload = "auto";
         audio.volume = 0;
         audio.setAttribute("playsinline", "");
+        ensureAmbientGain(sound.id, audio);
         audio.addEventListener("error", () => {
           showError(`${sound.label} 파일을 불러오지 못했어요.`);
         });
@@ -388,7 +430,13 @@
         const audio = ambientAudioElements.get(soundId);
         if (!audio) return;
         const level = clamp(state.ambientLevels[soundId] || 0, 0, 1);
-        audio.volume = level;
+        const gain = ambientGainNodes.get(soundId);
+        if (gain && ambientAudioContext) {
+          gain.gain.setValueAtTime(level, ambientAudioContext.currentTime);
+          audio.volume = 1;
+        } else {
+          audio.volume = level;
+        }
         if (level === 0) {
           audio.pause();
         }
@@ -414,6 +462,7 @@
         if (!sound) return;
         state.ambientLevels[soundId] = clamp(level, 0, 1);
         if (state.ambientLevels[soundId] > 0) {
+          ensureAmbientAudioContext();
           const audio = ensureAmbient(sound);
           applyAmbientLevel(soundId);
           if (audio.paused) {
@@ -576,6 +625,7 @@
           if (!tile) return;
           clearStatus();
           event.preventDefault();
+          ensureAmbientAudioContext();
           state.activeSoundPointerId = event.pointerId;
           state.activeSoundTile = tile;
           tile.setPointerCapture?.(event.pointerId);
@@ -605,6 +655,7 @@
             if (!touch || !tile) return;
             event.preventDefault();
             clearStatus();
+            ensureAmbientAudioContext();
             state.activeSoundTile = tile;
             setLevelFromPointer(tile, touch.clientY);
           }, { passive: false });
@@ -656,6 +707,7 @@
 
         document.addEventListener("visibilitychange", () => {
           if (document.hidden) return;
+          ensureAmbientAudioContext();
           ambientSounds.forEach((sound) => {
             if ((state.ambientLevels[sound.id] || 0) > 0) {
               const audio = ambientAudioElements.get(sound.id);
