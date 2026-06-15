@@ -29,8 +29,10 @@
 
           <!-- 로그인 후 -->
           <div class="auth-user" id="auth-user" hidden>
-            <img class="auth-avatar" id="auth-avatar" alt="" width="28" height="28" referrerpolicy="no-referrer" hidden />
-            <span class="auth-name" id="auth-name"></span>
+            <a href="https://myaccount.google.com" target="_blank" rel="noopener" class="auth-profile-link">
+              <img class="auth-avatar" id="auth-avatar" alt="" width="28" height="28" referrerpolicy="no-referrer" hidden />
+              <span class="auth-name" id="auth-name"></span>
+            </a>
             <button class="auth-logout-btn" id="btn-logout" type="button">로그아웃</button>
           </div>
           <p class="auth-error" id="auth-error" role="alert" hidden></p>
