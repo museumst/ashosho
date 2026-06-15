@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>건의 · 오류 게시판</title>
+  <title>게시판</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -14,6 +14,7 @@
       --text:    #1a1a18;
       --muted:   #888880;
       --accent:  #4f8ef7;
+      --danger:  #e53e3e;
       --radius:  12px;
     }
 
@@ -29,10 +30,7 @@
       padding: 14px 20px; display: flex; align-items: center; gap: 12px;
       position: sticky; top: 0; z-index: 10;
     }
-    .hd-back {
-      font-size: .85rem; color: var(--muted); text-decoration: none;
-      display: flex; align-items: center; gap: 4px;
-    }
+    .hd-back { font-size: .85rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 4px; }
     .hd-back:hover { color: var(--text); }
     .hd-title { font-size: 1rem; font-weight: 800; }
     .hd-auth  { margin-left: auto; display: flex; align-items: center; gap: 10px; }
@@ -49,8 +47,7 @@
     .auth-login-btn:hover { border-color: var(--accent); }
     .auth-user  { display: flex; align-items: center; gap: 8px; }
     .auth-avatar { width: 28px; height: 28px; border-radius: 50%; }
-    .auth-name  { font-size: .82rem; font-weight: 700; max-width: 120px;
-                  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .auth-name  { font-size: .82rem; font-weight: 700; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .auth-logout-btn {
       padding: 5px 10px; border-radius: 7px;
       border: 1px solid var(--line); background: transparent;
@@ -67,24 +64,12 @@
       border-radius: var(--radius); padding: 20px; margin-bottom: 28px;
     }
     .write-box h2 { font-size: .95rem; font-weight: 800; margin-bottom: 14px; }
-    .write-login-hint {
-      font-size: .85rem; color: var(--muted); padding: 14px 0;
-      text-align: center;
-    }
-    .cat-row { display: flex; gap: 8px; margin-bottom: 12px; }
-    .cat-btn {
-      flex: 1; padding: 8px 0; border-radius: 8px;
-      border: 1px solid var(--line); background: var(--surface);
-      font: inherit; font-size: .83rem; font-weight: 700;
-      color: var(--muted); cursor: pointer; transition: .15s;
-    }
-    .cat-btn.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .write-login-hint { font-size: .85rem; color: var(--muted); padding: 14px 0; text-align: center; }
     textarea {
       width: 100%; min-height: 100px; padding: 12px;
       border: 1px solid var(--line); border-radius: 9px;
       background: var(--bg); color: var(--text);
-      font: inherit; font-size: .9rem; resize: vertical;
-      margin-bottom: 12px;
+      font: inherit; font-size: .9rem; resize: vertical; margin-bottom: 12px;
     }
     textarea:focus { outline: none; border-color: var(--accent); }
     .submit-row { display: flex; justify-content: flex-end; }
@@ -108,32 +93,38 @@
     .toast.show { opacity: 1; }
 
     /* ── post list ── */
-    .list-header {
-      font-size: .8rem; font-weight: 800; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .05em;
-      margin-bottom: 12px;
-    }
+    .list-header { font-size: .8rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px; }
     .post-list { display: grid; gap: 10px; }
-    .post {
-      background: var(--surface); border: 1px solid var(--line);
-      border-radius: var(--radius); padding: 16px 18px;
-    }
-    .post-meta {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
+    .post { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+    .post-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
     .post-avatar { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
     .post-name { font-size: .8rem; font-weight: 700; }
-    .post-cat {
-      font-size: .72rem; font-weight: 800; padding: 2px 9px;
-      border-radius: 20px; white-space: nowrap;
-    }
-    .post-cat.suggestion { background: #eef4ff; color: #3a6ed4; }
-    .post-cat.bug        { background: #fff0f0; color: #d43a3a; }
     .post-date { font-size: .75rem; color: var(--muted); margin-left: auto; }
-    .post-content {
-      font-size: .9rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+    .post-actions { display: flex; gap: 6px; }
+    .btn-edit, .btn-delete {
+      padding: 3px 10px; border-radius: 6px; font: inherit;
+      font-size: .75rem; font-weight: 700; cursor: pointer; border: 1px solid var(--line);
+      background: transparent; color: var(--muted); transition: .15s;
     }
+    .btn-edit:hover   { border-color: var(--accent); color: var(--accent); }
+    .btn-delete:hover { border-color: var(--danger); color: var(--danger); }
+    .post-content { font-size: .9rem; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+
+    /* ── inline edit ── */
+    .inline-edit { display: grid; gap: 8px; margin-top: 10px; }
+    .inline-edit textarea { margin-bottom: 0; min-height: 80px; }
+    .inline-edit-btns { display: flex; gap: 8px; justify-content: flex-end; }
+    .btn-save {
+      padding: 6px 16px; border-radius: 7px; border: none;
+      background: var(--accent); color: #fff;
+      font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-cancel {
+      padding: 6px 16px; border-radius: 7px;
+      border: 1px solid var(--line); background: transparent;
+      font: inherit; font-size: .82rem; cursor: pointer; color: var(--muted);
+    }
+
     .empty { text-align: center; color: var(--muted); font-size: .9rem; padding: 40px 0; }
     .loading { text-align: center; color: var(--muted); font-size: .88rem; padding: 30px 0; }
   </style>
@@ -142,7 +133,7 @@
 
 <header>
   <a class="hd-back" href="../../index.html">← 홈</a>
-  <span class="hd-title">건의 · 오류 게시판</span>
+  <span class="hd-title">게시판</span>
   <div class="hd-auth">
     <button class="auth-login-btn" id="btn-login" hidden>
       <svg width="14" height="14" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -163,15 +154,10 @@
 
 <div class="wrap">
 
-  <!-- 글쓰기 폼 -->
   <div class="write-box">
-    <h2>글 남기기</h2>
+    <h2>건의사항 및 오류 제보</h2>
     <div id="write-login-hint" class="write-login-hint">로그인 후 글을 남길 수 있습니다.</div>
     <div id="write-form" hidden>
-      <div class="cat-row">
-        <button class="cat-btn selected" data-cat="suggestion">💡 건의사항</button>
-        <button class="cat-btn" data-cat="bug">🐛 오류 제보</button>
-      </div>
       <textarea id="content-input" placeholder="내용을 입력하세요..." maxlength="1000"></textarea>
       <div class="submit-row">
         <button class="btn-submit" id="btn-submit">등록</button>
@@ -179,7 +165,6 @@
     </div>
   </div>
 
-  <!-- 게시글 목록 -->
   <div class="list-header">게시글</div>
   <div class="post-list" id="post-list">
     <div class="loading">불러오는 중...</div>
@@ -195,9 +180,11 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import {
   getFirestore,
-  collection, addDoc, getDocs,
+  collection, addDoc, getDocs, updateDoc, deleteDoc, doc,
   query, orderBy, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const ADMIN_EMAIL = 'museumst@gmail.com';
 
 const firebaseConfig = {
   apiKey:            'AIzaSyC-CfCYCaNa3--RTXChQIY7c-EVURyuO1I',
@@ -208,13 +195,12 @@ const firebaseConfig = {
   appId:             '1:1014728880013:web:ad27fb41c8834c870c97c4',
 };
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-const col  = collection(db, 'feedback');
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const db       = getFirestore(app);
+const col      = collection(db, 'feedback');
 const provider = new GoogleAuthProvider();
 
-// ── DOM refs ──
 const btnLogin   = document.getElementById('btn-login');
 const btnLogout  = document.getElementById('btn-logout');
 const authUser   = document.getElementById('auth-user');
@@ -227,7 +213,6 @@ const btnSubmit  = document.getElementById('btn-submit');
 const postList   = document.getElementById('post-list');
 const toastEl    = document.getElementById('toast');
 
-let selectedCat = 'suggestion';
 let currentUser = null;
 
 // ── toast ──
@@ -237,6 +222,18 @@ function showToast(msg) {
   toastEl.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
+}
+
+function isAdmin(user) {
+  return user && user.email === ADMIN_EMAIL;
+}
+
+function canEdit(user, post) {
+  return user && user.uid === post.uid;
+}
+
+function canDelete(user, post) {
+  return user && (user.uid === post.uid || isAdmin(user));
 }
 
 // ── auth ──
@@ -257,32 +254,23 @@ onAuthStateChanged(auth, user => {
     writeHint.hidden  = false;
     writeForm.hidden  = true;
   }
+  loadPosts();
 });
 
 btnLogin.addEventListener('click', () => signInWithPopup(auth, provider).catch(console.error));
 btnLogout.addEventListener('click', () => signOut(auth).catch(console.error));
-
-// ── 카테고리 선택 ──
-document.querySelectorAll('.cat-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    selectedCat = btn.dataset.cat;
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('selected', b === btn));
-  });
-});
 
 // ── 등록 ──
 btnSubmit.addEventListener('click', async () => {
   if (!currentUser) return;
   const text = contentEl.value.trim();
   if (!text) { showToast('내용을 입력하세요.'); return; }
-
   btnSubmit.disabled = true;
   try {
     await addDoc(col, {
       uid:         currentUser.uid,
       displayName: currentUser.displayName || currentUser.email || '익명',
       photoURL:    currentUser.photoURL || '',
-      category:    selectedCat,
       content:     text,
       createdAt:   serverTimestamp(),
     });
@@ -290,58 +278,122 @@ btnSubmit.addEventListener('click', async () => {
     showToast('등록됐습니다. 감사합니다!');
     loadPosts();
   } catch(e) {
-    console.error(e);
     showToast('등록에 실패했습니다: ' + e.message);
   } finally {
     btnSubmit.disabled = false;
   }
 });
 
-// ── 목록 불러오기 ──
+// ── 유틸 ──
 function formatDate(ts) {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   const pad = n => String(n).padStart(2, '0');
   return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── 목록 ──
+let _posts = []; // { id, data }
+
 async function loadPosts() {
   try {
     const snap = await getDocs(query(col, orderBy('createdAt', 'desc')));
-    if (snap.empty) {
-      postList.innerHTML = '<div class="empty">아직 게시글이 없습니다.</div>';
-      return;
-    }
-    postList.innerHTML = snap.docs.map(d => {
-      const p = d.data();
-      const isBug = p.category === 'bug';
-      const catLabel = isBug ? '🐛 오류 제보' : '💡 건의사항';
-      const catClass = isBug ? 'bug' : 'suggestion';
-      const avatar = p.photoURL
-        ? `<img class="post-avatar" src="${esc(p.photoURL)}" alt="" referrerpolicy="no-referrer" />`
-        : `<span class="post-avatar" style="background:var(--line);display:inline-block;"></span>`;
-      return `
-        <div class="post">
-          <div class="post-meta">
-            ${avatar}
-            <span class="post-name">${esc(p.displayName)}</span>
-            <span class="post-cat ${catClass}">${catLabel}</span>
-            <span class="post-date">${formatDate(p.createdAt)}</span>
-          </div>
-          <div class="post-content">${esc(p.content)}</div>
-        </div>`;
-    }).join('');
+    _posts = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+    renderPosts();
   } catch(e) {
-    console.error(e);
     postList.innerHTML = `<div class="empty">불러오기 실패: ${esc(e.message)}</div>`;
   }
 }
 
-loadPosts();
+function renderPosts() {
+  if (!_posts.length) {
+    postList.innerHTML = '<div class="empty">아직 게시글이 없습니다.</div>';
+    return;
+  }
+  postList.innerHTML = _posts.map(({ id, data: p }) => {
+    const avatar = p.photoURL
+      ? `<img class="post-avatar" src="${esc(p.photoURL)}" alt="" referrerpolicy="no-referrer" />`
+      : `<span class="post-avatar" style="background:var(--line);display:inline-block;"></span>`;
+    const editBtn   = canEdit(currentUser, p)   ? `<button class="btn-edit"   data-id="${esc(id)}">수정</button>` : '';
+    const deleteBtn = canDelete(currentUser, p) ? `<button class="btn-delete" data-id="${esc(id)}">삭제</button>` : '';
+    const actions = (editBtn || deleteBtn) ? `<div class="post-actions">${editBtn}${deleteBtn}</div>` : '';
+    return `
+      <div class="post" data-id="${esc(id)}">
+        <div class="post-meta">
+          ${avatar}
+          <span class="post-name">${esc(p.displayName)}</span>
+          <span class="post-date">${formatDate(p.createdAt)}</span>
+          ${actions}
+        </div>
+        <div class="post-content" data-content-id="${esc(id)}">${esc(p.content)}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── 수정 / 삭제 (이벤트 위임) ──
+postList.addEventListener('click', async e => {
+  // 삭제
+  if (e.target.matches('.btn-delete')) {
+    const id = e.target.dataset.id;
+    if (!confirm('이 글을 삭제할까요?')) return;
+    try {
+      await deleteDoc(doc(db, 'feedback', id));
+      showToast('삭제됐습니다.');
+      loadPosts();
+    } catch(err) {
+      showToast('삭제 실패: ' + err.message);
+    }
+    return;
+  }
+
+  // 수정 — 인라인 편집창 열기
+  if (e.target.matches('.btn-edit')) {
+    const id = e.target.dataset.id;
+    const postEl = postList.querySelector(`.post[data-id="${id}"]`);
+    if (!postEl) return;
+    // 이미 열려있으면 닫기
+    if (postEl.querySelector('.inline-edit')) return;
+    const contentEl = postEl.querySelector('.post-content');
+    const original = _posts.find(p => p.id === id)?.data.content || '';
+    contentEl.insertAdjacentHTML('afterend', `
+      <div class="inline-edit">
+        <textarea class="edit-textarea">${esc(original)}</textarea>
+        <div class="inline-edit-btns">
+          <button class="btn-cancel" data-cancel="${esc(id)}">취소</button>
+          <button class="btn-save"   data-save="${esc(id)}">저장</button>
+        </div>
+      </div>`);
+    postEl.querySelector('.edit-textarea').focus();
+    return;
+  }
+
+  // 수정 취소
+  if (e.target.matches('.btn-cancel')) {
+    const id = e.target.dataset.cancel;
+    postList.querySelector(`.post[data-id="${id}"] .inline-edit`)?.remove();
+    return;
+  }
+
+  // 수정 저장
+  if (e.target.matches('.btn-save')) {
+    const id = e.target.dataset.save;
+    const postEl = postList.querySelector(`.post[data-id="${id}"]`);
+    const newText = postEl.querySelector('.edit-textarea')?.value.trim();
+    if (!newText) { showToast('내용을 입력하세요.'); return; }
+    e.target.disabled = true;
+    try {
+      await updateDoc(doc(db, 'feedback', id), { content: newText, updatedAt: serverTimestamp() });
+      showToast('수정됐습니다.');
+      loadPosts();
+    } catch(err) {
+      showToast('수정 실패: ' + err.message);
+      e.target.disabled = false;
+    }
+  }
+});
 </script>
 </body>
 </html>
