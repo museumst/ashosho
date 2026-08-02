@@ -1036,8 +1036,11 @@ function renderStudy() {
   if (!state.books.length) return;
   // 단어장 선택 드롭다운
   const sel = document.getElementById('unit-select');
-  sel.innerHTML = state.books.map((b,i) =>
-    `<option value="${i}">${esc(b.title)} (${b.units.flatMap(u=>u.entries).length})</option>`).join('');
+  sel.innerHTML = state.books.map((b,i) => {
+    const allEntries = b.units.flatMap(u => u.entries);
+    const unmemorizedCount = allEntries.filter(e => !state.excl[e.id]).length;
+    return `<option value="${i}">${esc(b.title)} (${unmemorizedCount}/${allEntries.length})</option>`;
+  }).join('');
   state.bookIndex = Math.min(state.bookIndex, state.books.length - 1);
   sel.value = String(state.bookIndex);
 
