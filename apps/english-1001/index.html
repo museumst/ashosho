@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>1001영어문장</title>
+    <link rel="stylesheet" href="../../assets/styles.css" />
+    <style>
+      .sentence-app {
+        align-items: start;
+        padding: 16px;
+      }
+
+      .sentence-panel {
+        width: min(860px, 100%);
+      }
+
+      .sentence-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .sentence-head h1 {
+        margin: 0;
+        max-width: none;
+        font-size: clamp(2rem, 6vw, 3.3rem);
+        line-height: 1.05;
+      }
+
+      .sentence-meta {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .top-actions,
+      .sentence-tools,
+      .card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .icon-btn,
+      .plain-btn,
+      .tts-btn {
+        display: inline-grid;
+        min-height: 40px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--muted);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.88rem;
+        font-weight: 800;
+      }
+
+      .icon-btn {
+        width: 44px;
+        padding: 0;
+      }
+
+      .plain-btn {
+        padding: 0 14px;
+      }
+
+      .tts-btn {
+        width: 34px;
+        min-height: 34px;
+      }
+
+      .icon-btn:hover,
+      .icon-btn:focus-visible,
+      .plain-btn:hover,
+      .plain-btn:focus-visible,
+      .tts-btn:hover,
+      .tts-btn:focus-visible {
+        border-color: var(--accent);
+        background: #e8f4f2;
+        color: var(--accent-strong);
+        outline: none;
+      }
+
+      .icon-btn svg,
+      .tts-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .icon-btn.is-active {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .tts-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.42;
+      }
+
+      .plain-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.42;
+      }
+
+      .sentence-tools {
+        margin-top: 22px;
+      }
+
+      .sentence-search,
+      .chapter-select,
+      .jump-input {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+      }
+
+      .sentence-search {
+        flex: 1 1 240px;
+        min-width: 0;
+        padding: 0 12px;
+      }
+
+      .chapter-select {
+        min-width: min(100%, 245px);
+        padding: 0 34px 0 12px;
+      }
+
+      .jump-input {
+        width: 92px;
+        padding: 0 10px;
+      }
+
+      .status {
+        min-height: 22px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        font-weight: 800;
+        line-height: 1.45;
+      }
+
+      .card-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .sentence-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px;
+        background: #fbfcfb;
+      }
+
+      .card-number {
+        color: var(--accent-strong);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .english-line {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .english-text {
+        margin: 0;
+        min-width: 0;
+        color: var(--text);
+        font-size: clamp(1.05rem, 4vw, 1.28rem);
+        font-weight: 900;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+
+      .sentence-card.is-hidden .english-text {
+        color: transparent;
+        text-shadow: 0 0 11px rgba(32, 33, 36, 0.28);
+        user-select: none;
+      }
+
+      .korean-text {
+        margin: 12px 0 0;
+        color: #31423f;
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.65;
+        overflow-wrap: anywhere;
+      }
+
+      .korean-text.empty {
+        color: var(--muted);
+      }
+
+      .empty-state {
+        margin-top: 16px;
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .pagination-status {
+        min-width: 94px;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 640px) {
+        .sentence-app {
+          padding: 10px;
+        }
+
+        .sentence-panel {
+          padding: 18px;
+        }
+
+        .sentence-head {
+          display: grid;
+        }
+
+        .top-actions {
+          justify-content: flex-start;
+        }
+
+        .sentence-tools {
+          display: grid;
+          grid-template-columns: 1fr 92px;
+        }
+
+        .sentence-search {
+          grid-column: 1 / -1;
+        }
+
+        .chapter-select {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .plain-btn {
+          min-height: 42px;
+        }
+      }
+    </style>
+  </head>
+  <body class="mini-app sentence-app">
+    <main class="mini-app-panel sentence-panel">
+      <header class="sentence-head">
+        <div>
+          <p class="eyebrow">Study</p>
+          <h1>1001영어문장</h1>
+          <p class="sentence-meta" id="sentence-meta">1001개 문장</p>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" type="button" id="toggle-english" aria-label="영어문장 가리기" title="영어문장 가리기">
+            <i data-lucide="eye"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="sentence-tools">
+        <select class="chapter-select" id="chapter-select" aria-label="학습 범위 선택"></select>
+        <input class="sentence-search" id="search-input" type="search" placeholder="문장 검색" />
+        <input class="jump-input" id="jump-input" type="number" min="1" max="1001" placeholder="번호" aria-label="문장 번호" />
+        <button class="plain-btn" type="button" id="jump-button">이동</button>
+      </div>
+
+      <p class="status" id="status-line" aria-live="polite"></p>
+      <section class="card-list" id="card-list" aria-label="영어 문장 카드"></section>
+      <div class="empty-state" id="empty-state" hidden>표시할 문장이 없습니다.</div>
+      <nav class="pagination" id="pagination" aria-label="문장 페이지">
+        <button class="plain-btn" type="button" id="previous-page">이전</button>
+        <span class="pagination-status" id="page-status"></span>
+        <button class="plain-btn" type="button" id="next-page">다음</button>
+      </nav>
+    </main>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="sentences.js?v=20260911-1001-translations"></script>
+    <script>
+      const PAGE_SIZE = 10;
+      const STORAGE_HIDE_KEY = "ashosho-english-1001-hide-english";
+      const hasTts = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+      const sentences = Array.isArray(window.ENGLISH_1001_SENTENCES) ? window.ENGLISH_1001_SENTENCES : [];
+      const chapters = [
+        { id: 1, title: "동사와 문장의 기본 구조", start: 1 },
+        { id: 2, title: "주어의 이해", start: 72 },
+        { id: 3, title: "목적어의 이해", start: 129 },
+        { id: 4, title: "보어의 이해", start: 213 },
+        { id: 5, title: "동사의 시제", start: 284 },
+        { id: 6, title: "조동사", start: 333 },
+        { id: 7, title: "동사의 태", start: 395 },
+        { id: 8, title: "가정법", start: 445 },
+        { id: 9, title: "수식어구: to부정사, 분사", start: 499 },
+        { id: 10, title: "분사구문", start: 564 },
+        { id: 11, title: "등위절과 병렬구조", start: 610 },
+        { id: 12, title: "관계사절", start: 657 },
+        { id: 13, title: "부사절", start: 736 },
+        { id: 14, title: "전명구를 동반하는 동사구", start: 801 },
+        { id: 15, title: "비교구문", start: 849 },
+        { id: 16, title: "특수구문", start: 912 }
+      ].map((chapter, index, allChapters) => ({
+        ...chapter,
+        end: (allChapters[index + 1]?.start || sentences.length + 1) - 1
+      }));
+
+      const state = {
+        query: "",
+        chapterId: 1,
+        page: 1,
+        hideEnglish: localStorage.getItem(STORAGE_HIDE_KEY) === "true"
+      };
+
+      const els = {
+        meta: document.querySelector("#sentence-meta"),
+        toggle: document.querySelector("#toggle-english"),
+        chapter: document.querySelector("#chapter-select"),
+        search: document.querySelector("#search-input"),
+        jumpInput: document.querySelector("#jump-input"),
+        jumpButton: document.querySelector("#jump-button"),
+        status: document.querySelector("#status-line"),
+        cardList: document.querySelector("#card-list"),
+        empty: document.querySelector("#empty-state"),
+        pagination: document.querySelector("#pagination"),
+        previousPage: document.querySelector("#previous-page"),
+        nextPage: document.querySelector("#next-page"),
+        pageStatus: document.querySelector("#page-status")
+      };
+
+      function esc(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function selectedChapter() {
+        return chapters.find((chapter) => chapter.id === state.chapterId) || null;
+      }
+
+      function scopedSentences() {
+        const chapter = selectedChapter();
+        if (!chapter) return sentences;
+        return sentences.filter((item) => item.no >= chapter.start && item.no <= chapter.end);
+      }
+
+      function filteredSentences() {
+        const query = state.query.trim().toLowerCase();
+        const source = scopedSentences();
+        if (!query) return source;
+        return source.filter((item) => {
+          return [item.no, item.en, item.ko]
+            .join(" ")
+            .toLowerCase()
+            .includes(query);
+        });
+      }
+
+      function speak(text) {
+        if (!hasTts) {
+          els.status.textContent = "이 브라우저에서는 TTS를 사용할 수 없습니다.";
+          return;
+        }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.92;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function updateEyeButton() {
+        els.toggle.classList.toggle("is-active", state.hideEnglish);
+        els.toggle.setAttribute("aria-label", state.hideEnglish ? "영어문장 보이기" : "영어문장 가리기");
+        els.toggle.title = state.hideEnglish ? "영어문장 보이기" : "영어문장 가리기";
+        els.toggle.innerHTML = `<i data-lucide="${state.hideEnglish ? "eye-off" : "eye"}"></i>`;
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      function renderChapterOptions() {
+        els.chapter.innerHTML = [
+          `<option value="all">전체 문장 (${sentences.length})</option>`,
+          ...chapters.map((chapter) => `<option value="${chapter.id}">Chapter ${String(chapter.id).padStart(2, "0")} · ${chapter.title} (${chapter.start}-${chapter.end})</option>`)
+        ].join("");
+        els.chapter.value = state.chapterId || "all";
+      }
+
+      function render() {
+        const filtered = filteredSentences();
+        const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        state.page = Math.min(state.page, pageCount);
+        const firstIndex = (state.page - 1) * PAGE_SIZE;
+        const visible = filtered.slice(firstIndex, firstIndex + PAGE_SIZE);
+        const chapter = selectedChapter();
+        els.meta.textContent = `${sentences.length}개 문장`;
+        els.status.textContent = state.query
+          ? `${filtered.length}개 검색됨${chapter ? ` · Chapter ${String(chapter.id).padStart(2, "0")}` : ""}`
+          : `${chapter ? `Chapter ${String(chapter.id).padStart(2, "0")} · ` : ""}${filtered.length}개 문장`;
+        els.empty.hidden = visible.length > 0;
+        els.pagination.hidden = filtered.length === 0;
+        els.previousPage.disabled = state.page === 1;
+        els.nextPage.disabled = state.page === pageCount;
+        els.pageStatus.textContent = `${state.page} / ${pageCount}쪽`;
+        els.cardList.innerHTML = visible.map((item) => `
+          <article class="sentence-card ${state.hideEnglish ? "is-hidden" : ""}" id="sentence-${item.no}">
+            <span class="card-number">${item.no}</span>
+            <div class="english-line">
+              <p class="english-text">${esc(item.en)}</p>
+              <button class="tts-btn" type="button" data-speak="${esc(item.en)}" ${hasTts ? "" : "disabled"} aria-label="${item.no}번 영어문장 듣기" title="영어문장 듣기">
+                <i data-lucide="volume-2"></i>
+              </button>
+            </div>
+            <p class="korean-text ${item.ko ? "" : "empty"}">${item.ko ? esc(item.ko) : "한글 해석 준비 중"}</p>
+          </article>
+        `).join("");
+
+        updateEyeButton();
+      }
+
+      els.toggle.addEventListener("click", () => {
+        state.hideEnglish = !state.hideEnglish;
+        localStorage.setItem(STORAGE_HIDE_KEY, String(state.hideEnglish));
+        render();
+      });
+
+      els.search.addEventListener("input", () => {
+        state.query = els.search.value;
+        state.page = 1;
+        render();
+      });
+
+      els.chapter.addEventListener("change", () => {
+        state.chapterId = els.chapter.value === "all" ? null : Number(els.chapter.value);
+        state.page = 1;
+        render();
+      });
+
+      els.jumpButton.addEventListener("click", () => {
+        const number = Number(els.jumpInput.value);
+        if (!Number.isInteger(number) || number < 1 || number > sentences.length) {
+          els.status.textContent = "1부터 1001 사이의 번호를 입력하세요.";
+          return;
+        }
+        const chapter = chapters.find((item) => number >= item.start && number <= item.end) || null;
+        state.chapterId = chapter?.id || null;
+        state.page = Math.floor((number - (chapter?.start || 1)) / PAGE_SIZE) + 1;
+        state.query = "";
+        els.search.value = "";
+        renderChapterOptions();
+        render();
+        document.querySelector(`#sentence-${number}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      els.jumpInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") els.jumpButton.click();
+      });
+
+      document.addEventListener("click", (event) => {
+        const speakButton = event.target.closest("[data-speak]");
+        if (speakButton) {
+          speak(speakButton.dataset.speak);
+          return;
+        }
+      });
+
+      els.previousPage.addEventListener("click", () => {
+        state.page -= 1;
+        render();
+        els.cardList.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      els.nextPage.addEventListener("click", () => {
+        state.page += 1;
+        render();
+        els.cardList.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      renderChapterOptions();
+      render();
+    </script>
+  </body>
+</html>

@@ -264,6 +264,39 @@ const apps = [
     tags: ["vocabulary", "study", "quiz", "tts"],
   },
   {
+    title: "1001영어문장",
+    description: "영어 문장 1001개를 카드로 보고, TTS로 들으며, 영문 가리기 모드로 복습하는 학습 앱입니다.",
+    i18n: {
+      ko: {
+        title: "1001영어문장",
+        description: "영어 문장 1001개를 카드로 보고, TTS로 들으며, 영문 가리기 모드로 복습하는 학습 앱입니다.",
+      },
+      en: {
+        title: "1001 English Sentences",
+        description: "Study 1001 English sentences with cards, TTS playback, and an English hide mode.",
+      },
+      ja: {
+        title: "1001英語文",
+        description: "1001個の英語文をカードで確認し、TTSで聞き、英文を隠して復習する学習アプリです。",
+      },
+      zh: {
+        title: "1001英语句子",
+        description: "通过卡片、TTS 播放和隐藏英文模式学习 1001 个英语句子。",
+      },
+      es: {
+        title: "1001 Frases en Inglés",
+        description: "Estudia 1001 frases en inglés con tarjetas, TTS y un modo para ocultar el texto inglés.",
+      },
+    },
+    category: "study",
+    categoryLabel: "학습",
+    thumbnail: "english-1001",
+    app_url: "apps/english-1001/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["english", "sentences", "study", "tts"],
+  },
+  {
     title: "그리스 신화 계보",
     description: "원초신, 티탄, 올림포스 신과 주요 영웅의 관계를 SVG 계보도로 정리한 학습 앱입니다.",
     i18n: {
