@@ -121,7 +121,6 @@
 
       .sentence-search,
       .chapter-select,
-      .voice-select,
       .jump-input {
         min-height: 42px;
         border: 1px solid var(--line);
@@ -140,11 +139,6 @@
 
       .chapter-select {
         min-width: min(100%, 245px);
-        padding: 0 34px 0 12px;
-      }
-
-      .voice-select {
-        min-width: min(100%, 180px);
         padding: 0 34px 0 12px;
       }
 
@@ -277,11 +271,6 @@
           width: 100%;
         }
 
-        .voice-select {
-          grid-column: 1 / -1;
-          width: 100%;
-        }
-
         .plain-btn {
           min-height: 42px;
         }
@@ -305,7 +294,6 @@
 
       <div class="sentence-tools">
         <select class="chapter-select" id="chapter-select" aria-label="학습 범위 선택"></select>
-        <select class="voice-select" id="voice-select" aria-label="영어 음성 선택" disabled></select>
         <input class="sentence-search" id="search-input" type="search" placeholder="문장 검색" />
         <input class="jump-input" id="jump-input" type="number" min="1" max="1001" placeholder="번호" aria-label="문장 번호" />
         <button class="plain-btn" type="button" id="jump-button">이동</button>
@@ -326,7 +314,6 @@
     <script>
       const PAGE_SIZE = 10;
       const STORAGE_HIDE_KEY = "ashosho-english-1001-hide-english";
-      const STORAGE_VOICE_KEY = "ashosho-english-1001-voice";
       const hasTts = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
       const sentences = Array.isArray(window.ENGLISH_1001_SENTENCES) ? window.ENGLISH_1001_SENTENCES : [];
       const chapters = [
@@ -357,15 +344,13 @@
         page: 1,
         hideEnglish: localStorage.getItem(STORAGE_HIDE_KEY) === "true",
         hiddenSentenceNumbers: new Set(),
-        revealedSentenceNumbers: new Set(),
-        voiceName: localStorage.getItem(STORAGE_VOICE_KEY) || ""
+        revealedSentenceNumbers: new Set()
       };
 
       const els = {
         meta: document.querySelector("#sentence-meta"),
         toggle: document.querySelector("#toggle-english"),
         chapter: document.querySelector("#chapter-select"),
-        voice: document.querySelector("#voice-select"),
         search: document.querySelector("#search-input"),
         jumpInput: document.querySelector("#jump-input"),
         jumpButton: document.querySelector("#jump-button"),
@@ -409,48 +394,6 @@
         });
       }
 
-      function englishVoices() {
-        if (!hasTts) return [];
-        return window.speechSynthesis
-          .getVoices()
-          .filter((voice) => voice.lang.toLowerCase().startsWith("en"));
-      }
-
-      function preferredVoice(voices) {
-        return voices.find((voice) => /^samantha$/i.test(voice.name) && /^en-us$/i.test(voice.lang))
-          || voices.find((voice) => /(ava|zoe|siri|jenny|aria|google us english)/i.test(voice.name) && /^en-us$/i.test(voice.lang))
-          || voices.find((voice) => /^en-us$/i.test(voice.lang))
-          || voices[0]
-          || null;
-      }
-
-      function activeVoice() {
-        const voices = englishVoices();
-        return voices.find((voice) => voice.name === state.voiceName) || preferredVoice(voices);
-      }
-
-      function renderVoiceOptions() {
-        const voices = englishVoices();
-        els.voice.disabled = !hasTts || voices.length === 0;
-
-        if (!hasTts) {
-          els.voice.innerHTML = '<option>음성 지원 안 됨</option>';
-          return;
-        }
-
-        if (voices.length === 0) {
-          els.voice.innerHTML = '<option>음성 불러오는 중</option>';
-          return;
-        }
-
-        const selected = activeVoice();
-        els.voice.innerHTML = voices.map((voice) => {
-          const label = `${voice.name} (${voice.lang})`;
-          return `<option value="${esc(voice.name)}">${esc(label)}</option>`;
-        }).join("");
-        els.voice.value = selected?.name || "";
-      }
-
       function speak(text) {
         if (!hasTts) {
           els.status.textContent = "이 브라우저에서는 TTS를 사용할 수 없습니다.";
@@ -459,8 +402,6 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = "en-US";
-        const voice = activeVoice();
-        if (voice) utterance.voice = voice;
         utterance.rate = 0.92;
         window.speechSynthesis.speak(utterance);
       }
@@ -541,11 +482,6 @@
         render();
       });
 
-      els.voice.addEventListener("change", () => {
-        state.voiceName = els.voice.value;
-        localStorage.setItem(STORAGE_VOICE_KEY, state.voiceName);
-      });
-
       els.jumpButton.addEventListener("click", () => {
         const number = Number(els.jumpInput.value);
         if (!Number.isInteger(number) || number < 1 || number > sentences.length) {
@@ -600,8 +536,6 @@
       });
 
       renderChapterOptions();
-      renderVoiceOptions();
-      if (hasTts) window.speechSynthesis.addEventListener("voiceschanged", renderVoiceOptions);
       render();
     </script>
   </body>
