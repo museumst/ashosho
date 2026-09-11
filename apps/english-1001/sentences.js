@@ -103,7 +103,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 21,
     "en": "Just be yourself, and stay true to your values.",
-    "ko": "and stay true to your values.\",\"그냥 자신이 되어라, 그리고 자신의 가치에 충실하라."
+    "ko": "그냥 자신이 되어라, 그리고 자신의 가치에 충실하라."
   },
   {
     "no": 22,
@@ -133,7 +133,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 27,
     "en": "The music sounded very loud, so we had to shout to each other.",
-    "ko": "so we had to shout to each other.\",음악 소리가 너무 커서 우리는 서로에게 소리를 질러야 했다."
+    "ko": "음악 소리가 너무 커서 우리는 서로에게 소리를 질러야 했다."
   },
   {
     "no": 28,
@@ -143,7 +143,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 29,
     "en": "In extremely hot weather, dairy products go bad easily.",
-    "ko": "dairy products go bad easily.\",극도로 더운 날씨에는 유제품이 쉽게 상한다."
+    "ko": "극도로 더운 날씨에는 유제품이 쉽게 상한다."
   },
   {
     "no": 30,
@@ -168,7 +168,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 34,
     "en": "According to an old saying, great hopes make great men.",
-    "ko": "great hopes make great men.\",\"옛말에 따르면, 큰 희망이 위대한 사람을 만든다."
+    "ko": "옛말에 따르면, 큰 희망이 위대한 사람을 만든다."
   },
   {
     "no": 35,
@@ -303,7 +303,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 61,
     "en": "After two hours' walk, we finally reached the coast.",
-    "ko": "we finally reached the coast.\",\"두 시간을 걸은 후, 우리는 마침내 해안에 도달했다."
+    "ko": "두 시간을 걸은 후, 우리는 마침내 해안에 도달했다."
   },
   {
     "no": 62,
@@ -338,7 +338,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 68,
     "en": "During warm periods, glaciers melt and the sea level rises.",
-    "ko": "glaciers melt and the sea level rises.\",따뜻한 시기에는 빙하가 녹고 해수면이 올라간다."
+    "ko": "따뜻한 시기에는 빙하가 녹고 해수면이 올라간다."
   },
   {
     "no": 69,
@@ -348,7 +348,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 70,
     "en": "Travel can introduce to us new people, experiences, and foods.",
-    "ko": "experiences, and foods.\",\"여행은 우리에게 새로운 사람들, 경험, 그리고 음식을 소개해 줄 수 있다."
+    "ko": "여행은 우리에게 새로운 사람들, 경험, 그리고 음식을 소개해 줄 수 있다."
   },
   {
     "no": 71,
@@ -423,7 +423,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 85,
     "en": "In making a proposal, why you want to achieve your purpose should be clear and logical.",
-    "ko": "why you want to achieve your purpose should be clear and logical.\",\"제안을 할 때, 목적을 달성하려는 이유가 명확하고 논리적이어야 한다."
+    "ko": "제안을 할 때, 목적을 달성하려는 이유가 명확하고 논리적이어야 한다."
   },
   {
     "no": 86,
@@ -463,7 +463,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 93,
     "en": "In the movie, whom the main character marries interests the audience.",
-    "ko": "whom the main character marries interests the audience.\",\"그 영화에서, 주인공이 누구와 결혼하는지가 관객들의 관심을 끈다."
+    "ko": "그 영화에서, 주인공이 누구와 결혼하는지가 관객들의 관심을 끈다."
   },
   {
     "no": 94,
@@ -573,7 +573,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 115,
     "en": "In spite of the sun shining through the window, the air was chilly.",
-    "ko": "the air was chilly.\",\"창문을 통해 햇빛이 비치고 있었음에도 불구하고, 공기는 차가웠다."
+    "ko": "창문을 통해 햇빛이 비치고 있었음에도 불구하고, 공기는 차가웠다."
   },
   {
     "no": 116,
@@ -598,7 +598,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 120,
     "en": "It snowed in the Sahara desert for 30 minutes on Feb. 18, 1979.",
-    "ko": "1979.\",1979년 2월 18일에 사하라 사막에 30분 동안 눈이 내렸다."
+    "ko": "1979년 2월 18일에 사하라 사막에 30분 동안 눈이 내렸다."
   },
   {
     "no": 121,
@@ -608,12 +608,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 122,
     "en": "It's Monday morning, and there's a long week ahead of us.",
-    "ko": "and there's a long week ahead of us.\",\"월요일 아침이고, 우리 앞에는 긴 한 주가 기다리고 있다."
+    "ko": "월요일 아침이고, 우리 앞에는 긴 한 주가 기다리고 있다."
   },
   {
     "no": 123,
     "en": "It's really noisy in here, so speak a little louder.",
-    "ko": "so speak a little louder.\",\"여기가 정말 시끄러우니, 조금 더 크게 말해 주세요."
+    "ko": "여기가 정말 시끄러우니, 조금 더 크게 말해 주세요."
   },
   {
     "no": 124,
@@ -638,7 +638,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 128,
     "en": "To my surprise, it happened that I got an A in math.",
-    "ko": "it happened that I got an A in math.\",\"놀랍게도, 수학에서 A를 받게 되었다."
+    "ko": "놀랍게도, 수학에서 A를 받게 되었다."
   },
   {
     "no": 129,
@@ -648,7 +648,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 130,
     "en": "For a happier life, quit living according to others' expectations.",
-    "ko": "quit living according to others' expectations.\",\"더 행복한 삶을 위해, 다른 사람들의 기대에 따라 사는 것을 그만둬라."
+    "ko": "더 행복한 삶을 위해, 다른 사람들의 기대에 따라 사는 것을 그만둬라."
   },
   {
     "no": 131,
@@ -708,7 +708,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 142,
     "en": "He told me where to go, but not how to get there.",
-    "ko": "but not how to get there.\",\"그는 어디로 가야 하는지 알려줬지만, 어떻게 가야 하는지는 알려주지 않았다."
+    "ko": "그는 어디로 가야 하는지 알려줬지만, 어떻게 가야 하는지는 알려주지 않았다."
   },
   {
     "no": 143,
@@ -718,7 +718,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 144,
     "en": "Man love to wonder[wondering], and that is the seed of science.",
-    "ko": "and that is the seed of science.\",\"인간은 궁금해하기를 좋아하며, 그것이 과학의 씨앗이다."
+    "ko": "인간은 궁금해하기를 좋아하며, 그것이 과학의 씨앗이다."
   },
   {
     "no": 145,
@@ -758,7 +758,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 152,
     "en": "Don't regret making a wrong decision. Learn from it, move on, and don't look back!",
-    "ko": "move on, and don't look back!\",\"잘못된 결정을 한 것을 후회하지 마라. 그것에서 배우고, 앞으로 나아가고, 뒤를 돌아보지 마라!"
+    "ko": "잘못된 결정을 한 것을 후회하지 마라. 그것에서 배우고, 앞으로 나아가고, 뒤를 돌아보지 마라!"
   },
   {
     "no": 153,
@@ -788,7 +788,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 158,
     "en": "To sufficiently clean your teeth, you should brush for at least two minutes at least twice a day. Remember to brush your tongue, too.",
-    "ko": "you should brush for at least two minutes at least twice a day.\",\"치아를 충분히 닦으려면 하루에 최소 두 번, 적어도 2분 동안 양치질을 해야 한다."
+    "ko": "치아를 충분히 닦으려면 하루에 최소 두 번, 적어도 2분 동안 양치질을 해야 한다."
   },
   {
     "no": 159,
@@ -798,7 +798,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 160,
     "en": "I believe (that) success is a journey, not a destination.",
-    "ko": "not a destination.\",나는 성공이 목적지가 아니라 여정이라고 믿는다."
+    "ko": "나는 성공이 목적지가 아니라 여정이라고 믿는다."
   },
   {
     "no": 161,
@@ -808,7 +808,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 162,
     "en": "Color can impact how you perceive weight. Dark colors look heavy, and bright colors look less so.",
-    "ko": "and bright colors look less so.\",\"색상은 무게를 인식하는 방식에 영향을 줄 수 있다. 어두운 색은 무거워 보이고, 밝은 색은 덜 그렇게 보인다."
+    "ko": "색상은 무게를 인식하는 방식에 영향을 줄 수 있다. 어두운 색은 무거워 보이고, 밝은 색은 덜 그렇게 보인다."
   },
   {
     "no": 163,
@@ -858,7 +858,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 172,
     "en": "Never mind whose fault it is. Instead, fix the problem.",
-    "ko": "fix the problem.\",\"누구의 잘못인지는 신경 쓰지 마라. 대신, 문제를 해결해라."
+    "ko": "누구의 잘못인지는 신경 쓰지 마라. 대신, 문제를 해결해라."
   },
   {
     "no": 173,
@@ -883,7 +883,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 177,
     "en": "In the thriller movie, the main character didn't know whom he could trust.",
-    "ko": "the main character didn't know whom he could trust.\",\"그 스릴러 영화에서, 주인공은 누구를 믿을 수 있는지 몰랐다."
+    "ko": "그 스릴러 영화에서, 주인공은 누구를 믿을 수 있는지 몰랐다."
   },
   {
     "no": 178,
@@ -913,7 +913,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 183,
     "en": "To make myself mentally stronger, I try to forget about the past and focus on the now.",
-    "ko": "I try to forget about the past and focus on the now.\",\"정신적으로 더 강해지기 위해, 나는 과거를 잊으려 하고 현재에 집중하려 한다."
+    "ko": "정신적으로 더 강해지기 위해, 나는 과거를 잊으려 하고 현재에 집중하려 한다."
   },
   {
     "no": 184,
@@ -958,7 +958,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 192,
     "en": "If I do my full duty, the rest will take care of itself.",
-    "ko": "the rest will take care of itself.\",\"내가 최선을 다하면, 나머지는 저절로 해결될 것이다."
+    "ko": "내가 최선을 다하면, 나머지는 저절로 해결될 것이다."
   },
   {
     "no": 193,
@@ -1008,12 +1008,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 202,
     "en": "A repetitive schedule gives us a sense of security, in that we know what is coming next.",
-    "ko": "in that we know what is coming next.\",반복적인 일정은 다음에 무슨 일이 일어날지 알기 때문에 우리에게 안정감을 준다."
+    "ko": "반복적인 일정은 다음에 무슨 일이 일어날지 알기 때문에 우리에게 안정감을 준다."
   },
   {
     "no": 203,
     "en": "The food was awesome, except that we had to wait for an hour.",
-    "ko": "except that we had to wait for an hour.\",한 시간을 기다려야 했다는 것을 제외하면 음식은 훌륭했다."
+    "ko": "한 시간을 기다려야 했다는 것을 제외하면 음식은 훌륭했다."
   },
   {
     "no": 204,
@@ -1108,7 +1108,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 222,
     "en": "The question is not whether we will die, but how we will live.",
-    "ko": "but how we will live.\",\"문제는 우리가 죽을 것인지가 아니라, 어떻게 살 것인지이다."
+    "ko": "문제는 우리가 죽을 것인지가 아니라, 어떻게 살 것인지이다."
   },
   {
     "no": 223,
@@ -1133,7 +1133,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 227,
     "en": "He didn't appear (to be) nervous, even before the big match.",
-    "ko": "even before the big match.\",그는 큰 경기 전에도 긴장한 것처럼 보이지 않았다."
+    "ko": "그는 큰 경기 전에도 긴장한 것처럼 보이지 않았다."
   },
   {
     "no": 228,
@@ -1143,7 +1143,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 229,
     "en": "In a film, sometimes the least-expected person turns out to be the villain.",
-    "ko": "sometimes the least-expected person turns out to be the villain.\",영화에서 때로는 가장 예상하지 못했던 사람이 악당으로 밝혀진다."
+    "ko": "영화에서 때로는 가장 예상하지 못했던 사람이 악당으로 밝혀진다."
   },
   {
     "no": 230,
@@ -1168,17 +1168,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 234,
     "en": "A true friend never asks you to act like an angel. Instead, he becomes your angel.",
-    "ko": "he becomes your angel.\",\"진정한 친구는 당신에게 천사처럼 행동하라고 요청하지 않는다. 대신, 그가 당신의 천사가 된다."
+    "ko": "진정한 친구는 당신에게 천사처럼 행동하라고 요청하지 않는다. 대신, 그가 당신의 천사가 된다."
   },
   {
     "no": 235,
     "en": "The judge can order you to pay a maximum fine amount of $1,000.",
-    "ko": "000.\",\"판사는 최대 1,000달러의 벌금을 납부하라고 명령할 수 있다."
+    "ko": "판사는 최대 1,000달러의 벌금을 납부하라고 명령할 수 있다."
   },
   {
     "no": 236,
     "en": "Allow your passion to become your purpose, and it will become your profession one day.",
-    "ko": "and it will become your profession one day.\",\"열정이 목적이 되도록 허용하라, 그러면 언젠가 그것이 직업이 될 것이다."
+    "ko": "열정이 목적이 되도록 허용하라, 그러면 언젠가 그것이 직업이 될 것이다."
   },
   {
     "no": 237,
@@ -1198,7 +1198,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 240,
     "en": "Strong leaders encourage you to do things for your own benefit, not just theirs.",
-    "ko": "not just theirs.\",\"강한 리더는 당신 자신의 이익을 위해 행동하도록 격려하지, 그들만의 이익을 위해서가 아니라."
+    "ko": "강한 리더는 당신 자신의 이익을 위해 행동하도록 격려하지, 그들만의 이익을 위해서가 아니라."
   },
   {
     "no": 241,
@@ -1238,7 +1238,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 248,
     "en": "Millions saw the apple fall, but Newton was the one who asked why.",
-    "ko": "but Newton was the one who asked why.\",\"수백만 명이 사과가 떨어지는 것을 봤지만, 뉴턴은 왜 그런지 물은 사람이었다."
+    "ko": "수백만 명이 사과가 떨어지는 것을 봤지만, 뉴턴은 왜 그런지 물은 사람이었다."
   },
   {
     "no": 249,
@@ -1263,12 +1263,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 253,
     "en": "In spring, you can feel the temperature change a lot from night to day.",
-    "ko": "you can feel the temperature change a lot from night to day.\",봄에는 밤에서 낮 사이에 온도가 많이 변하는 것을 느낄 수 있다."
+    "ko": "봄에는 밤에서 낮 사이에 온도가 많이 변하는 것을 느낄 수 있다."
   },
   {
     "no": 254,
     "en": "Help others to achieve their dreams, and you will achieve yours.",
-    "ko": "and you will achieve yours.\",\"다른 사람들이 꿈을 이룰 수 있도록 도우면, 당신도 꿈을 이룰 것이다."
+    "ko": "다른 사람들이 꿈을 이룰 수 있도록 도우면, 당신도 꿈을 이룰 것이다."
   },
   {
     "no": 255,
@@ -1283,7 +1283,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 257,
     "en": "Right before the large earthquake, she saw the walls shaking.",
-    "ko": "she saw the walls shaking.\",\"큰 지진 직전에, 그녀는 벽이 흔들리는 것을 보았다."
+    "ko": "큰 지진 직전에, 그녀는 벽이 흔들리는 것을 보았다."
   },
   {
     "no": 258,
@@ -1293,7 +1293,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 259,
     "en": "When we hear someone laughing, it is almost impossible not to begin laughing too.",
-    "ko": "it is almost impossible not to begin laughing too.\",\"누군가 웃는 소리를 들으면, 같이 웃지 않는 것이 거의 불가능하다."
+    "ko": "누군가 웃는 소리를 들으면, 같이 웃지 않는 것이 거의 불가능하다."
   },
   {
     "no": 260,
@@ -1318,7 +1318,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 264,
     "en": "When I'm in love, I find myself smiling for no reason at all.",
-    "ko": "I find myself smiling for no reason at all.\",\"사랑에 빠졌을 때, 나는 아무 이유 없이 미소 짓고 있는 나를 발견한다."
+    "ko": "사랑에 빠졌을 때, 나는 아무 이유 없이 미소 짓고 있는 나를 발견한다."
   },
   {
     "no": 265,
@@ -1343,12 +1343,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 269,
     "en": "Examine your thoughts, and you will notice them filled with the past or the future.",
-    "ko": "and you will notice them filled with the past or the future.\",\"당신의 생각을 살펴보면, 그것들이 과거나 미래로 가득 차 있다는 것을 알게 될 것이다."
+    "ko": "당신의 생각을 살펴보면, 그것들이 과거나 미래로 가득 차 있다는 것을 알게 될 것이다."
   },
   {
     "no": 270,
     "en": "When it's hard to focus at work, listening to the appropriate music could keep you motivated.",
-    "ko": "listening to the appropriate music could keep you motivated.\",\"직장에서 집중하기 어려울 때, 적절한 음악을 듣는 것이 동기 부여를 유지하는 데 도움이 될 수 있다."
+    "ko": "직장에서 집중하기 어려울 때, 적절한 음악을 듣는 것이 동기 부여를 유지하는 데 도움이 될 수 있다."
   },
   {
     "no": 271,
@@ -1358,17 +1358,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 272,
     "en": "Someday, you may find yourself improved by all your struggles.",
-    "ko": "you may find yourself improved by all your struggles.\",\"언젠가, 당신은 모든 고난을 통해 발전한 자신을 발견할 수도 있다."
+    "ko": "언젠가, 당신은 모든 고난을 통해 발전한 자신을 발견할 수도 있다."
   },
   {
     "no": 273,
     "en": "If you want your eggs hatched, sit on them yourself.",
-    "ko": "sit on them yourself.\",\"알이 부화하길 원한다면, 직접 그 위에 앉아라."
+    "ko": "알이 부화하길 원한다면, 직접 그 위에 앉아라."
   },
   {
     "no": 274,
     "en": "Don't let yourself be controlled by three things: people, money, or past experiences.",
-    "ko": "money, or past experiences.\",\"세 가지, 즉 사람, 돈, 과거의 경험에 의해 통제되지 마라."
+    "ko": "세 가지, 즉 사람, 돈, 과거의 경험에 의해 통제되지 마라."
   },
   {
     "no": 275,
@@ -1378,7 +1378,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 276,
     "en": "When you complete your essay, have it reviewed by someone else.",
-    "ko": "have it reviewed by someone else.\",에세이를 완성하면 다른 사람에게 검토를 받아라."
+    "ko": "에세이를 완성하면 다른 사람에게 검토를 받아라."
   },
   {
     "no": 277,
@@ -1393,12 +1393,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 279,
     "en": "We had no time to cook, so we had some food delivered.",
-    "ko": "so we had some food delivered.\",우리는 요리할 시간이 없어서 음식을 배달시켰다."
+    "ko": "우리는 요리할 시간이 없어서 음식을 배달시켰다."
   },
   {
     "no": 280,
     "en": "During the intense training, the runner had his ankle broken.",
-    "ko": "the runner had his ankle broken.\",강도 높은 훈련 중에 그 달리기 선수는 발목이 부러졌다."
+    "ko": "강도 높은 훈련 중에 그 달리기 선수는 발목이 부러졌다."
   },
   {
     "no": 281,
@@ -1413,7 +1413,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 283,
     "en": "Because we cannot have everything completed all at once, we have to prioritize.",
-    "ko": "we have to prioritize.\",\"모든 것을 한꺼번에 완성할 수 없기 때문에, 우선순위를 정해야 한다."
+    "ko": "모든 것을 한꺼번에 완성할 수 없기 때문에, 우선순위를 정해야 한다."
   },
   {
     "no": 284,
@@ -1433,7 +1433,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 287,
     "en": "Vegetarians stay away from meat, including chicken and fish.",
-    "ko": "including chicken and fish.\",채식주의자들은 닭고기와 생선을 포함한 고기를 먹지 않는다."
+    "ko": "채식주의자들은 닭고기와 생선을 포함한 고기를 먹지 않는다."
   },
   {
     "no": 288,
@@ -1443,17 +1443,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 289,
     "en": "When you do common things in an uncommon way, you will get the attention of the world.",
-    "ko": "you will get the attention of the world.\",\"평범한 일을 비범한 방식으로 하면, 세상의 주목을 받을 것이다."
+    "ko": "평범한 일을 비범한 방식으로 하면, 세상의 주목을 받을 것이다."
   },
   {
     "no": 290,
     "en": "If you don't go through hardships, you won't know how strong you are.",
-    "ko": "you won't know how strong you are.\",\"고난을 겪지 않으면, 자신이 얼마나 강한지 알 수 없다."
+    "ko": "고난을 겪지 않으면, 자신이 얼마나 강한지 알 수 없다."
   },
   {
     "no": 291,
     "en": "As soon as you start to pursue a dream, everything in your life will have meaning.",
-    "ko": "everything in your life will have meaning.\",\"꿈을 추구하기 시작하는 순간, 삶의 모든 것이 의미를 갖게 된다."
+    "ko": "꿈을 추구하기 시작하는 순간, 삶의 모든 것이 의미를 갖게 된다."
   },
   {
     "no": 292,
@@ -1538,12 +1538,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 308,
     "en": "She's only twenty, but she's already achieved worldwide fame.",
-    "ko": "but she's already achieved worldwide fame.\",\"그녀는 겨우 스물이지만, 이미 세계적인 명성을 얻었다."
+    "ko": "그녀는 겨우 스물이지만, 이미 세계적인 명성을 얻었다."
   },
   {
     "no": 309,
     "en": "He has just become a member of Mensa, with an estimated IQ of 156.",
-    "ko": "with an estimated IQ of 156.\",그는 추정 IQ 156으로 방금 멘사 회원이 되었다."
+    "ko": "그는 추정 IQ 156으로 방금 멘사 회원이 되었다."
   },
   {
     "no": 310,
@@ -1583,7 +1583,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 317,
     "en": "The pianist had been sick for two weeks, so she couldn't take part in the concert.",
-    "ko": "so she couldn't take part in the concert.\",\"그 피아니스트는 2주 동안 아팠기 때문에, 콘서트에 참여할 수 없었다."
+    "ko": "그 피아니스트는 2주 동안 아팠기 때문에, 콘서트에 참여할 수 없었다."
   },
   {
     "no": 318,
@@ -1593,7 +1593,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 319,
     "en": "When I entered the classroom, the lesson had already finished.",
-    "ko": "the lesson had already finished.\",\"내가 교실에 들어갔을 때, 수업은 이미 끝나 있었다."
+    "ko": "내가 교실에 들어갔을 때, 수업은 이미 끝나 있었다."
   },
   {
     "no": 320,
@@ -1603,7 +1603,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 321,
     "en": "Carol prepared a gift for her mom, who had sacrificed all her life for her family.",
-    "ko": "who had sacrificed all her life for her family.\",캐롤은 가족을 위해 평생을 희생한 어머니를 위해 선물을 준비했다."
+    "ko": "캐롤은 가족을 위해 평생을 희생한 어머니를 위해 선물을 준비했다."
   },
   {
     "no": 322,
@@ -1618,7 +1618,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 324,
     "en": "If I see this film once more, I will have seen it three times.",
-    "ko": "I will have seen it three times.\",\"이 영화를 한 번 더 보면, 세 번 본 것이 될 것이다."
+    "ko": "이 영화를 한 번 더 보면, 세 번 본 것이 될 것이다."
   },
   {
     "no": 325,
@@ -1678,17 +1678,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 336,
     "en": "Our love is the wind. I can't see it, but I can feel it.",
-    "ko": "but I can feel it.\",\"우리의 사랑은 바람과 같다. 볼 수는 없지만, 느낄 수 있다."
+    "ko": "우리의 사랑은 바람과 같다. 볼 수는 없지만, 느낄 수 있다."
   },
   {
     "no": 337,
     "en": "I couldn't find the sports car of my dreams, so I built it myself.",
-    "ko": "so I built it myself.\",\"꿈에 그리던 스포츠카를 찾을 수 없어서, 직접 만들었다."
+    "ko": "꿈에 그리던 스포츠카를 찾을 수 없어서, 직접 만들었다."
   },
   {
     "no": 338,
     "en": "With faith, you will be able to handle any challenges in life.",
-    "ko": "you will be able to handle any challenges in life.\",\"믿음이 있으면, 삶의 어떤 도전도 이겨낼 수 있을 것이다."
+    "ko": "믿음이 있으면, 삶의 어떤 도전도 이겨낼 수 있을 것이다."
   },
   {
     "no": 339,
@@ -1708,12 +1708,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 342,
     "en": "Your mistakes should be your motivation, not your excuses.",
-    "ko": "not your excuses.\",당신의 실수는 변명이 아니라 동기 부여가 되어야 한다."
+    "ko": "당신의 실수는 변명이 아니라 동기 부여가 되어야 한다."
   },
   {
     "no": 343,
     "en": "To live a creative life, we must lose our fear (of being wrong).",
-    "ko": "we must lose our fear of being wrong.\",창의적인 삶을 살기 위해서는 틀리는 것에 대한 두려움을 버려야 한다."
+    "ko": "창의적인 삶을 살기 위해서는 틀리는 것에 대한 두려움을 버려야 한다."
   },
   {
     "no": 344,
@@ -1748,7 +1748,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 350,
     "en": "Adults must pay an entrance fee, but children don't have to pay anything.",
-    "ko": "but children don't have to pay anything.\",\"어른들은 입장료를 내야 하지만, 아이들은 아무것도 낼 필요가 없다."
+    "ko": "어른들은 입장료를 내야 하지만, 아이들은 아무것도 낼 필요가 없다."
   },
   {
     "no": 351,
@@ -1783,7 +1783,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 357,
     "en": "The film ought to take about 90 minutes, so we'll be home by 10 p.m.",
-    "ko": "so we'll be home by 10 p.m.\",\"영화는 약 90분 정도 걸릴 것이므로, 오후 10시까지는 집에 도착할 것이다."
+    "ko": "영화는 약 90분 정도 걸릴 것이므로, 오후 10시까지는 집에 도착할 것이다."
   },
   {
     "no": 358,
@@ -1793,7 +1793,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 359,
     "en": "As you will understand, we can't make exceptions to this safety rule.",
-    "ko": "we can't make exceptions to this safety rule.\",\"이해하시겠지만, 우리는 이 안전 규칙에 예외를 둘 수 없다."
+    "ko": "이해하시겠지만, 우리는 이 안전 규칙에 예외를 둘 수 없다."
   },
   {
     "no": 360,
@@ -1848,7 +1848,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 370,
     "en": "I shouldn't have said it, but the word slipped out of my mouth.",
-    "ko": "but the word slipped out of my mouth.\",\"말하지 말았어야 했는데, 입에서 그냥 나와버렸다."
+    "ko": "말하지 말았어야 했는데, 입에서 그냥 나와버렸다."
   },
   {
     "no": 371,
@@ -1858,7 +1858,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 372,
     "en": "If you spend time in thinking about what you should have done, you lose valuable time for planning what you will do.",
-    "ko": "you lose valuable planning time.\",\"해야 했던 일에 대해 생각하는 데 시간을 보내면, 앞으로의 계획을 위한 소중한 시간을 잃는다."
+    "ko": "해야 했던 일에 대해 생각하는 데 시간을 보내면, 앞으로의 계획을 위한 소중한 시간을 잃는다."
   },
   {
     "no": 373,
@@ -1868,7 +1868,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 374,
     "en": "Life doesn't require that we be the best, only that we try our best.",
-    "ko": "only that we try our best.\",삶은 우리가 최고가 될 것을 요구하지 않는다. 단지 최선을 다할 것을 요구할 뿐이다."
+    "ko": "삶은 우리가 최고가 될 것을 요구하지 않는다. 단지 최선을 다할 것을 요구할 뿐이다."
   },
   {
     "no": 375,
@@ -1898,7 +1898,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 380,
     "en": "Health experts recommend that nuts be eaten regularly, as they are major sources of protein, minerals, and vitamins.",
-    "ko": "as they are major sources of protein.\",건강 전문가들은 견과류가 주요 단백질 공급원이므로 정기적으로 섭취할 것을 권장한다."
+    "ko": "건강 전문가들은 견과류가 주요 단백질 공급원이므로 정기적으로 섭취할 것을 권장한다."
   },
   {
     "no": 381,
@@ -1913,7 +1913,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 383,
     "en": "I would[used to] eat meat, but now I'm a vegetarian.",
-    "ko": "but now I'm a vegetarian.\",\"나는 예전에는 고기를 먹었지만, 지금은 채식주의자이다."
+    "ko": "나는 예전에는 고기를 먹었지만, 지금은 채식주의자이다."
   },
   {
     "no": 384,
@@ -1938,12 +1938,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 388,
     "en": "If you have to have a dream, you may as well dream big.",
-    "ko": "you may as well dream big.\",\"꿈을 가져야 한다면, 큰 꿈을 꾸는 편이 낫다."
+    "ko": "꿈을 가져야 한다면, 큰 꿈을 꾸는 편이 낫다."
   },
   {
     "no": 389,
     "en": "When I hear great music, I can't help being inspired by it.",
-    "ko": "I can't help being inspired by it.\",\"훌륭한 음악을 들으면, 그것에 영감을 받지 않을 수 없다."
+    "ko": "훌륭한 음악을 들으면, 그것에 영감을 받지 않을 수 없다."
   },
   {
     "no": 390,
@@ -1963,7 +1963,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 393,
     "en": "Whenever I meet homeless dogs and cats, I can't help but feel sorry for them.",
-    "ko": "I can't help but feel sorry for them.\",\"유기견이나 유기묘를 만날 때마다, 그들이 불쌍하다는 느낌을 참을 수 없다."
+    "ko": "유기견이나 유기묘를 만날 때마다, 그들이 불쌍하다는 느낌을 참을 수 없다."
   },
   {
     "no": 394,
@@ -2083,12 +2083,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 417,
     "en": "I may be compelled to face danger, but never fear it.",
-    "ko": "but never fear it.\",\"나는 위험에 맞서도록 강요받을 수도 있지만, 절대 두려워하지는 않는다."
+    "ko": "나는 위험에 맞서도록 강요받을 수도 있지만, 절대 두려워하지는 않는다."
   },
   {
     "no": 418,
     "en": "Children must be taught how to think, not what to think.",
-    "ko": "not what to think.\",\"아이들은 무엇을 생각해야 하는지가 아니라, 어떻게 생각해야 하는지를 배워야 한다."
+    "ko": "아이들은 무엇을 생각해야 하는지가 아니라, 어떻게 생각해야 하는지를 배워야 한다."
   },
   {
     "no": 419,
@@ -2108,7 +2108,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 422,
     "en": "Up until the late 1800s, soccer had been called \"football\" in both America and Britain.",
-    "ko": "soccer had been called 'football' in both America and Britain.\",\"1800년대 후반까지, 축구는 미국과 영국 모두에서 '풋볼'이라고 불렸다."
+    "ko": "1800년대 후반까지, 축구는 미국과 영국 모두에서 '풋볼'이라고 불렸다."
   },
   {
     "no": 423,
@@ -2223,32 +2223,32 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 445,
     "en": "If I were good at grammar, I could answer the question.",
-    "ko": "I could answer the question.\",\"내가 문법을 잘 안다면, 그 질문에 답할 수 있을 텐데."
+    "ko": "내가 문법을 잘 안다면, 그 질문에 답할 수 있을 텐데."
   },
   {
     "no": 446,
     "en": "If I had eight hours to chop down a tree, I would spend six sharpening my axe.",
-    "ko": "I would spend six sharpening my axe.\",\"나무를 베는 데 8시간이 주어진다면, 나는 6시간을 도끼를 갈며 보낼 것이다."
+    "ko": "나무를 베는 데 8시간이 주어진다면, 나는 6시간을 도끼를 갈며 보낼 것이다."
   },
   {
     "no": 447,
     "en": "If my grandparents were alive, they could experience a whole new world.",
-    "ko": "they could experience a whole new world.\",\"조부모님이 살아계신다면, 완전히 새로운 세상을 경험하실 수 있을 것이다."
+    "ko": "조부모님이 살아계신다면, 완전히 새로운 세상을 경험하실 수 있을 것이다."
   },
   {
     "no": 448,
     "en": "If nature were not beautiful, it would not be worth knowing, and life would not be worth living.",
-    "ko": "it would not be worth knowing, and life would not be worth living.\",\"자연이 아름답지 않다면, 알 가치도 없을 것이고 삶도 살 가치가 없을 것이다."
+    "ko": "자연이 아름답지 않다면, 알 가치도 없을 것이고 삶도 살 가치가 없을 것이다."
   },
   {
     "no": 449,
     "en": "If you had a one-year vacation, what would you do during that time?",
-    "ko": "what would you do during that time?\",\"만약 1년간 휴가가 있다면, 그 시간 동안 무엇을 하겠습니까?"
+    "ko": "만약 1년간 휴가가 있다면, 그 시간 동안 무엇을 하겠습니까?"
   },
   {
     "no": 450,
     "en": "If happiness were sold, few of us could pay the price.",
-    "ko": "few of us could pay the price.\",\"만약 행복이 팔린다면, 우리 중 그 가격을 치를 수 있는 사람은 거의 없을 것이다."
+    "ko": "만약 행복이 팔린다면, 우리 중 그 가격을 치를 수 있는 사람은 거의 없을 것이다."
   },
   {
     "no": 451,
@@ -2268,42 +2268,42 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 454,
     "en": "If we all did just one random act of kindness daily, we might set the world in the right direction.",
-    "ko": "we might set the world in the right direction.\",\"우리 모두가 매일 하나의 무작위 친절 행위를 한다면, 세상을 올바른 방향으로 이끌 수 있을 것이다."
+    "ko": "우리 모두가 매일 하나의 무작위 친절 행위를 한다면, 세상을 올바른 방향으로 이끌 수 있을 것이다."
   },
   {
     "no": 455,
     "en": "If all the ice in the Arctic should melt, many coastal areas would disappear.",
-    "ko": "many coastal areas would disappear.\",\"북극의 얼음이 모두 녹는다면, 많은 해안 지역이 사라질 것이다."
+    "ko": "북극의 얼음이 모두 녹는다면, 많은 해안 지역이 사라질 것이다."
   },
   {
     "no": 456,
     "en": "If the Internet were to stop functioning, the results could be chaotic.",
-    "ko": "the results could be chaotic.\",\"인터넷이 작동을 멈춘다면, 그 결과는 혼란스러울 수 있다."
+    "ko": "인터넷이 작동을 멈춘다면, 그 결과는 혼란스러울 수 있다."
   },
   {
     "no": 457,
     "en": "If you were to change your job right now, what would you choose?",
-    "ko": "what would you choose?\",\"지금 당장 직업을 바꾼다면, 무엇을 선택하겠습니까?"
+    "ko": "지금 당장 직업을 바꾼다면, 무엇을 선택하겠습니까?"
   },
   {
     "no": 458,
     "en": "If you had spent more time on the project, you would have made fewer mistakes.",
-    "ko": "you would have made fewer mistakes.\",\"프로젝트에 더 많은 시간을 쏟았더라면, 실수를 더 적게 했을 것이다."
+    "ko": "프로젝트에 더 많은 시간을 쏟았더라면, 실수를 더 적게 했을 것이다."
   },
   {
     "no": 459,
     "en": "If Edison had been born before Gutenberg, books might have been distributed as sound recordings.",
-    "ko": "books might have been distributed as sound recordings.\",\"에디슨이 구텐베르크보다 먼저 태어났더라면, 책은 음성 녹음으로 배포되었을지도 모른다."
+    "ko": "에디슨이 구텐베르크보다 먼저 태어났더라면, 책은 음성 녹음으로 배포되었을지도 모른다."
   },
   {
     "no": 460,
     "en": "If I had thought of the right words, I could have told him what I was thinking!",
-    "ko": "I could have told him what I was thinking!\",\"적절한 말이 떠올랐더라면, 그에게 내가 생각하는 것을 말할 수 있었을 텐데!"
+    "ko": "적절한 말이 떠올랐더라면, 그에게 내가 생각하는 것을 말할 수 있었을 텐데!"
   },
   {
     "no": 461,
     "en": "If I had not dared to be risky, I colud never have dared to be great.",
-    "ko": "I could never have dared to be great.\",\"위험을 감수하지 않았더라면, 위대해지려는 시도도 결코 할 수 없었을 것이다."
+    "ko": "위험을 감수하지 않았더라면, 위대해지려는 시도도 결코 할 수 없었을 것이다."
   },
   {
     "no": 462,
@@ -2313,27 +2313,27 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 463,
     "en": "If her father had been alive, he would have heartily agreed with her marriage to Tim.",
-    "ko": "he would have heartily agreed with her marriage to Tim.\",\"그녀의 아버지가 살아 계셨더라면, 팀과의 결혼을 진심으로 동의하셨을 것이다."
+    "ko": "그녀의 아버지가 살아 계셨더라면, 팀과의 결혼을 진심으로 동의하셨을 것이다."
   },
   {
     "no": 464,
     "en": "If you had taken a different path, what would you be doing now?",
-    "ko": "what would you be doing now?\",\"다른 길을 택했더라면, 지금 무엇을 하고 있을까요?"
+    "ko": "다른 길을 택했더라면, 지금 무엇을 하고 있을까요?"
   },
   {
     "no": 465,
     "en": "If it hadn't rained in the morning, we would be on the top of the mountain now.",
-    "ko": "we would be on the top of the mountain now.\",\"아침에 비가 오지 않았더라면, 우리는 지금 산 정상에 있을 것이다."
+    "ko": "아침에 비가 오지 않았더라면, 우리는 지금 산 정상에 있을 것이다."
   },
   {
     "no": 466,
     "en": "Were I in your shoes, I would try to look on the bright side.",
-    "ko": "I would try to look on the bright side.\",\"내가 당신의 입장이라면, 긍정적인 면을 보려고 노력할 것이다."
+    "ko": "내가 당신의 입장이라면, 긍정적인 면을 보려고 노력할 것이다."
   },
   {
     "no": 467,
     "en": "Had Asian countries been unified with one language, there would have been less diversity in our history.",
-    "ko": "there would have been less diversity in our history.\",\"아시아 국가들이 하나의 언어로 통일되었더라면, 역사 속에 다양성이 덜했을 것이다."
+    "ko": "아시아 국가들이 하나의 언어로 통일되었더라면, 역사 속에 다양성이 덜했을 것이다."
   },
   {
     "no": 468,
@@ -2343,7 +2343,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 469,
     "en": "Should you have further questions, please feel free to e-mail or call us.",
-    "ko": "please feel free to e-mail or call us.\",추가 문의 사항이 있으시면 이메일이나 전화로 연락해 주세요."
+    "ko": "추가 문의 사항이 있으시면 이메일이나 전화로 연락해 주세요."
   },
   {
     "no": 470,
@@ -2353,7 +2353,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 471,
     "en": "Had he followed my advice, he would have saved face.",
-    "ko": "he would have saved face.\",\"그가 내 충고를 따랐더라면, 체면을 지킬 수 있었을 것이다."
+    "ko": "그가 내 충고를 따랐더라면, 체면을 지킬 수 있었을 것이다."
   },
   {
     "no": 472,
@@ -2383,7 +2383,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 477,
     "en": "The city was beautiful, and I wished we could have stayed longer.",
-    "ko": "and I wished we could have stayed longer.\",\"도시는 아름다웠고, 나는 우리가 더 오래 머물 수 있었으면 했다."
+    "ko": "도시는 아름다웠고, 나는 우리가 더 오래 머물 수 있었으면 했다."
   },
   {
     "no": 478,
@@ -2398,7 +2398,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 480,
     "en": "He always looked happy, as if a smile were painted on his face.",
-    "ko": "as if a smile were painted on his face.\",그는 항상 미소가 얼굴에 그려진 것처럼 행복해 보였다."
+    "ko": "그는 항상 미소가 얼굴에 그려진 것처럼 행복해 보였다."
   },
   {
     "no": 481,
@@ -2418,17 +2418,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 484,
     "en": "He is a genius in communication. Otherwise, he would never be my choice for the position.",
-    "ko": "he would never be my choice for the position.\",\"그는 의사소통의 천재이다. 그렇지 않다면, 그 직책에 그를 선택하지 않았을 것이다."
+    "ko": "그는 의사소통의 천재이다. 그렇지 않다면, 그 직책에 그를 선택하지 않았을 것이다."
   },
   {
     "no": 485,
     "en": "Without[But for] friends, the world would be a pretty lonely place.",
-    "ko": "the world would be a pretty lonely place.\",\"친구 없이는, 세상은 꽤 외로운 곳이 될 것이다."
+    "ko": "친구 없이는, 세상은 꽤 외로운 곳이 될 것이다."
   },
   {
     "no": 486,
     "en": "Without copyright, the dramatic growth of the artistic, cultural, and other creative industries would have been impossible.",
-    "ko": "cultural, and other creative industries would have been impossible.\",\"저작권 없이는, 예술적, 문화적, 그리고 다른 창의적 산업의 극적인 성장이 불가능했을 것이다."
+    "ko": "저작권 없이는, 예술적, 문화적, 그리고 다른 창의적 산업의 극적인 성장이 불가능했을 것이다."
   },
   {
     "no": 487,
@@ -2438,22 +2438,22 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 488,
     "en": "If it were not for love, life would be quite a gloomy experience.",
-    "ko": "life would be quite a gloomy experience.\",\"사랑이 없다면, 삶은 꽤 암울한 경험이 될 것이다."
+    "ko": "사랑이 없다면, 삶은 꽤 암울한 경험이 될 것이다."
   },
   {
     "no": 489,
     "en": "Had it not been for our efforts, we would be in an even more difficult position now.",
-    "ko": "we would be in an even more difficult position now.\",\"우리의 노력이 없었더라면, 우리는 지금 더욱 어려운 상황에 처해 있을 것이다."
+    "ko": "우리의 노력이 없었더라면, 우리는 지금 더욱 어려운 상황에 처해 있을 것이다."
   },
   {
     "no": 490,
     "en": "Supposing you had been born a century ago, what differences would have been made in you life?",
-    "ko": "what differences would have been made in your life?\",\"만약 당신이 100년 전에 태어났다면, 삶에 어떤 차이가 있었을까요?"
+    "ko": "만약 당신이 100년 전에 태어났다면, 삶에 어떤 차이가 있었을까요?"
   },
   {
     "no": 491,
     "en": "In different circumstances, we could have been good friends.",
-    "ko": "we could have been good friends.\",\"다른 상황이었다면, 우리는 좋은 친구가 될 수 있었을 것이다."
+    "ko": "다른 상황이었다면, 우리는 좋은 친구가 될 수 있었을 것이다."
   },
   {
     "no": 492,
@@ -2463,7 +2463,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 493,
     "en": "Perhaps billions of years ago, Mars would have been water covering its entire surface.",
-    "ko": "Mars would have been water covering its entire surface.\",아마도 수십억 년 전에는 화성의 표면 전체가 물로 덮여 있었을 것이다."
+    "ko": "아마도 수십억 년 전에는 화성의 표면 전체가 물로 덮여 있었을 것이다."
   },
   {
     "no": 494,
@@ -2478,17 +2478,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 496,
     "en": "To hear her sing, you might think she was an angel.",
-    "ko": "you might think she was an angel.\",\"그녀의 노래를 들으면, 천사라고 생각할 수도 있다."
+    "ko": "그녀의 노래를 들으면, 천사라고 생각할 수도 있다."
   },
   {
     "no": 497,
     "en": "To see his everyday life, you would never think he is 80 years old.",
-    "ko": "you would never think he is 80 years old.\",\"그의 일상생활을 보면, 그가 80세라고 절대 생각하지 못할 것이다."
+    "ko": "그의 일상생활을 보면, 그가 80세라고 절대 생각하지 못할 것이다."
   },
   {
     "no": 498,
     "en": "Asked for the most useful advice in life, I would say: Expect difficulties always!",
-    "ko": "I would say: Expect difficulties always!\",\"삶에서 가장 유용한 조언을 물어본다면, 나는 이렇게 말할 것이다: 항상 어려움을 예상해라!"
+    "ko": "삶에서 가장 유용한 조언을 물어본다면, 나는 이렇게 말할 것이다: 항상 어려움을 예상해라!"
   },
   {
     "no": 499,
@@ -2508,7 +2508,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 502,
     "en": "If you are well prepared, there is nothing to worry about.",
-    "ko": "there is nothing to worry about.\",\"잘 준비되어 있다면, 걱정할 것이 없다."
+    "ko": "잘 준비되어 있다면, 걱정할 것이 없다."
   },
   {
     "no": 503,
@@ -2533,7 +2533,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 507,
     "en": "Money is not an aim to live for, but just a means of exchange.",
-    "ko": "but just a means of exchange.\",\"돈은 살기 위한 목표가 아니라, 단지 교환의 수단일 뿐이다."
+    "ko": "돈은 살기 위한 목표가 아니라, 단지 교환의 수단일 뿐이다."
   },
   {
     "no": 508,
@@ -2558,22 +2558,22 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 512,
     "en": "People experiencing stress tend to long for more fatty, salty and sugary foods.",
-    "ko": "salty and sugary foods.\",\"스트레스를 받는 사람들은 더 기름지고, 짜고, 달콤한 음식을 갈망하는 경향이 있다."
+    "ko": "스트레스를 받는 사람들은 더 기름지고, 짜고, 달콤한 음식을 갈망하는 경향이 있다."
   },
   {
     "no": 513,
     "en": "Some aromas have a relaxing effect on the body, for example lavender.",
-    "ko": "for example lavender.\",\"어떤 향기들은 몸에 이완 효과를 가져다준다, 예를 들면 라벤더가 그렇다."
+    "ko": "어떤 향기들은 몸에 이완 효과를 가져다준다, 예를 들면 라벤더가 그렇다."
   },
   {
     "no": 514,
     "en": "According to doctors, hair turning gray runs in the family.",
-    "ko": "hair turning gray runs in the family.\",\"의사들에 따르면, 머리카락이 희어지는 것은 가족력에 관련이 있다."
+    "ko": "의사들에 따르면, 머리카락이 희어지는 것은 가족력에 관련이 있다."
   },
   {
     "no": 515,
     "en": "The United Nations is an international organization promoting world peace, civil rights, and anti-terrorism.",
-    "ko": "civil rights, and anti-terrorism.\",\"유엔은 세계 평화, 시민권, 반테러를 증진하는 국제 기구이다."
+    "ko": "유엔은 세계 평화, 시민권, 반테러를 증진하는 국제 기구이다."
   },
   {
     "no": 516,
@@ -2658,12 +2658,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 532,
     "en": "After years working with boring people, he set off to travel the world.",
-    "ko": "he set off to travel the world.\",\"지루한 사람들과 수년간 일한 후, 그는 세계 여행을 떠났다."
+    "ko": "지루한 사람들과 수년간 일한 후, 그는 세계 여행을 떠났다."
   },
   {
     "no": 533,
     "en": "To learn anything new, you have to have an open mind.",
-    "ko": "you have to have an open mind.\",\"새로운 무언가를 배우려면, 열린 마음을 가져야 한다."
+    "ko": "새로운 무언가를 배우려면, 열린 마음을 가져야 한다."
   },
   {
     "no": 534,
@@ -2698,7 +2698,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 540,
     "en": "Some animals, like the chameleon, can change the color of their skin so as not to be seen by predators.",
-    "ko": "can change the color of their skin so as not to be seen by predators.\",카멜레온 같은 일부 동물들은 포식자에게 발견되지 않도록 피부 색깔을 바꿀 수 있다."
+    "ko": "카멜레온 같은 일부 동물들은 포식자에게 발견되지 않도록 피부 색깔을 바꿀 수 있다."
   },
   {
     "no": 541,
@@ -2723,22 +2723,22 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 545,
     "en": "If you wish to live to see better days, you must endure the bad days.",
-    "ko": "you must endure the bad days.\",\"더 나은 날들을 살아서 보고 싶다면, 나쁜 날들을 견뎌내야 한다."
+    "ko": "더 나은 날들을 살아서 보고 싶다면, 나쁜 날들을 견뎌내야 한다."
   },
   {
     "no": 546,
     "en": "Many of us attempt change, only to give up after a few tries.",
-    "ko": "only to give up after a few tries.\",\"우리 중 많은 사람들이 변화를 시도하지만, 몇 번 시도 후에 포기한다."
+    "ko": "우리 중 많은 사람들이 변화를 시도하지만, 몇 번 시도 후에 포기한다."
   },
   {
     "no": 547,
     "en": "One day he disappeared from the town, never to be seen again.",
-    "ko": "never to be seen again.\",\"어느 날 그는 마을에서 사라졌고, 다시는 볼 수 없었다."
+    "ko": "어느 날 그는 마을에서 사라졌고, 다시는 볼 수 없었다."
   },
   {
     "no": 548,
     "en": "To see the scene, you would never forget it.",
-    "ko": "you would never forget it.\",\"그 장면을 보게 된다면, 절대 잊지 못할 것이다."
+    "ko": "그 장면을 보게 된다면, 절대 잊지 못할 것이다."
   },
   {
     "no": 549,
@@ -2748,7 +2748,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 550,
     "en": "Kind words can be short and easy to speak, but their echoes are truly endless.",
-    "ko": "but their echoes are truly endless.\",\"친절한 말은 짧고 말하기 쉽지만, 그 울림은 진정으로 끝이 없다."
+    "ko": "친절한 말은 짧고 말하기 쉽지만, 그 울림은 진정으로 끝이 없다."
   },
   {
     "no": 551,
@@ -2768,7 +2768,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 554,
     "en": "You are free to choose, but you are not free from the consequences of your choice.",
-    "ko": "but you are not free from the consequences of your choice.\",\"당신은 선택할 자유가 있지만, 선택의 결과로부터는 자유롭지 않다."
+    "ko": "당신은 선택할 자유가 있지만, 선택의 결과로부터는 자유롭지 않다."
   },
   {
     "no": 555,
@@ -2818,7 +2818,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 564,
     "en": "Shouting for joy, the players celebrated their own victory.",
-    "ko": "the players celebrated their own victory.\",\"기쁨으로 소리를 지르며, 선수들은 자신들의 승리를 축하했다."
+    "ko": "기쁨으로 소리를 지르며, 선수들은 자신들의 승리를 축하했다."
   },
   {
     "no": 565,
@@ -2828,72 +2828,72 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 566,
     "en": "I got up from the table quickly, knocking over a glass of water.",
-    "ko": "knocking over a glass of water.\",나는 물잔을 엎으면서 테이블에서 빠르게 일어났다."
+    "ko": "나는 물잔을 엎으면서 테이블에서 빠르게 일어났다."
   },
   {
     "no": 567,
     "en": "Waiting to be served, we stood in a long line in front of the restaurant.",
-    "ko": "we stood in a long line in front of the restaurant.\",\"서비스를 기다리며, 우리는 식당 앞에서 긴 줄을 서 있었다."
+    "ko": "서비스를 기다리며, 우리는 식당 앞에서 긴 줄을 서 있었다."
   },
   {
     "no": 568,
     "en": "Roman law evolved dramatically over time, continuously adapting to new circumstances and challenges.",
-    "ko": "continuously adapting to new circumstances and challenges.\",\"로마법은 시간이 지나면서 극적으로 진화했으며, 새로운 상황과 도전에 지속적으로 적응했다."
+    "ko": "로마법은 시간이 지나면서 극적으로 진화했으며, 새로운 상황과 도전에 지속적으로 적응했다."
   },
   {
     "no": 569,
     "en": "Good readers, reading books, make predictions about the text they read.",
-    "ko": "make predictions about the text they read.\",책을 잘 읽는 사람들은 자신이 읽는 글에 대해 예측을 한다."
+    "ko": "책을 잘 읽는 사람들은 자신이 읽는 글에 대해 예측을 한다."
   },
   {
     "no": 570,
     "en": "The plane left London at 10 a.m., arriving here at 3 p.m.",
-    "ko": "arriving here at 3 p.m.\",그 비행기는 오전 10시에 런던을 출발하여 오후 3시에 여기 도착했다."
+    "ko": "그 비행기는 오전 10시에 런던을 출발하여 오후 3시에 여기 도착했다."
   },
   {
     "no": 571,
     "en": "Sleep deprivation can negatively affect a person's cognitive skills, thus reducing the ability to focus.",
-    "ko": "thus reducing the ability to focus.\",수면 부족은 사람의 인지 능력에 부정적인 영향을 미쳐 집중력을 감소시킬 수 있다."
+    "ko": "수면 부족은 사람의 인지 능력에 부정적인 영향을 미쳐 집중력을 감소시킬 수 있다."
   },
   {
     "no": 572,
     "en": "Filling out the customer survey, please answer all the questions.",
-    "ko": "please answer all the questions.\",\"고객 설문지를 작성할 때, 모든 질문에 답해 주세요."
+    "ko": "고객 설문지를 작성할 때, 모든 질문에 답해 주세요."
   },
   {
     "no": 573,
     "en": "Feeling rather ill, I declined his invitation to dinner.",
-    "ko": "I declined his invitation to dinner.\",\"다소 몸이 안 좋아서, 나는 그의 저녁 식사 초대를 거절했다."
+    "ko": "다소 몸이 안 좋아서, 나는 그의 저녁 식사 초대를 거절했다."
   },
   {
     "no": 574,
     "en": "Choosing a career, you should think hard about your interests.",
-    "ko": "you should think hard about your interests.\",\"직업을 선택할 때, 자신의 관심사에 대해 신중하게 생각해야 한다."
+    "ko": "직업을 선택할 때, 자신의 관심사에 대해 신중하게 생각해야 한다."
   },
   {
     "no": 575,
     "en": "My sister, not knowing what to do, came to ask for my advice.",
-    "ko": "not knowing what to do, came to ask for my advice.\",무엇을 해야 할지 모르는 내 여동생이 내게 조언을 구하러 왔다."
+    "ko": "무엇을 해야 할지 모르는 내 여동생이 내게 조언을 구하러 왔다."
   },
   {
     "no": 576,
     "en": "Having a positive attitude, you can come up with possible solutions in difficult situations.",
-    "ko": "you can come up with possible solutions in difficult situations.\",\"긍정적인 태도를 가지면, 어려운 상황에서 가능한 해결책을 생각해 낼 수 있다."
+    "ko": "긍정적인 태도를 가지면, 어려운 상황에서 가능한 해결책을 생각해 낼 수 있다."
   },
   {
     "no": 577,
     "en": "Admitting that some areas take longer to master, I found English quite interesting to learn.",
-    "ko": "I found English quite interesting to learn.\",\"어떤 분야는 숙달하는 데 더 오래 걸린다는 것을 인정하면서도, 나는 영어를 배우는 것이 꽤 흥미롭다고 생각했다."
+    "ko": "어떤 분야는 숙달하는 데 더 오래 걸린다는 것을 인정하면서도, 나는 영어를 배우는 것이 꽤 흥미롭다고 생각했다."
   },
   {
     "no": 578,
     "en": "Having had a big lunch, I had no appetite for dinner.",
-    "ko": "I had no appetite for dinner.\",\"점심을 많이 먹어서, 저녁에는 식욕이 없었다."
+    "ko": "점심을 많이 먹어서, 저녁에는 식욕이 없었다."
   },
   {
     "no": 579,
     "en": "Never having gone to a concert, he would love to get the tickets.",
-    "ko": "he would love to get the tickets.\",콘서트에 한 번도 가본 적이 없는 그는 티켓을 얻고 싶어 한다."
+    "ko": "콘서트에 한 번도 가본 적이 없는 그는 티켓을 얻고 싶어 한다."
   },
   {
     "no": 580,
@@ -2903,42 +2903,42 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 581,
     "en": "The teacher, not having heard the bell, kept on teaching.",
-    "ko": "not having heard the bell, kept on teaching.\",종소리를 듣지 못한 선생님은 계속 수업을 했다."
+    "ko": "종소리를 듣지 못한 선생님은 계속 수업을 했다."
   },
   {
     "no": 582,
     "en": "Worn properly, safety belts can save many lives each year.",
-    "ko": "safety belts can save many lives each year.\",\"제대로 착용하면, 안전벨트는 매년 많은 생명을 구할 수 있다."
+    "ko": "제대로 착용하면, 안전벨트는 매년 많은 생명을 구할 수 있다."
   },
   {
     "no": 583,
     "en": "This poem, translated into English, would lose its beauty.",
-    "ko": "translated into English, would lose its beauty.\",이 시는 영어로 번역되면 아름다움을 잃을 것이다."
+    "ko": "이 시는 영어로 번역되면 아름다움을 잃을 것이다."
   },
   {
     "no": 584,
     "en": "Having been bitten by a snake, he's afraid of a rope.",
-    "ko": "he's afraid of a rope.\",\"뱀에 물린 적이 있어서, 그는 밧줄도 무서워한다."
+    "ko": "뱀에 물린 적이 있어서, 그는 밧줄도 무서워한다."
   },
   {
     "no": 585,
     "en": "A kind person, she is loved by everyone.",
-    "ko": "she is loved by everyone.\",친절한 사람인 그녀는 모든 사람에게 사랑받는다."
+    "ko": "친절한 사람인 그녀는 모든 사람에게 사랑받는다."
   },
   {
     "no": 586,
     "en": "Rich in zinc, pumpkin seeds can be helpful in enhancing memory.",
-    "ko": "pumpkin seeds can be helpful in enhancing memory.\",아연이 풍부한 호박씨는 기억력 향상에 도움이 될 수 있다."
+    "ko": "아연이 풍부한 호박씨는 기억력 향상에 도움이 될 수 있다."
   },
   {
     "no": 587,
     "en": "Busy with his work, he didn't sleep at all.",
-    "ko": "he didn't sleep at all.\",\"일이 바빠서, 그는 전혀 잠을 자지 못했다."
+    "ko": "일이 바빠서, 그는 전혀 잠을 자지 못했다."
   },
   {
     "no": 588,
     "en": "Used without care, words can cause great damage.",
-    "ko": "words can cause great damage.\",\"조심하지 않고 사용하면, 말은 큰 피해를 줄 수 있다."
+    "ko": "조심하지 않고 사용하면, 말은 큰 피해를 줄 수 있다."
   },
   {
     "no": 589,
@@ -2958,37 +2958,37 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 592,
     "en": "Once seen, the last scene of the movie can never be forgotten.",
-    "ko": "the last scene of the movie can never be forgotten.\",\"한 번 보고 나면, 그 영화의 마지막 장면은 절대 잊을 수 없다."
+    "ko": "한 번 보고 나면, 그 영화의 마지막 장면은 절대 잊을 수 없다."
   },
   {
     "no": 593,
     "en": "Never having sung in front of people, he must be nervous now.",
-    "ko": "he must be nervous now.\",사람들 앞에서 한 번도 노래한 적이 없는 그는 지금 긴장하고 있을 것이다."
+    "ko": "사람들 앞에서 한 번도 노래한 적이 없는 그는 지금 긴장하고 있을 것이다."
   },
   {
     "no": 594,
     "en": "Written in haste, his report had many spelling mistakes.",
-    "ko": "his report had many spelling mistakes.\",\"서둘러 쓰다 보니, 그의 보고서에는 많은 철자 오류가 있었다."
+    "ko": "서둘러 쓰다 보니, 그의 보고서에는 많은 철자 오류가 있었다."
   },
   {
     "no": 595,
     "en": "Other things being equal, I prefer this one.",
-    "ko": "I prefer this one.\",\"다른 조건이 같다면, 나는 이것을 선호한다."
+    "ko": "다른 조건이 같다면, 나는 이것을 선호한다."
   },
   {
     "no": 596,
     "en": "Many modern pop musicians, one example being Paul McCartney, can't read music at all.",
-    "ko": "one example being Paul McCartney, can't read music at all.\",\"폴 매카트니를 예로 들면, 많은 현대 팝 음악가들은 악보를 전혀 읽지 못한다."
+    "ko": "폴 매카트니를 예로 들면, 많은 현대 팝 음악가들은 악보를 전혀 읽지 못한다."
   },
   {
     "no": 597,
     "en": "We will set up telescopes to view stars, weather permitting.",
-    "ko": "weather permitting.\",\"날씨가 허락한다면, 우리는 별을 관찰하기 위해 망원경을 설치할 것이다."
+    "ko": "날씨가 허락한다면, 우리는 별을 관찰하기 위해 망원경을 설치할 것이다."
   },
   {
     "no": 598,
     "en": "With night coming on, it was beginning to snow.",
-    "ko": "it was beginning to snow.\",\"밤이 다가오면서, 눈이 내리기 시작했다."
+    "ko": "밤이 다가오면서, 눈이 내리기 시작했다."
   },
   {
     "no": 599,
@@ -3003,7 +3003,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 601,
     "en": "With technology progressing faster than ever before, there are plenty of devices to save more water.",
-    "ko": "there are plenty of devices to save more water.\",\"기술이 그 어느 때보다 빠르게 발전하면서, 물을 더 아낄 수 있는 기기들이 많이 있다."
+    "ko": "기술이 그 어느 때보다 빠르게 발전하면서, 물을 더 아낄 수 있는 기기들이 많이 있다."
   },
   {
     "no": 602,
@@ -3013,37 +3013,37 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 603,
     "en": "When regions can no longer produce food, people will be forced to move to other areas, making them \"climate refugees.\"",
-    "ko": "making them 'climate refugees.'\",\"지역들이 더 이상 식량을 생산할 수 없을 때, 사람들은 다른 지역으로 이동하게 되어 '기후 난민'이 된다."
+    "ko": "지역들이 더 이상 식량을 생산할 수 없을 때, 사람들은 다른 지역으로 이동하게 되어 '기후 난민'이 된다."
   },
   {
     "no": 604,
     "en": "When studying for an exam, it is crucial to set specific goals.",
-    "ko": "it is crucial to set specific goals.\",\"시험 공부를 할 때, 구체적인 목표를 설정하는 것이 중요하다."
+    "ko": "시험 공부를 할 때, 구체적인 목표를 설정하는 것이 중요하다."
   },
   {
     "no": 605,
     "en": "Generally speaking, when you eat is as important as what you eat.",
-    "ko": "when you eat is as important as what you eat.\",\"일반적으로 말해서, 언제 먹느냐는 무엇을 먹느냐만큼 중요하다."
+    "ko": "일반적으로 말해서, 언제 먹느냐는 무엇을 먹느냐만큼 중요하다."
   },
   {
     "no": 606,
     "en": "Some wild mushrooms are poisonous, leading people to lose their lives.",
-    "ko": "leading people to lose their lives.\",\"일부 야생 버섯은 독이 있어, 사람들의 목숨을 빼앗기도 한다."
+    "ko": "일부 야생 버섯은 독이 있어, 사람들의 목숨을 빼앗기도 한다."
   },
   {
     "no": 607,
     "en": "When storing fresh produce, it is recommended to store it at a proper temperature.",
-    "ko": "it is recommended to store it at a proper temperature.\",\"신선 식품을 보관할 때, 적절한 온도에서 보관하는 것이 좋다."
+    "ko": "신선 식품을 보관할 때, 적절한 온도에서 보관하는 것이 좋다."
   },
   {
     "no": 608,
     "en": "Strictly speaking, spiders are not insects, because they have two main body parts and eight legs.",
-    "ko": "because they have two main body parts and eight legs.\",\"엄밀히 말하면, 거미는 두 개의 주요 신체 부분과 여덟 개의 다리를 가지고 있어 곤충이 아니다."
+    "ko": "엄밀히 말하면, 거미는 두 개의 주요 신체 부분과 여덟 개의 다리를 가지고 있어 곤충이 아니다."
   },
   {
     "no": 609,
     "en": "Speaking of fame, it can really come and go.",
-    "ko": "it can really come and go.\",\"명성에 대해 말하자면, 그것은 정말로 왔다 갔다 할 수 있다."
+    "ko": "명성에 대해 말하자면, 그것은 정말로 왔다 갔다 할 수 있다."
   },
   {
     "no": 610,
@@ -3058,7 +3058,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 612,
     "en": "Conflict is always difficult, but it sometimes leads to growth and change in organizations.",
-    "ko": "but it sometimes leads to growth and change in organizations.\",\"갈등은 항상 어렵지만, 때로는 조직의 성장과 변화로 이어지기도 한다."
+    "ko": "갈등은 항상 어렵지만, 때로는 조직의 성장과 변화로 이어지기도 한다."
   },
   {
     "no": 613,
@@ -3068,37 +3068,37 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 614,
     "en": "Suffering can destroy you, or it can show your true potential.",
-    "ko": "or it can show your true potential.\",\"고통은 당신을 무너뜨릴 수도 있고, 당신의 진정한 잠재력을 보여줄 수도 있다."
+    "ko": "고통은 당신을 무너뜨릴 수도 있고, 당신의 진정한 잠재력을 보여줄 수도 있다."
   },
   {
     "no": 615,
     "en": "Don't try to do much at once, or you will tire yourself out.",
-    "ko": "or you will tire yourself out.\",\"한꺼번에 너무 많은 것을 하려 하지 마라, 그렇지 않으면 지치고 만다."
+    "ko": "한꺼번에 너무 많은 것을 하려 하지 마라, 그렇지 않으면 지치고 만다."
   },
   {
     "no": 616,
     "en": "Focus on one task at a time, and you'll accomplish each task better, and probably faster.",
-    "ko": "and you'll accomplish each task better, and probably faster.\",\"한 번에 하나의 과제에 집중하면, 각 과제를 더 잘, 아마도 더 빠르게 완성할 것이다."
+    "ko": "한 번에 하나의 과제에 집중하면, 각 과제를 더 잘, 아마도 더 빠르게 완성할 것이다."
   },
   {
     "no": 617,
     "en": "Strive to have friends, for life without friends is like life on a desert island.",
-    "ko": "for life without friends is like life on a desert island.\",\"친구를 사귀기 위해 노력해라, 왜냐하면 친구 없는 삶은 무인도에서의 삶과 같기 때문이다."
+    "ko": "친구를 사귀기 위해 노력해라, 왜냐하면 친구 없는 삶은 무인도에서의 삶과 같기 때문이다."
   },
   {
     "no": 618,
     "en": "I am not afraid of storms, for I am learning how to sail my ship.",
-    "ko": "for I am learning how to sail my ship.\",나는 폭풍을 두려워하지 않는다. 왜냐하면 나는 내 배를 어떻게 항해하는지 배우고 있기 때문이다."
+    "ko": "나는 폭풍을 두려워하지 않는다. 왜냐하면 나는 내 배를 어떻게 항해하는지 배우고 있기 때문이다."
   },
   {
     "no": 619,
     "en": "I never did anything by accident, nor did any of my inventions come by accident.",
-    "ko": "nor did any of my inventions come by accident.\",\"나는 어떤 것도 우연히 한 적이 없으며, 내 발명품들도 우연히 나온 것이 없다."
+    "ko": "나는 어떤 것도 우연히 한 적이 없으며, 내 발명품들도 우연히 나온 것이 없다."
   },
   {
     "no": 620,
     "en": "Trees cannot grow in the sky, nor (can) clouds be in the deep sea, nor (can) fish live in the fields.",
-    "ko": "nor can clouds be in the deep sea, nor can fish live in the fields.\",\"나무는 하늘에서 자랄 수 없고, 구름은 깊은 바다에 있을 수 없으며, 물고기는 들판에서 살 수 없다."
+    "ko": "나무는 하늘에서 자랄 수 없고, 구름은 깊은 바다에 있을 수 없으며, 물고기는 들판에서 살 수 없다."
   },
   {
     "no": 621,
@@ -3108,17 +3108,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 622,
     "en": "Celebrities' reputations are their most valuable asset, yet they can be built or destroyed overnight.",
-    "ko": "yet they can be built or destroyed overnight.\",\"유명인들의 명성은 그들의 가장 귀중한 자산이지만, 하룻밤 사이에 쌓이거나 무너질 수 있다."
+    "ko": "유명인들의 명성은 그들의 가장 귀중한 자산이지만, 하룻밤 사이에 쌓이거나 무너질 수 있다."
   },
   {
     "no": 623,
     "en": "Too much inactivity can lead to bad physical condition, muscle weakness, weight gain, and depression.",
-    "ko": "muscle weakness, weight gain, and depression.\",\"너무 많은 활동 부재는 나쁜 신체 상태, 근육 약화, 체중 증가, 우울증으로 이어질 수 있다."
+    "ko": "너무 많은 활동 부재는 나쁜 신체 상태, 근육 약화, 체중 증가, 우울증으로 이어질 수 있다."
   },
   {
     "no": 624,
     "en": "To communicate clearly with others, have the courage to ask questions and express what you really want.",
-    "ko": "have the courage to ask questions and express what you really want.\",\"다른 사람들과 명확하게 소통하려면, 질문하고 자신이 진정으로 원하는 것을 표현할 용기를 가져라."
+    "ko": "다른 사람들과 명확하게 소통하려면, 질문하고 자신이 진정으로 원하는 것을 표현할 용기를 가져라."
   },
   {
     "no": 625,
@@ -3138,22 +3138,22 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 628,
     "en": "If you're never scared or embarrassed or hurt, it means you never take any chances.",
-    "ko": "it means you never take any chances.\",\"두렵거나 당혹스럽거나 상처받은 적이 없다면, 그것은 어떤 기회도 잡은 적이 없다는 의미이다."
+    "ko": "두렵거나 당혹스럽거나 상처받은 적이 없다면, 그것은 어떤 기회도 잡은 적이 없다는 의미이다."
   },
   {
     "no": 629,
     "en": "The signs and symptoms of burnout are subtle at first, but become worse as time goes on.",
-    "ko": "but become worse as time goes on.\",\"번아웃의 징후와 증상은 처음에는 미묘하지만, 시간이 지날수록 악화된다."
+    "ko": "번아웃의 징후와 증상은 처음에는 미묘하지만, 시간이 지날수록 악화된다."
   },
   {
     "no": 630,
     "en": "Books can add to what we know, widen our vocabulary, make our character strong, and do many other things that silver and gold cannot do.",
-    "ko": "make our character strong, and do many other things.\",\"책은 우리가 아는 것에 더하고, 어휘를 넓히고, 성격을 강하게 하고, 많은 다른 일들을 할 수 있다."
+    "ko": "책은 우리가 아는 것에 더하고, 어휘를 넓히고, 성격을 강하게 하고, 많은 다른 일들을 할 수 있다."
   },
   {
     "no": 631,
     "en": "Happiness is when what you think, what you say, and what you do are in harmony.",
-    "ko": "what you say, and what you do are in harmony.\",\"행복은 당신이 생각하는 것, 말하는 것, 행하는 것이 조화를 이룰 때이다."
+    "ko": "행복은 당신이 생각하는 것, 말하는 것, 행하는 것이 조화를 이룰 때이다."
   },
   {
     "no": 632,
@@ -3163,7 +3163,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 633,
     "en": "When your doctor prescribes medication without checking your chart or asking the right questions, critical mistakes can happen.",
-    "ko": "critical mistakes can happen.\",\"의사가 차트를 확인하거나 적절한 질문을 하지 않고 약을 처방할 때, 심각한 실수가 발생할 수 있다."
+    "ko": "의사가 차트를 확인하거나 적절한 질문을 하지 않고 약을 처방할 때, 심각한 실수가 발생할 수 있다."
   },
   {
     "no": 634,
@@ -3178,7 +3178,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 636,
     "en": "I confess I do not know why, but looking at the stars always makes me dream.",
-    "ko": "but looking at the stars always makes me dream.\",\"이유는 모르겠지만, 별을 바라보면 항상 꿈꾸게 된다고 고백한다."
+    "ko": "이유는 모르겠지만, 별을 바라보면 항상 꿈꾸게 된다고 고백한다."
   },
   {
     "no": 637,
@@ -3218,7 +3218,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 644,
     "en": "When we lose, we must not show our grief and anger, but congratulate the winner.",
-    "ko": "we must not show our grief and anger, but congratulate the winner.\",\"질 때, 우리는 슬픔과 분노를 드러내서는 안 되고, 승자를 축하해야 한다."
+    "ko": "질 때, 우리는 슬픔과 분노를 드러내서는 안 되고, 승자를 축하해야 한다."
   },
   {
     "no": 645,
@@ -3228,7 +3228,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 646,
     "en": "Our brains are programmed to perform at their best, not when they are negative, but when they are positive.",
-    "ko": "not when negative, but when they are positive.\",우리의 뇌는 부정적일 때가 아니라 긍정적일 때 최상의 성과를 내도록 프로그래밍되어 있다."
+    "ko": "우리의 뇌는 부정적일 때가 아니라 긍정적일 때 최상의 성과를 내도록 프로그래밍되어 있다."
   },
   {
     "no": 647,
@@ -3248,12 +3248,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 650,
     "en": "Saying is one thing, doing is another.",
-    "ko": "doing is another.\",\"말하는 것은 한 가지이고, 행하는 것은 또 다른 것이다."
+    "ko": "말하는 것은 한 가지이고, 행하는 것은 또 다른 것이다."
   },
   {
     "no": 651,
     "en": "Prefer knowledge to wealth, for the one is transitory, the other perpetual.",
-    "ko": "for the one is transitory, the other perpetual.\",지식을 부보다 선호하라. 왜냐하면 부는 일시적이고 지식은 영속적이기 때문이다."
+    "ko": "지식을 부보다 선호하라. 왜냐하면 부는 일시적이고 지식은 영속적이기 때문이다."
   },
   {
     "no": 652,
@@ -3268,17 +3268,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 654,
     "en": "Building DIY furniture can save you money, but the other side of the coin is that it requires time, skill and effort.",
-    "ko": "skill and effort.\",\"DIY 가구를 만드는 것은 돈을 절약할 수 있지만, 동전의 이면은 시간, 기술, 노력이 필요하다는 것이다."
+    "ko": "DIY 가구를 만드는 것은 돈을 절약할 수 있지만, 동전의 이면은 시간, 기술, 노력이 필요하다는 것이다."
   },
   {
     "no": 655,
     "en": "Someone with an anxiety disorder may also suffer from depression, or vice versa.",
-    "ko": "or vice versa.\",\"불안 장애가 있는 사람은 우울증도 앓을 수 있으며, 그 반대도 마찬가지이다."
+    "ko": "불안 장애가 있는 사람은 우울증도 앓을 수 있으며, 그 반대도 마찬가지이다."
   },
   {
     "no": 656,
     "en": "To know is one thing, to teach is another.",
-    "ko": "to teach is another.\",\"아는 것은 한 가지이고, 가르치는 것은 또 다른 것이다."
+    "ko": "아는 것은 한 가지이고, 가르치는 것은 또 다른 것이다."
   },
   {
     "no": 657,
@@ -3318,12 +3318,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 664,
     "en": "When writing a report, you should not use a sentence whose meaning is unclear.",
-    "ko": "you should not use a sentence whose meaning is unclear.\",\"보고서를 작성할 때, 의미가 불명확한 문장은 사용하지 말아야 한다."
+    "ko": "보고서를 작성할 때, 의미가 불명확한 문장은 사용하지 말아야 한다."
   },
   {
     "no": 665,
     "en": "A mentor is someone whose work or life is admired, and who is a good guide to others.",
-    "ko": "and who is a good guide to others.\",\"멘토는 그들의 업적이나 삶이 존경받는 사람이며, 다른 사람들에게 좋은 안내자이다."
+    "ko": "멘토는 그들의 업적이나 삶이 존경받는 사람이며, 다른 사람들에게 좋은 안내자이다."
   },
   {
     "no": 666,
@@ -3353,12 +3353,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 671,
     "en": "When people encounter people or things that they like, the rate of blinking increases.",
-    "ko": "the rate of blinking increases.\",\"사람들이 좋아하는 사람이나 물건을 만날 때, 눈 깜박임 횟수가 증가한다."
+    "ko": "사람들이 좋아하는 사람이나 물건을 만날 때, 눈 깜박임 횟수가 증가한다."
   },
   {
     "no": 672,
     "en": "A friend is a person with whom I may be sincere. Before him, I may think aloud.",
-    "ko": "I may think aloud.\",친구는 내가 진심을 보일 수 있는 사람이다. 그의 앞에서 나는 소리 내어 생각할 수 있다."
+    "ko": "친구는 내가 진심을 보일 수 있는 사람이다. 그의 앞에서 나는 소리 내어 생각할 수 있다."
   },
   {
     "no": 673,
@@ -3368,7 +3368,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 674,
     "en": "Use simple words which your readers will understand, and not words which they will have to look up.",
-    "ko": "and not words which they will have to look up.\",\"독자들이 이해할 수 있는 쉬운 단어를 사용하고, 찾아봐야 하는 단어는 쓰지 마라."
+    "ko": "독자들이 이해할 수 있는 쉬운 단어를 사용하고, 찾아봐야 하는 단어는 쓰지 마라."
   },
   {
     "no": 675,
@@ -3493,7 +3493,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 699,
     "en": "A black hole is an area in outer space into which everything, including light itself, is pulled.",
-    "ko": "including light itself, is pulled.\",블랙홀은 빛 자체를 포함한 모든 것이 빨려 들어가는 우주 공간의 영역이다."
+    "ko": "블랙홀은 빛 자체를 포함한 모든 것이 빨려 들어가는 우주 공간의 영역이다."
   },
   {
     "no": 700,
@@ -3563,7 +3563,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 713,
     "en": "Ask for advice to whomever you depend on, and you'll get valuable feedback.",
-    "ko": "and you'll get valuable feedback.\",\"의지하는 사람 누구에게든 조언을 구하면, 귀중한 피드백을 얻을 것이다."
+    "ko": "의지하는 사람 누구에게든 조언을 구하면, 귀중한 피드백을 얻을 것이다."
   },
   {
     "no": 714,
@@ -3573,7 +3573,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 715,
     "en": "Whatever is going to happen will happen, whether we worry or not.",
-    "ko": "whether we worry or not.\",일어날 일은 일어날 것이다. 우리가 걱정하든 안 하든."
+    "ko": "일어날 일은 일어날 것이다. 우리가 걱정하든 안 하든."
   },
   {
     "no": 716,
@@ -3588,7 +3588,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 718,
     "en": "With a strong will, you can have whichever life you want in any circumstances.",
-    "ko": "you can have whichever life you want in any circumstances.\",\"강한 의지가 있으면, 어떤 상황에서도 원하는 삶을 살 수 있다."
+    "ko": "강한 의지가 있으면, 어떤 상황에서도 원하는 삶을 살 수 있다."
   },
   {
     "no": 719,
@@ -3598,97 +3598,97 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 720,
     "en": "I met an old friend of mine, who didn't recognize me at first.",
-    "ko": "who didn't recognize me at first.\",\"나는 옛 친구를 만났는데, 그는 처음에 나를 알아보지 못했다."
+    "ko": "나는 옛 친구를 만났는데, 그는 처음에 나를 알아보지 못했다."
   },
   {
     "no": 721,
     "en": "Time, whose teeth eat away at everything else, is powerless against truth.",
-    "ko": "whose teeth eat away at everything else, is powerless against truth.\",다른 모든 것을 갉아먹는 이빨을 가진 시간도 진실 앞에서는 무력하다."
+    "ko": "다른 모든 것을 갉아먹는 이빨을 가진 시간도 진실 앞에서는 무력하다."
   },
   {
     "no": 722,
     "en": "Millions apparently suffer from \"no mobile phobia,\" which has been given the name \"nomophobia.\"",
-    "ko": "' which has been given the name 'nomophobia.'\",수백만 명이 '노모포비아'라는 이름이 붙은 '휴대폰 없는 공포증'으로 고통받는 것으로 보인다."
+    "ko": "수백만 명이 '노모포비아'라는 이름이 붙은 '휴대폰 없는 공포증'으로 고통받는 것으로 보인다."
   },
   {
     "no": 723,
     "en": "The solar system, to which planets like Earth and Mars belong, was formed approximately 4.5 billion years ago.",
-    "ko": "was formed approximately 4.5 billion years ago.\",지구와 화성 같은 행성들이 속해 있는 태양계는 약 45억 년 전에 형성되었다."
+    "ko": "지구와 화성 같은 행성들이 속해 있는 태양계는 약 45억 년 전에 형성되었다."
   },
   {
     "no": 724,
     "en": "One of the best ways (to learn) is to teach others, which enhances our own learning experience.",
-    "ko": "which enhances our own learning experience.\",\"배우는 가장 좋은 방법 중 하나는 다른 사람들을 가르치는 것인데, 이는 우리 자신의 학습 경험을 향상시킨다."
+    "ko": "배우는 가장 좋은 방법 중 하나는 다른 사람들을 가르치는 것인데, 이는 우리 자신의 학습 경험을 향상시킨다."
   },
   {
     "no": 725,
     "en": "Water has no calories, but it takes up a space in your stomach, which creates a feeling of fullness.",
-    "ko": "which creates a feeling of fullness.\",\"물은 칼로리가 없지만, 위 속에 공간을 차지하여 포만감을 만들어낸다."
+    "ko": "물은 칼로리가 없지만, 위 속에 공간을 차지하여 포만감을 만들어낸다."
   },
   {
     "no": 726,
     "en": "Curing the mind is the first step to curing illness, which is a healing principle mentioned in the Dongui Bogam.",
-    "ko": "which is a healing principle mentioned in the Dongui Bogam.\",\"마음을 치유하는 것이 병을 치유하는 첫 번째 단계인데, 이는 동의보감에 언급된 치유 원칙이다."
+    "ko": "마음을 치유하는 것이 병을 치유하는 첫 번째 단계인데, 이는 동의보감에 언급된 치유 원칙이다."
   },
   {
     "no": 727,
     "en": "I've always had a great many worries, most of which were silly.",
-    "ko": "most of which were silly.\",\"나는 항상 많은 걱정이 있었는데, 그 중 대부분은 어리석은 것들이었다."
+    "ko": "나는 항상 많은 걱정이 있었는데, 그 중 대부분은 어리석은 것들이었다."
   },
   {
     "no": 728,
     "en": "Approximately 25,000 people worldwide, many of whom are children, are still dying of hunger every day.",
-    "ko": "many of whom are children, are still dying of hunger every day.\",\"전 세계적으로 약 25,000명, 그중 많은 사람이 아이들인데, 여전히 매일 굶주림으로 죽어가고 있다."
+    "ko": "전 세계적으로 약 25,000명, 그중 많은 사람이 아이들인데, 여전히 매일 굶주림으로 죽어가고 있다."
   },
   {
     "no": 729,
     "en": "Carrots are full of beta carotene, some of which is converted into vitamin A.",
-    "ko": "some of which is converted into vitamin A.\",\"당근에는 베타카로틴이 풍부하며, 그 중 일부는 비타민 A로 전환된다."
+    "ko": "당근에는 베타카로틴이 풍부하며, 그 중 일부는 비타민 A로 전환된다."
   },
   {
     "no": 730,
     "en": "As a rule, the panel consists of ten members, three of whom are students.",
-    "ko": "the panel consists of ten members, three of whom are students.\",\"원칙적으로, 패널은 10명의 구성원으로 이루어져 있으며, 그 중 3명이 학생이다."
+    "ko": "원칙적으로, 패널은 10명의 구성원으로 이루어져 있으며, 그 중 3명이 학생이다."
   },
   {
     "no": 731,
     "en": "The manager set out three solutions for the problem, one of which was considered the most attractive by everyone.",
-    "ko": "one of which was considered the most attractive.\",\"관리자는 그 문제에 대한 세 가지 해결책을 제시했는데, 그 중 하나가 가장 매력적인 것으로 여겨졌다."
+    "ko": "관리자는 그 문제에 대한 세 가지 해결책을 제시했는데, 그 중 하나가 가장 매력적인 것으로 여겨졌다."
   },
   {
     "no": 732,
     "en": "The last time I went to Santorini was in September, when the weather was really beautiful.",
-    "ko": "when the weather was really beautiful.\",\"내가 산토리니에 마지막으로 간 것은 9월이었는데, 그때 날씨가 정말 아름다웠다."
+    "ko": "내가 산토리니에 마지막으로 간 것은 9월이었는데, 그때 날씨가 정말 아름다웠다."
   },
   {
     "no": 733,
     "en": "We planned our purchases for the last day of the sale, when the prices would be really low.",
-    "ko": "when the prices would be really low.\",우리는 가격이 정말 낮을 세일 마지막 날을 위해 구매 계획을 세웠다."
+    "ko": "우리는 가격이 정말 낮을 세일 마지막 날을 위해 구매 계획을 세웠다."
   },
   {
     "no": 734,
     "en": "South Africa is like a giant zoo, where elephants, lions, and even penguins wander freely.",
-    "ko": "where elephants, lions, and even penguins wander freely.\",\"남아프리카는 코끼리, 사자, 심지어 펭귄까지 자유롭게 돌아다니는 거대한 동물원 같다."
+    "ko": "남아프리카는 코끼리, 사자, 심지어 펭귄까지 자유롭게 돌아다니는 거대한 동물원 같다."
   },
   {
     "no": 735,
     "en": "I walked along the streets in Paris, where I found cafes and restaurants with pretty outdoor seating.",
-    "ko": "where I found cafes and restaurants with pretty outdoor seating.\",\"나는 파리의 거리를 걸었는데, 그곳에서 예쁜 야외 좌석이 있는 카페와 식당들을 발견했다."
+    "ko": "나는 파리의 거리를 걸었는데, 그곳에서 예쁜 야외 좌석이 있는 카페와 식당들을 발견했다."
   },
   {
     "no": 736,
     "en": "When it rains, look for rainbows. When it's dark, look for stars.",
-    "ko": "look for rainbows. When it's dark, look for stars.\",비가 올 때 무지개를 찾아라. 어두울 때는 별을 찾아라."
+    "ko": "비가 올 때 무지개를 찾아라. 어두울 때는 별을 찾아라."
   },
   {
     "no": 737,
     "en": "While we stop to think, we often miss our opportunity.",
-    "ko": "we often miss our opportunity.\",\"우리가 생각하느라 멈추는 동안, 우리는 종종 기회를 놓친다."
+    "ko": "우리가 생각하느라 멈추는 동안, 우리는 종종 기회를 놓친다."
   },
   {
     "no": 738,
     "en": "Happiness adds and multiplies, as we divide it with others.",
-    "ko": "as we divide it with others.\",행복은 다른 사람들과 나눌 때 더해지고 곱해진다."
+    "ko": "행복은 다른 사람들과 나눌 때 더해지고 곱해진다."
   },
   {
     "no": 739,
@@ -3708,7 +3708,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 742,
     "en": "Once you replace negative thoughts with positive ones, you'll start having positive results.",
-    "ko": "you'll start having positive results.\",\"부정적인 생각을 긍정적인 생각으로 바꾸면, 긍정적인 결과가 나타나기 시작할 것이다."
+    "ko": "부정적인 생각을 긍정적인 생각으로 바꾸면, 긍정적인 결과가 나타나기 시작할 것이다."
   },
   {
     "no": 743,
@@ -3718,7 +3718,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 744,
     "en": "As soon as the fear approaches near, attack and destroy it.",
-    "ko": "attack and destroy it.\",\"두려움이 가까이 다가오는 순간, 공격하고 무너뜨려라."
+    "ko": "두려움이 가까이 다가오는 순간, 공격하고 무너뜨려라."
   },
   {
     "no": 745,
@@ -3733,17 +3733,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 747,
     "en": "The moment you doubt whether you can fly, you cease forever to be able to do it.",
-    "ko": "you cease forever to be able to do it.\",\"날 수 있는지 의심하는 순간, 당신은 영원히 날 수 없게 된다."
+    "ko": "날 수 있는지 의심하는 순간, 당신은 영원히 날 수 없게 된다."
   },
   {
     "no": 748,
     "en": "By the time they are three months old, babies will be able to recognize their mother.",
-    "ko": "babies will be able to recognize their mother.\",\"생후 3개월이 되면, 아기들은 어머니를 알아볼 수 있게 된다."
+    "ko": "생후 3개월이 되면, 아기들은 어머니를 알아볼 수 있게 된다."
   },
   {
     "no": 749,
     "en": "Every time you smile at someone, it is a gift to that person.",
-    "ko": "it is a gift to that person.\",\"당신이 누군가에게 미소를 지을 때마다, 그것은 그 사람에 대한 선물이다."
+    "ko": "당신이 누군가에게 미소를 지을 때마다, 그것은 그 사람에 대한 선물이다."
   },
   {
     "no": 750,
@@ -3768,12 +3768,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 754,
     "en": "Since life began in the oceans, most life has chemical properties similar to the ocean.",
-    "ko": "most life has chemical properties similar to the ocean.\",\"생명이 바다에서 시작된 이래로, 대부분의 생명체는 바다와 유사한 화학적 특성을 가지고 있다."
+    "ko": "생명이 바다에서 시작된 이래로, 대부분의 생명체는 바다와 유사한 화학적 특성을 가지고 있다."
   },
   {
     "no": 755,
     "en": "Dyeing hair blond was common among Roman men, as they believed (that) it made them appear younger.",
-    "ko": "as they believed it made them appear younger.\",\"로마 남성들 사이에서 머리를 금발로 염색하는 것이 흔했는데, 그것이 더 젊어 보이게 만든다고 믿었기 때문이다."
+    "ko": "로마 남성들 사이에서 머리를 금발로 염색하는 것이 흔했는데, 그것이 더 젊어 보이게 만든다고 믿었기 때문이다."
   },
   {
     "no": 756,
@@ -3783,12 +3783,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 757,
     "en": "Seeing that the level of fine dust is high, you'd better wear a mask.",
-    "ko": "you'd better wear a mask.\",미세먼지 수준이 높으니 마스크를 착용하는 것이 좋다."
+    "ko": "미세먼지 수준이 높으니 마스크를 착용하는 것이 좋다."
   },
   {
     "no": 758,
     "en": "I tried something new. I am sorry that I wasn't good at it, but I am proud that I tried.",
-    "ko": "but I am proud that I tried.\",\"나는 새로운 것을 시도했다. 잘하지 못한 것은 아쉽지만, 시도했다는 것이 자랑스럽다."
+    "ko": "나는 새로운 것을 시도했다. 잘하지 못한 것은 아쉽지만, 시도했다는 것이 자랑스럽다."
   },
   {
     "no": 759,
@@ -3798,7 +3798,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 760,
     "en": "If a person starts the day with a positive mindset, that person is more likely to have a positive day.",
-    "ko": "that person is more likely to have a positive day.\",긍정적인 마음가짐으로 하루를 시작하는 사람은 긍정적인 하루를 보낼 가능성이 더 높다."
+    "ko": "긍정적인 마음가짐으로 하루를 시작하는 사람은 긍정적인 하루를 보낼 가능성이 더 높다."
   },
   {
     "no": 761,
@@ -3818,12 +3818,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 764,
     "en": "There are always millions of way to reach your goal, supposing you really want to do it.",
-    "ko": "supposing you really want to do it.\",\"당신이 정말로 원한다면, 목표에 도달하는 방법은 항상 수백만 가지가 있다."
+    "ko": "당신이 정말로 원한다면, 목표에 도달하는 방법은 항상 수백만 가지가 있다."
   },
   {
     "no": 765,
     "en": "It does not make a big difference what your hobby is, provided you find it interesting.",
-    "ko": "provided you find it interesting.\",\"흥미를 느낀다면, 당신의 취미가 무엇인지는 크게 중요하지 않다."
+    "ko": "흥미를 느낀다면, 당신의 취미가 무엇인지는 크게 중요하지 않다."
   },
   {
     "no": 766,
@@ -3838,17 +3838,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 768,
     "en": "Although the world is full of suffering, it is full also of the overcoming of it.",
-    "ko": "it is full also of the overcoming of it.\",\"세상이 고통으로 가득하지만, 그것을 극복하는 것으로도 가득하다."
+    "ko": "세상이 고통으로 가득하지만, 그것을 극복하는 것으로도 가득하다."
   },
   {
     "no": 769,
     "en": "Even if it's a little thing, do something for those who have need of a man's help.",
-    "ko": "do something for those who have need of a man's help.\",\"작은 것이라도, 사람의 도움이 필요한 사람들을 위해 무언가를 해라."
+    "ko": "작은 것이라도, 사람의 도움이 필요한 사람들을 위해 무언가를 해라."
   },
   {
     "no": 770,
     "en": "Aim for the moon. If you miss, you may hit a star.",
-    "ko": "you may hit a star.\",달을 겨냥해라. 빗나가더라도 별을 맞출 수 있다."
+    "ko": "달을 겨냥해라. 빗나가더라도 별을 맞출 수 있다."
   },
   {
     "no": 771,
@@ -3858,7 +3858,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 772,
     "en": "Whereas knowledge can be acquired from books, skills must be learned through practice.",
-    "ko": "skills must be learned through practice.\",\"지식은 책에서 습득할 수 있지만, 기술은 연습을 통해 배워야 한다."
+    "ko": "지식은 책에서 습득할 수 있지만, 기술은 연습을 통해 배워야 한다."
   },
   {
     "no": 773,
@@ -3868,32 +3868,32 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 774,
     "en": "Rich as you may be, you can't buy sincere friends.",
-    "ko": "you can't buy sincere friends.\",\"아무리 부유해도, 진실한 친구를 살 수는 없다."
+    "ko": "아무리 부유해도, 진실한 친구를 살 수는 없다."
   },
   {
     "no": 775,
     "en": "Coward as he was, John couldn't bear such an insult.",
-    "ko": "John couldn't bear such an insult.\",\"겁쟁이이긴 했지만, 존은 그런 모욕을 참을 수 없었다."
+    "ko": "겁쟁이이긴 했지만, 존은 그런 모욕을 참을 수 없었다."
   },
   {
     "no": 776,
     "en": "Even though we wear fashionable clothes, we can't be truly beautiful without good manners.",
-    "ko": "we can't be truly beautiful without good manners.\",\"유행하는 옷을 입더라도, 좋은 예의범절 없이는 진정으로 아름다울 수 없다."
+    "ko": "유행하는 옷을 입더라도, 좋은 예의범절 없이는 진정으로 아름다울 수 없다."
   },
   {
     "no": 777,
     "en": "Be honest with your friends, however painful the truth is.",
-    "ko": "however painful the truth is.\",\"아무리 진실이 고통스럽더라도, 친구들에게 솔직해라."
+    "ko": "아무리 진실이 고통스럽더라도, 친구들에게 솔직해라."
   },
   {
     "no": 778,
     "en": "Whoever you are, whatever you do, do vote if you can.",
-    "ko": "whatever you do, do vote if you can.\",\"당신이 누구이든, 무엇을 하든, 할 수 있다면 꼭 투표하라."
+    "ko": "당신이 누구이든, 무엇을 하든, 할 수 있다면 꼭 투표하라."
   },
   {
     "no": 779,
     "en": "The game will be very exciting, whichever side wins.",
-    "ko": "whichever side wins.\",\"어느 편이 이기든, 그 경기는 매우 흥미진진할 것이다."
+    "ko": "어느 편이 이기든, 그 경기는 매우 흥미진진할 것이다."
   },
   {
     "no": 780,
@@ -3903,17 +3903,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 781,
     "en": "Whenever you start, it is important that you do not stop after starting.",
-    "ko": "it is important that you do not stop after starting.\",\"언제 시작하든, 시작한 후에 멈추지 않는 것이 중요하다."
+    "ko": "언제 시작하든, 시작한 후에 멈추지 않는 것이 중요하다."
   },
   {
     "no": 782,
     "en": "Wherever you go in life or however old you get, there's always something new to learn about.",
-    "ko": "there's always something new to learn about.\",\"삶에서 어디를 가든 나이가 얼마가 되든, 항상 새로 배울 것이 있다."
+    "ko": "삶에서 어디를 가든 나이가 얼마가 되든, 항상 새로 배울 것이 있다."
   },
   {
     "no": 783,
     "en": "However powerful your engine is, you won't get very far if you don't have any wheels.",
-    "ko": "you won't get very far if you don't have any wheels.\",\"엔진이 아무리 강력해도, 바퀴가 없으면 멀리 가지 못한다."
+    "ko": "엔진이 아무리 강력해도, 바퀴가 없으면 멀리 가지 못한다."
   },
   {
     "no": 784,
@@ -3933,7 +3933,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 787,
     "en": "We must learn from history, lest we (should) repeat its tragic lessons.",
-    "ko": "lest we should repeat its tragic lessons.\",비극적인 역사를 반복하지 않도록 역사로부터 배워야 한다."
+    "ko": "비극적인 역사를 반복하지 않도록 역사로부터 배워야 한다."
   },
   {
     "no": 788,
@@ -3953,7 +3953,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 791,
     "en": "Chewier foods take more energy to digest, so the number of calories that our body receives is less.",
-    "ko": "so the number of calories that our body receives is less.\",\"더 질긴 음식은 소화하는 데 더 많은 에너지가 필요하므로, 몸이 받아들이는 칼로리 수가 더 적다."
+    "ko": "더 질긴 음식은 소화하는 데 더 많은 에너지가 필요하므로, 몸이 받아들이는 칼로리 수가 더 적다."
   },
   {
     "no": 792,
@@ -3968,7 +3968,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 794,
     "en": "Truth cannot be broken, and always gets above falsehood, as does oil above water.",
-    "ko": "and always gets above falsehood, as does oil above water.\",\"진실은 무너지지 않으며, 물 위의 기름처럼 항상 거짓 위에 떠오른다."
+    "ko": "진실은 무너지지 않으며, 물 위의 기름처럼 항상 거짓 위에 떠오른다."
   },
   {
     "no": 795,
@@ -3983,12 +3983,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 797,
     "en": "Just as darkness comes at the end of each day, so also comes the dawn to spread light across the land.",
-    "ko": "so also comes the dawn to spread light across the land.\",\"매일 끝에 어둠이 오는 것처럼, 대지에 빛을 퍼뜨리기 위한 새벽도 온다."
+    "ko": "매일 끝에 어둠이 오는 것처럼, 대지에 빛을 퍼뜨리기 위한 새벽도 온다."
   },
   {
     "no": 798,
     "en": "As a well-spent day brings happy sleep, so life well used brings happy death.",
-    "ko": "so life well used brings happy death.\",\"잘 보낸 하루가 행복한 잠을 가져오듯이, 잘 사용된 삶은 행복한 죽음을 가져온다."
+    "ko": "잘 보낸 하루가 행복한 잠을 가져오듯이, 잘 사용된 삶은 행복한 죽음을 가져온다."
   },
   {
     "no": 799,
@@ -3998,7 +3998,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 800,
     "en": "(Just) As food and water are essential to life, so the spirit of self-sacrifice is a necessary condition of love.",
-    "ko": "so the spirit of self-sacrifice is a necessary condition of love.\",\"음식과 물이 삶에 필수적인 것처럼, 자기희생 정신은 사랑의 필요 조건이다."
+    "ko": "음식과 물이 삶에 필수적인 것처럼, 자기희생 정신은 사랑의 필요 조건이다."
   },
   {
     "no": 801,
@@ -4028,7 +4028,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 806,
     "en": "All the puppies looked the same, so I couldn't tell one from another.",
-    "ko": "so I couldn't tell one from another.\",모든 강아지들이 똑같이 생겨서 구별할 수 없었다."
+    "ko": "모든 강아지들이 똑같이 생겨서 구별할 수 없었다."
   },
   {
     "no": 807,
@@ -4053,12 +4053,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 811,
     "en": "For a vegetarian diet, substitute beans for meat in your recipes. For a vegetarian diet, substitute meat with beans in your recipes.",
-    "ko": "substitute beans for meat in your recipes.\",채식 식단을 위해 요리법에서 고기 대신 콩을 사용해라."
+    "ko": "채식 식단을 위해 요리법에서 고기 대신 콩을 사용해라."
   },
   {
     "no": 812,
     "en": "Because he was big for his age, people often took my younger brother for an adult.",
-    "ko": "people often took my younger brother for an adult.\",\"나이에 비해 체구가 커서, 사람들은 종종 내 남동생을 어른으로 착각했다."
+    "ko": "나이에 비해 체구가 커서, 사람들은 종종 내 남동생을 어른으로 착각했다."
   },
   {
     "no": 813,
@@ -4108,7 +4108,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 822,
     "en": "After using the new treatment, many patients were cured of the illness.",
-    "ko": "many patients were cured of the illness.\",\"새로운 치료법을 사용한 후, 많은 환자들이 질병에서 회복되었다."
+    "ko": "새로운 치료법을 사용한 후, 많은 환자들이 질병에서 회복되었다."
   },
   {
     "no": 823,
@@ -4148,7 +4148,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 830,
     "en": "You cannot add more minutes to the day, but you can utilize each one to the fullest.",
-    "ko": "but you can utilize each one to the fullest.\",\"하루에 더 많은 시간을 추가할 수는 없지만, 각 시간을 최대한 활용할 수 있다."
+    "ko": "하루에 더 많은 시간을 추가할 수는 없지만, 각 시간을 최대한 활용할 수 있다."
   },
   {
     "no": 831,
@@ -4168,7 +4168,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 834,
     "en": "We can attribute the failure to a number of factors, not only one.",
-    "ko": "not only one.\",실패를 하나의 요인만이 아니라 여러 요인에 돌릴 수 있다."
+    "ko": "실패를 하나의 요인만이 아니라 여러 요인에 돌릴 수 있다."
   },
   {
     "no": 835,
@@ -4238,7 +4238,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 848,
     "en": "Travel opens your heart, broadens your mind and fills your life with stories to tell.",
-    "ko": "broadens your mind and fills your life with stories to tell.\",\"여행은 마음을 열게 하고, 시야를 넓히며, 이야기로 삶을 채워준다."
+    "ko": "여행은 마음을 열게 하고, 시야를 넓히며, 이야기로 삶을 채워준다."
   },
   {
     "no": 849,
@@ -4258,7 +4258,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 852,
     "en": "We ought to do good to others as simply as a horse runs, or a bee makes honey.",
-    "ko": "or a bee makes honey.\",말이 달리거나 벌이 꿀을 만드는 것처럼 자연스럽게 다른 사람들에게 선을 베풀어야 한다."
+    "ko": "말이 달리거나 벌이 꿀을 만드는 것처럼 자연스럽게 다른 사람들에게 선을 베풀어야 한다."
   },
   {
     "no": 853,
@@ -4283,7 +4283,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 857,
     "en": "During the peak season, the tours start as frequently as every 30 minutes.",
-    "ko": "the tours start as frequently as every 30 minutes.\",성수기에는 30분마다 투어가 시작될 정도로 자주 있다."
+    "ko": "성수기에는 30분마다 투어가 시작될 정도로 자주 있다."
   },
   {
     "no": 858,
@@ -4338,7 +4338,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 868,
     "en": "When feeling down, saying \"I am really sad\" is more helpful than declaring \"I am happy.\"",
-    "ko": "saying 'I am really sad' is more helpful than declaring 'I am happy.'\",\"기분이 안 좋을 때, '나는 정말 슬프다'고 말하는 것이 '나는 행복하다'고 선언하는 것보다 더 도움이 된다."
+    "ko": "기분이 안 좋을 때, '나는 정말 슬프다'고 말하는 것이 '나는 행복하다'고 선언하는 것보다 더 도움이 된다."
   },
   {
     "no": 869,
@@ -4353,12 +4353,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 871,
     "en": "Despite the laws, the air in many places is still worse than it is permitted to be.",
-    "ko": "the air in many places is still worse than it is permitted to be.\",\"법에도 불구하고, 많은 지역의 공기는 여전히 허용 기준보다 더 나쁘다."
+    "ko": "법에도 불구하고, 많은 지역의 공기는 여전히 허용 기준보다 더 나쁘다."
   },
   {
     "no": 872,
     "en": "Because of the flood of applicants, the application process is taking a little longer than we expected.",
-    "ko": "the application process is taking a little longer than we expected.\",\"지원자가 몰려들어서, 지원 과정이 예상보다 조금 더 오래 걸리고 있다."
+    "ko": "지원자가 몰려들어서, 지원 과정이 예상보다 조금 더 오래 걸리고 있다."
   },
   {
     "no": 873,
@@ -4368,17 +4368,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 874,
     "en": "The more we study, the more we discover our ignorance.",
-    "ko": "the more we discover our ignorance.\",\"더 많이 공부할수록, 우리의 무지를 더 많이 발견한다."
+    "ko": "더 많이 공부할수록, 우리의 무지를 더 많이 발견한다."
   },
   {
     "no": 875,
     "en": "The harder you work for something, the greater you'll feel when you achieve it.",
-    "ko": "the greater you'll feel when you achieve it.\",\"무언가를 위해 더 열심히 노력할수록, 그것을 성취했을 때 더 큰 보람을 느낄 것이다."
+    "ko": "무언가를 위해 더 열심히 노력할수록, 그것을 성취했을 때 더 큰 보람을 느낄 것이다."
   },
   {
     "no": 876,
     "en": "The more moisture a food has, the more likely it is to grow harmful bacteria.",
-    "ko": "the more likely it is to grow harmful bacteria.\",\"음식에 수분이 많을수록, 해로운 박테리아가 자랄 가능성이 더 높다."
+    "ko": "음식에 수분이 많을수록, 해로운 박테리아가 자랄 가능성이 더 높다."
   },
   {
     "no": 877,
@@ -4408,7 +4408,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 882,
     "en": "The stronger you become, the bigger obstacles you can overcome.",
-    "ko": "the bigger obstacles you can overcome.\",\"당신이 강해질수록, 더 큰 장애물을 극복할 수 있다."
+    "ko": "당신이 강해질수록, 더 큰 장애물을 극복할 수 있다."
   },
   {
     "no": 883,
@@ -4453,12 +4453,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 891,
     "en": "Occasionally I have fast food, but not more than once a month.",
-    "ko": "but not more than once a month.\",\"나는 가끔 패스트푸드를 먹지만, 한 달에 한 번 이상은 먹지 않는다."
+    "ko": "나는 가끔 패스트푸드를 먹지만, 한 달에 한 번 이상은 먹지 않는다."
   },
   {
     "no": 892,
     "en": "The candidates for mayor of this city must collect not less than 40,000 signatures for registration.",
-    "ko": "000 signatures for registration.\",\"시장 후보자는 등록을 위해 40,000개 이상의 서명을 수집해야 한다."
+    "ko": "시장 후보자는 등록을 위해 40,000개 이상의 서명을 수집해야 한다."
   },
   {
     "no": 893,
@@ -4498,7 +4498,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 900,
     "en": "The musical performance contains the most astonishing costumes, stage setting, and lighting that have ever been used.",
-    "ko": "stage setting, and lighting that have ever been used.\",\"그 공연에는 지금까지 사용된 것 중 가장 놀라운 의상, 무대 세트, 조명이 포함되어 있다."
+    "ko": "그 공연에는 지금까지 사용된 것 중 가장 놀라운 의상, 무대 세트, 조명이 포함되어 있다."
   },
   {
     "no": 901,
@@ -4513,12 +4513,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 903,
     "en": "Nothing is more precious than time, but nothing is less valued.",
-    "ko": "but nothing is less valued.\",\"시간보다 더 소중한 것은 없지만, 시간보다 덜 소중히 여겨지는 것도 없다."
+    "ko": "시간보다 더 소중한 것은 없지만, 시간보다 덜 소중히 여겨지는 것도 없다."
   },
   {
     "no": 904,
     "en": "The beginning is perhaps more difficult than anything else, but keep an optimistic view.",
-    "ko": "but keep an optimistic view.\",\"시작이 다른 어떤 것보다 더 어려울 수도 있지만, 낙관적인 시각을 유지해라."
+    "ko": "시작이 다른 어떤 것보다 더 어려울 수도 있지만, 낙관적인 시각을 유지해라."
   },
   {
     "no": 905,
@@ -4548,17 +4548,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 910,
     "en": "By the laws of nature the stream runs downhill, and the strongest man cannot stop it.",
-    "ko": "and the strongest man cannot stop it.\",\"자연의 법칙에 따라 개울은 아래로 흐르고, 가장 강한 사람도 그것을 멈출 수 없다."
+    "ko": "자연의 법칙에 따라 개울은 아래로 흐르고, 가장 강한 사람도 그것을 멈출 수 없다."
   },
   {
     "no": 911,
     "en": "Introduced by Google in 2004, Gmail is one of the most popular e-mail services in the world.",
-    "ko": "Gmail is one of the most popular e-mail services in the world.\",2004년 구글이 출시한 지메일은 세계에서 가장 인기 있는 이메일 서비스 중 하나이다."
+    "ko": "2004년 구글이 출시한 지메일은 세계에서 가장 인기 있는 이메일 서비스 중 하나이다."
   },
   {
     "no": 912,
     "en": "Not only did he come, but he also helped me.",
-    "ko": "but he also helped me.\",\"그는 오기만 한 것이 아니라, 나를 도와주기도 했다."
+    "ko": "그는 오기만 한 것이 아니라, 나를 도와주기도 했다."
   },
   {
     "no": 913,
@@ -4608,7 +4608,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 922,
     "en": "Only when we realize the reasons behind failure, can the causes of success be more meaningful.",
-    "ko": "can the causes of success be more meaningful.\",\"실패의 이유를 깨달았을 때에야, 성공의 원인이 더 의미 있어진다."
+    "ko": "실패의 이유를 깨달았을 때에야, 성공의 원인이 더 의미 있어진다."
   },
   {
     "no": 923,
@@ -4623,17 +4623,17 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 925,
     "en": "The future belongs to all of us, and so does the responsibility to make a good future.",
-    "ko": "and so does the responsibility to make a good future.\",\"미래는 우리 모두의 것이며, 좋은 미래를 만들 책임도 마찬가지이다."
+    "ko": "미래는 우리 모두의 것이며, 좋은 미래를 만들 책임도 마찬가지이다."
   },
   {
     "no": 926,
     "en": "A good appearance doesn't make you beautiful inside, and neither do quality clothes.",
-    "ko": "and neither do quality clothes.\",\"좋은 외모가 당신을 내면적으로 아름답게 만들지 않으며, 좋은 옷도 마찬가지이다."
+    "ko": "좋은 외모가 당신을 내면적으로 아름답게 만들지 않으며, 좋은 옷도 마찬가지이다."
   },
   {
     "no": 927,
     "en": "In life, love is never planned nor does it happen for a reason.",
-    "ko": "love is never planned nor does it happen for a reason.\",삶에서 사랑은 결코 계획되거나 이유 때문에 생기는 것이 아니다."
+    "ko": "삶에서 사랑은 결코 계획되거나 이유 때문에 생기는 것이 아니다."
   },
   {
     "no": 928,
@@ -4643,7 +4643,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 929,
     "en": "If there exists no possibility of failure, then victory is meaningless.",
-    "ko": "then victory is meaningless.\",\"실패의 가능성이 없다면, 승리는 의미가 없다."
+    "ko": "실패의 가능성이 없다면, 승리는 의미가 없다."
   },
   {
     "no": 930,
@@ -4663,7 +4663,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 933,
     "en": "It is the things I've never tried that I regret, not the things I've failed at.",
-    "ko": "not the things I've failed at.\",\"내가 후회하는 것은 실패한 것들이 아니라, 시도해보지 않은 것들이다."
+    "ko": "내가 후회하는 것은 실패한 것들이 아니라, 시도해보지 않은 것들이다."
   },
   {
     "no": 934,
@@ -4678,7 +4678,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 936,
     "en": "It wasn't until 1840, when Queen Victoria got married, that the white wedding dress was made popular.",
-    "ko": "that the white wedding dress was made popular.\",흰 웨딩드레스가 대중화된 것은 1840년 빅토리아 여왕이 결혼했을 때였다."
+    "ko": "흰 웨딩드레스가 대중화된 것은 1840년 빅토리아 여왕이 결혼했을 때였다."
   },
   {
     "no": 937,
@@ -4698,7 +4698,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 940,
     "en": "Sometimes, a break from your routine is the very thing you need.",
-    "ko": "a break from your routine is the very thing you need.\",때로는 일상에서 벗어나는 것이 바로 당신에게 필요한 것이다."
+    "ko": "때로는 일상에서 벗어나는 것이 바로 당신에게 필요한 것이다."
   },
   {
     "no": 941,
@@ -4718,12 +4718,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 944,
     "en": "He said he would fail, but he didn't (fail).",
-    "ko": "but he didn't fail.\",\"그는 실패할 것이라고 말했지만, 실패하지 않았다."
+    "ko": "그는 실패할 것이라고 말했지만, 실패하지 않았다."
   },
   {
     "no": 945,
     "en": "When (you are) in Rome, do as the Romans do.",
-    "ko": "do as the Romans do.\",로마에 있을 때는 로마인들처럼 행동해라."
+    "ko": "로마에 있을 때는 로마인들처럼 행동해라."
   },
   {
     "no": 946,
@@ -4733,7 +4733,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 947,
     "en": "Lost wealth can be regained, but lost time never.",
-    "ko": "but lost time never.\",\"잃은 재산은 되찾을 수 있지만, 잃은 시간은 결코 그럴 수 없다."
+    "ko": "잃은 재산은 되찾을 수 있지만, 잃은 시간은 결코 그럴 수 없다."
   },
   {
     "no": 948,
@@ -4748,12 +4748,12 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 950,
     "en": "We are drowning in information, while starving for wisdom.",
-    "ko": "while starving for wisdom.\",우리는 지식에는 익사하면서 지혜에는 굶주리고 있다."
+    "ko": "우리는 지식에는 익사하면서 지혜에는 굶주리고 있다."
   },
   {
     "no": 951,
     "en": "Highly social animals, such as parrots, seem to be adversely affected if kept alone.",
-    "ko": "such as parrots, seem to be adversely affected if kept alone.\",앵무새와 같이 매우 사회적인 동물들은 혼자 두면 나쁜 영향을 받는 것 같다."
+    "ko": "앵무새와 같이 매우 사회적인 동물들은 혼자 두면 나쁜 영향을 받는 것 같다."
   },
   {
     "no": 952,
@@ -4763,7 +4763,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 953,
     "en": "We fuel our bodies with food, we fuel our minds with education and we fuel our hearts with love.",
-    "ko": "we fuel our minds with education and we fuel our hearts with love.\",\"우리는 음식으로 몸을 채우고, 교육으로 마음을 채우며, 사랑으로 가슴을 채운다."
+    "ko": "우리는 음식으로 몸을 채우고, 교육으로 마음을 채우며, 사랑으로 가슴을 채운다."
   },
   {
     "no": 954,
@@ -4773,7 +4773,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 955,
     "en": "Education means development, not only of the brain, but also of the whole person.",
-    "ko": "not only of the brain, but also of the whole person.\",\"교육은 두뇌의 발전뿐만 아니라, 사람 전체의 발전을 의미한다."
+    "ko": "교육은 두뇌의 발전뿐만 아니라, 사람 전체의 발전을 의미한다."
   },
   {
     "no": 956,
@@ -4783,7 +4783,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 957,
     "en": "Government of the people, by the people, and for the people shall not perish from the earth.",
-    "ko": "by the people, and for the people shall not perish from the earth.\",\"국민의, 국민에 의한, 국민을 위한 정부는 지구상에서 사라지지 않을 것이다."
+    "ko": "국민의, 국민에 의한, 국민을 위한 정부는 지구상에서 사라지지 않을 것이다."
   },
   {
     "no": 958,
@@ -4798,27 +4798,27 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 960,
     "en": "Even in this most technological age, the greater part of our activity is, and must be, based on tradition.",
-    "ko": "the greater part of our activity is, and must be, based on tradition.\",\"이 가장 기술적인 시대에도, 우리 활동의 대부분은 전통에 기반하고 있으며 그래야만 한다."
+    "ko": "이 가장 기술적인 시대에도, 우리 활동의 대부분은 전통에 기반하고 있으며 그래야만 한다."
   },
   {
     "no": 961,
     "en": "Efforts are as valuable as, and maybe more valuable than, the results they bring about.",
-    "ko": "and maybe more valuable than, the results they bring about.\",\"노력은 그것이 가져오는 결과만큼, 아니 어쩌면 그것보다 더 가치 있다."
+    "ko": "노력은 그것이 가져오는 결과만큼, 아니 어쩌면 그것보다 더 가치 있다."
   },
   {
     "no": 962,
     "en": "Successful people ask better questions and, as a result, they get better answers.",
-    "ko": "as a result, they get better answers.\",\"성공한 사람들은 더 나은 질문을 하며, 그 결과 더 나은 답을 얻는다."
+    "ko": "성공한 사람들은 더 나은 질문을 하며, 그 결과 더 나은 답을 얻는다."
   },
   {
     "no": 963,
     "en": "Words once spoken, like bullets once fired, can't be recovered.",
-    "ko": "like bullets once fired, can't be recovered.\",한번 한 말은 한번 발사된 총알처럼 되돌릴 수 없다."
+    "ko": "한번 한 말은 한번 발사된 총알처럼 되돌릴 수 없다."
   },
   {
     "no": 964,
     "en": "A good plan, violently executed now, is better than a perfect plan next week.",
-    "ko": "violently executed now, is better than a perfect plan next week.\",\"지금 강력하게 실행되는 좋은 계획이, 다음 주의 완벽한 계획보다 낫다."
+    "ko": "지금 강력하게 실행되는 좋은 계획이, 다음 주의 완벽한 계획보다 낫다."
   },
   {
     "no": 965,
@@ -4828,27 +4828,27 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 966,
     "en": "Interpersonal skills, which are used when we communicate with others, help us establish and maintain relationships.",
-    "ko": "help us establish and maintain relationships.\",다른 사람들과 소통할 때 사용되는 대인 관계 기술은 우리가 관계를 맺고 유지하는 데 도움이 된다."
+    "ko": "다른 사람들과 소통할 때 사용되는 대인 관계 기술은 우리가 관계를 맺고 유지하는 데 도움이 된다."
   },
   {
     "no": 967,
     "en": "Competition, we have learned, is neither good nor evil in itself.",
-    "ko": "we have learned, is neither good nor evil in itself.\",\"우리가 배운 바와 같이, 경쟁 자체는 좋지도 나쁘지도 않다."
+    "ko": "우리가 배운 바와 같이, 경쟁 자체는 좋지도 나쁘지도 않다."
   },
   {
     "no": 968,
     "en": "A man's friends can have a great, if not decisive, influence on his life.",
-    "ko": "if not decisive, influence on his life.\",\"사람의 친구들은 결정적이지는 않더라도, 그의 삶에 큰 영향을 미칠 수 있다."
+    "ko": "사람의 친구들은 결정적이지는 않더라도, 그의 삶에 큰 영향을 미칠 수 있다."
   },
   {
     "no": 969,
     "en": "There are few, if any, mistakes in his English.",
-    "ko": "if any, mistakes in his English.\",그의 영어에는 실수가 있더라도 거의 없다."
+    "ko": "그의 영어에는 실수가 있더라도 거의 없다."
   },
   {
     "no": 970,
     "en": "Shy people seldom, if ever, speak unless they are spoken to.",
-    "ko": "if ever, speak unless they are spoken to.\",수줍음 많은 사람들은 먼저 말을 걸지 않으면 거의 말하지 않는다."
+    "ko": "수줍음 많은 사람들은 먼저 말을 걸지 않으면 거의 말하지 않는다."
   },
   {
     "no": 971,
@@ -4863,22 +4863,22 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 973,
     "en": "When brainstorming, write down your ideas, and then select which idea you feel is best.",
-    "ko": "write down your ideas, and then select which idea you feel is best.\",\"브레인스토밍을 할 때, 아이디어를 적어두고, 가장 좋다고 생각하는 아이디어를 선택해라."
+    "ko": "브레인스토밍을 할 때, 아이디어를 적어두고, 가장 좋다고 생각하는 아이디어를 선택해라."
   },
   {
     "no": 974,
     "en": "With persistence, you can go beyond what you thought was possible for you to achieve.",
-    "ko": "you can go beyond what you thought was possible for you to achieve.\",\"끈기가 있으면, 당신이 달성 가능하다고 생각했던 것을 넘어설 수 있다."
+    "ko": "끈기가 있으면, 당신이 달성 가능하다고 생각했던 것을 넘어설 수 있다."
   },
   {
     "no": 975,
     "en": "Eric and Tom, both friends of mine, are starting a band.",
-    "ko": "both friends of mine, are starting a band.\",나의 친구들인 에릭과 톰 둘 다 밴드를 시작하려 한다."
+    "ko": "나의 친구들인 에릭과 톰 둘 다 밴드를 시작하려 한다."
   },
   {
     "no": 976,
     "en": "Acrophobia, or a fear of heights, is a well-known phobia.",
-    "ko": "or a fear of heights, is a well-known phobia.\",\"고소공포증, 즉 높은 곳에 대한 두려움은 잘 알려진 공포증이다."
+    "ko": "고소공포증, 즉 높은 곳에 대한 두려움은 잘 알려진 공포증이다."
   },
   {
     "no": 977,
@@ -4938,22 +4938,22 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 988,
     "en": "Not all of us can do great things, but we can do small things with great love.",
-    "ko": "but we can do small things with great love.\",\"우리 모두가 위대한 일을 할 수는 없지만, 큰 사랑으로 작은 일을 할 수 있다."
+    "ko": "우리 모두가 위대한 일을 할 수는 없지만, 큰 사랑으로 작은 일을 할 수 있다."
   },
   {
     "no": 989,
     "en": "Action may not always bring happiness, but there is no happiness without action.",
-    "ko": "but there is no happiness without action.\",\"행동이 항상 행복을 가져오지는 않지만, 행동 없이는 행복이 없다."
+    "ko": "행동이 항상 행복을 가져오지는 않지만, 행동 없이는 행복이 없다."
   },
   {
     "no": 990,
     "en": "Search engines find the information, not necessarily the truth.",
-    "ko": "not necessarily the truth.\",\"검색 엔진은 정보를 찾아주지, 반드시 진실을 찾아주는 것은 아니다."
+    "ko": "검색 엔진은 정보를 찾아주지, 반드시 진실을 찾아주는 것은 아니다."
   },
   {
     "no": 991,
     "en": "Without diligence and thrift nothing will happen, and with them everything.",
-    "ko": "and with them everything.\",\"근면과 검소함 없이는 아무것도 이루어지지 않으며, 그것들이 있으면 모든 것이 가능하다."
+    "ko": "근면과 검소함 없이는 아무것도 이루어지지 않으며, 그것들이 있으면 모든 것이 가능하다."
   },
   {
     "no": 992,
@@ -4993,7 +4993,7 @@ window.ENGLISH_1001_SENTENCES = [
   {
     "no": 999,
     "en": "Traveling allows us to relax, explore new places, and have fun.",
-    "ko": "explore new places, and have fun.\",\"여행은 우리가 휴식을 취하고, 새로운 장소를 탐험하며, 즐거운 시간을 보낼 수 있게 해준다."
+    "ko": "여행은 우리가 휴식을 취하고, 새로운 장소를 탐험하며, 즐거운 시간을 보낼 수 있게 해준다."
   },
   {
     "no": 1000,

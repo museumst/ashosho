@@ -18,7 +18,18 @@ if (!Array.isArray(sentences) || sentences.length !== 1001) {
   throw new Error("Expected 1001 source sentences.");
 }
 
+function stripWrappingQuotes(value) {
+  return value.trim().replace(/^"|"$/g, "");
+}
+
 function splitTranslation(rest) {
+  if (rest.startsWith('"')) {
+    const quotedEnglishEnd = rest.indexOf('",');
+    if (quotedEnglishEnd !== -1) {
+      return stripWrappingQuotes(rest.slice(quotedEnglishEnd + 2));
+    }
+  }
+
   for (let index = 0; index < rest.length; index += 1) {
     if (rest[index] !== ",") continue;
 
@@ -27,7 +38,7 @@ function splitTranslation(rest) {
     const latinCount = (sample.match(/[A-Za-z]/g) || []).length;
 
     if (hangulCount >= 2 && hangulCount * 2 >= latinCount) {
-      return rest.slice(index + 1).trim().replace(/^"|"$/g, "");
+      return stripWrappingQuotes(rest.slice(index + 1));
     }
   }
 
