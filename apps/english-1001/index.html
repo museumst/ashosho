@@ -75,6 +75,12 @@
         min-height: 34px;
       }
 
+      .hide-english-btn.is-active {
+        border-color: #202124;
+        background: #202124;
+        color: #fff;
+      }
+
       .icon-btn:hover,
       .icon-btn:focus-visible,
       .plain-btn:hover,
@@ -115,6 +121,7 @@
 
       .sentence-search,
       .chapter-select,
+      .voice-select,
       .jump-input {
         min-height: 42px;
         border: 1px solid var(--line);
@@ -133,6 +140,11 @@
 
       .chapter-select {
         min-width: min(100%, 245px);
+        padding: 0 34px 0 12px;
+      }
+
+      .voice-select {
+        min-width: min(100%, 180px);
         padding: 0 34px 0 12px;
       }
 
@@ -179,6 +191,7 @@
 
       .english-text {
         margin: 0;
+        flex: 1 1 auto;
         min-width: 0;
         color: var(--text);
         font-size: clamp(1.05rem, 4vw, 1.28rem);
@@ -188,8 +201,11 @@
       }
 
       .sentence-card.is-hidden .english-text {
-        color: transparent;
-        text-shadow: 0 0 11px rgba(32, 33, 36, 0.28);
+        min-height: 1.55em;
+        border-radius: 2px;
+        background: #101010;
+        color: #101010;
+        text-shadow: none;
         user-select: none;
       }
 
@@ -261,6 +277,11 @@
           width: 100%;
         }
 
+        .voice-select {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
         .plain-btn {
           min-height: 42px;
         }
@@ -284,6 +305,7 @@
 
       <div class="sentence-tools">
         <select class="chapter-select" id="chapter-select" aria-label="학습 범위 선택"></select>
+        <select class="voice-select" id="voice-select" aria-label="영어 음성 선택" disabled></select>
         <input class="sentence-search" id="search-input" type="search" placeholder="문장 검색" />
         <input class="jump-input" id="jump-input" type="number" min="1" max="1001" placeholder="번호" aria-label="문장 번호" />
         <button class="plain-btn" type="button" id="jump-button">이동</button>
@@ -304,6 +326,7 @@
     <script>
       const PAGE_SIZE = 10;
       const STORAGE_HIDE_KEY = "ashosho-english-1001-hide-english";
+      const STORAGE_VOICE_KEY = "ashosho-english-1001-voice";
       const hasTts = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
       const sentences = Array.isArray(window.ENGLISH_1001_SENTENCES) ? window.ENGLISH_1001_SENTENCES : [];
       const chapters = [
@@ -332,13 +355,17 @@
         query: "",
         chapterId: 1,
         page: 1,
-        hideEnglish: localStorage.getItem(STORAGE_HIDE_KEY) === "true"
+        hideEnglish: localStorage.getItem(STORAGE_HIDE_KEY) === "true",
+        hiddenSentenceNumbers: new Set(),
+        revealedSentenceNumbers: new Set(),
+        voiceName: localStorage.getItem(STORAGE_VOICE_KEY) || ""
       };
 
       const els = {
         meta: document.querySelector("#sentence-meta"),
         toggle: document.querySelector("#toggle-english"),
         chapter: document.querySelector("#chapter-select"),
+        voice: document.querySelector("#voice-select"),
         search: document.querySelector("#search-input"),
         jumpInput: document.querySelector("#jump-input"),
         jumpButton: document.querySelector("#jump-button"),
@@ -382,6 +409,48 @@
         });
       }
 
+      function englishVoices() {
+        if (!hasTts) return [];
+        return window.speechSynthesis
+          .getVoices()
+          .filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+      }
+
+      function preferredVoice(voices) {
+        return voices.find((voice) => /^samantha$/i.test(voice.name) && /^en-us$/i.test(voice.lang))
+          || voices.find((voice) => /(ava|zoe|siri|jenny|aria|google us english)/i.test(voice.name) && /^en-us$/i.test(voice.lang))
+          || voices.find((voice) => /^en-us$/i.test(voice.lang))
+          || voices[0]
+          || null;
+      }
+
+      function activeVoice() {
+        const voices = englishVoices();
+        return voices.find((voice) => voice.name === state.voiceName) || preferredVoice(voices);
+      }
+
+      function renderVoiceOptions() {
+        const voices = englishVoices();
+        els.voice.disabled = !hasTts || voices.length === 0;
+
+        if (!hasTts) {
+          els.voice.innerHTML = '<option>음성 지원 안 됨</option>';
+          return;
+        }
+
+        if (voices.length === 0) {
+          els.voice.innerHTML = '<option>음성 불러오는 중</option>';
+          return;
+        }
+
+        const selected = activeVoice();
+        els.voice.innerHTML = voices.map((voice) => {
+          const label = `${voice.name} (${voice.lang})`;
+          return `<option value="${esc(voice.name)}">${esc(label)}</option>`;
+        }).join("");
+        els.voice.value = selected?.name || "";
+      }
+
       function speak(text) {
         if (!hasTts) {
           els.status.textContent = "이 브라우저에서는 TTS를 사용할 수 없습니다.";
@@ -390,6 +459,8 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = "en-US";
+        const voice = activeVoice();
+        if (voice) utterance.voice = voice;
         utterance.rate = 0.92;
         window.speechSynthesis.speak(utterance);
       }
@@ -400,6 +471,12 @@
         els.toggle.title = state.hideEnglish ? "영어문장 보이기" : "영어문장 가리기";
         els.toggle.innerHTML = `<i data-lucide="${state.hideEnglish ? "eye-off" : "eye"}"></i>`;
         if (window.lucide) window.lucide.createIcons();
+      }
+
+      function isSentenceHidden(number) {
+        return state.hideEnglish
+          ? !state.revealedSentenceNumbers.has(number)
+          : state.hiddenSentenceNumbers.has(number);
       }
 
       function renderChapterOptions() {
@@ -427,12 +504,15 @@
         els.nextPage.disabled = state.page === pageCount;
         els.pageStatus.textContent = `${state.page} / ${pageCount}쪽`;
         els.cardList.innerHTML = visible.map((item) => `
-          <article class="sentence-card ${state.hideEnglish ? "is-hidden" : ""}" id="sentence-${item.no}">
+          <article class="sentence-card ${isSentenceHidden(item.no) ? "is-hidden" : ""}" id="sentence-${item.no}">
             <span class="card-number">${item.no}</span>
             <div class="english-line">
               <p class="english-text">${esc(item.en)}</p>
               <button class="tts-btn" type="button" data-speak="${esc(item.en)}" ${hasTts ? "" : "disabled"} aria-label="${item.no}번 영어문장 듣기" title="영어문장 듣기">
                 <i data-lucide="volume-2"></i>
+              </button>
+              <button class="tts-btn hide-english-btn ${isSentenceHidden(item.no) ? "is-active" : ""}" type="button" data-toggle-sentence="${item.no}" aria-label="${item.no}번 영어문장 ${isSentenceHidden(item.no) ? "보이기" : "가리기"}" title="영어문장 ${isSentenceHidden(item.no) ? "보이기" : "가리기"}">
+                <i data-lucide="${isSentenceHidden(item.no) ? "eye-off" : "eye"}"></i>
               </button>
             </div>
             <p class="korean-text ${item.ko ? "" : "empty"}">${item.ko ? esc(item.ko) : "한글 해석 준비 중"}</p>
@@ -444,6 +524,7 @@
 
       els.toggle.addEventListener("click", () => {
         state.hideEnglish = !state.hideEnglish;
+        state.revealedSentenceNumbers.clear();
         localStorage.setItem(STORAGE_HIDE_KEY, String(state.hideEnglish));
         render();
       });
@@ -458,6 +539,11 @@
         state.chapterId = els.chapter.value === "all" ? null : Number(els.chapter.value);
         state.page = 1;
         render();
+      });
+
+      els.voice.addEventListener("change", () => {
+        state.voiceName = els.voice.value;
+        localStorage.setItem(STORAGE_VOICE_KEY, state.voiceName);
       });
 
       els.jumpButton.addEventListener("click", () => {
@@ -481,6 +567,19 @@
       });
 
       document.addEventListener("click", (event) => {
+        const hideButton = event.target.closest("[data-toggle-sentence]");
+        if (hideButton) {
+          const number = Number(hideButton.dataset.toggleSentence);
+          const targetSet = state.hideEnglish ? state.revealedSentenceNumbers : state.hiddenSentenceNumbers;
+          if (targetSet.has(number)) {
+            targetSet.delete(number);
+          } else {
+            targetSet.add(number);
+          }
+          render();
+          return;
+        }
+
         const speakButton = event.target.closest("[data-speak]");
         if (speakButton) {
           speak(speakButton.dataset.speak);
@@ -501,6 +600,8 @@
       });
 
       renderChapterOptions();
+      renderVoiceOptions();
+      if (hasTts) window.speechSynthesis.addEventListener("voiceschanged", renderVoiceOptions);
       render();
     </script>
   </body>
