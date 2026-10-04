@@ -261,12 +261,18 @@
 
       .note-dialog {
         width: min(540px, calc(100% - 32px));
+        min-width: min(360px, calc(100% - 32px));
+        min-height: 340px;
+        max-width: calc(100% - 32px);
         max-height: min(620px, calc(100dvh - 32px));
+        box-sizing: border-box;
         padding: 0;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--surface);
         box-shadow: 0 18px 54px rgba(17, 24, 39, 0.2);
+        resize: both;
+        overflow: auto;
       }
 
       .note-dialog::backdrop {
@@ -275,7 +281,11 @@
 
       .note-dialog-body {
         display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
         gap: 16px;
+        min-height: 338px;
+        height: 100%;
+        box-sizing: border-box;
         padding: 20px;
       }
 
@@ -302,8 +312,9 @@
 
       .note-input {
         width: 100%;
-        min-height: 180px;
-        resize: vertical;
+        min-height: 0;
+        height: 100%;
+        resize: none;
         box-sizing: border-box;
         padding: 12px;
         border: 1px solid var(--line);
