@@ -81,6 +81,12 @@
         color: #fff;
       }
 
+      .note-btn.has-note {
+        border-color: var(--accent);
+        background: #e8f4f2;
+        color: var(--accent-strong);
+      }
+
       .icon-btn:hover,
       .icon-btn:focus-visible,
       .plain-btn:hover,
@@ -246,6 +252,75 @@
         text-align: center;
       }
 
+      .note-dialog {
+        width: min(540px, calc(100% - 32px));
+        max-height: min(620px, calc(100dvh - 32px));
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: 0 18px 54px rgba(17, 24, 39, 0.2);
+      }
+
+      .note-dialog::backdrop {
+        background: rgba(17, 24, 39, 0.42);
+      }
+
+      .note-dialog-body {
+        display: grid;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .note-dialog-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .note-dialog-title {
+        margin: 0;
+        font-size: 1.15rem;
+      }
+
+      .note-context {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 700;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+
+      .note-input {
+        width: 100%;
+        min-height: 180px;
+        resize: vertical;
+        box-sizing: border-box;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfb;
+        color: var(--text);
+        font: inherit;
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .note-input:focus {
+        border-color: var(--accent);
+        outline: 2px solid rgba(15, 118, 110, 0.16);
+        outline-offset: 1px;
+      }
+
+      .note-dialog-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -319,11 +394,33 @@
       </nav>
     </main>
 
+    <dialog class="note-dialog" id="note-dialog" aria-labelledby="note-dialog-title">
+      <div class="note-dialog-body">
+        <header class="note-dialog-head">
+          <div>
+            <h2 class="note-dialog-title" id="note-dialog-title">문장 메모</h2>
+            <p class="note-context" id="note-context"></p>
+          </div>
+          <button class="icon-btn" type="button" id="note-close" aria-label="메모 닫기" title="닫기">
+            <i data-lucide="x"></i>
+          </button>
+        </header>
+        <textarea class="note-input" id="note-input" placeholder="모르는 어휘, 문법, 기억할 내용을 적어보세요."></textarea>
+        <div class="note-dialog-actions">
+          <button class="icon-btn" type="button" id="note-delete" aria-label="메모 삭제" title="메모 삭제">
+            <i data-lucide="trash-2"></i>
+          </button>
+          <button class="plain-btn" type="button" id="note-save">저장</button>
+        </div>
+      </div>
+    </dialog>
+
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="sentences.js?v=20261002-1001-patterns"></script>
     <script>
       const PAGE_SIZE = 10;
       const STORAGE_HIDE_KEY = "ashosho-english-1001-hide-english";
+      const STORAGE_NOTES_KEY = "ashosho-english-1001-notes";
       const hasTts = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
       const sentences = Array.isArray(window.ENGLISH_1001_SENTENCES) ? window.ENGLISH_1001_SENTENCES : [];
       const chapters = [
@@ -354,7 +451,9 @@
         page: 1,
         hideEnglish: localStorage.getItem(STORAGE_HIDE_KEY) === "true",
         hiddenSentenceNumbers: new Set(),
-        revealedSentenceNumbers: new Set()
+        revealedSentenceNumbers: new Set(),
+        notes: loadNotes(),
+        noteNumber: null
       };
 
       const els = {
@@ -370,7 +469,13 @@
         pagination: document.querySelector("#pagination"),
         previousPage: document.querySelector("#previous-page"),
         nextPage: document.querySelector("#next-page"),
-        pageStatus: document.querySelector("#page-status")
+        pageStatus: document.querySelector("#page-status"),
+        noteDialog: document.querySelector("#note-dialog"),
+        noteContext: document.querySelector("#note-context"),
+        noteInput: document.querySelector("#note-input"),
+        noteClose: document.querySelector("#note-close"),
+        noteDelete: document.querySelector("#note-delete"),
+        noteSave: document.querySelector("#note-save")
       };
 
       function esc(value) {
@@ -380,6 +485,27 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
+      }
+
+      function loadNotes() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_NOTES_KEY) || "{}");
+          return saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function persistNotes() {
+        if (Object.keys(state.notes).length === 0) {
+          localStorage.removeItem(STORAGE_NOTES_KEY);
+          return;
+        }
+        localStorage.setItem(STORAGE_NOTES_KEY, JSON.stringify(state.notes));
+      }
+
+      function hasNote(number) {
+        return Boolean(state.notes[number]?.trim());
       }
 
       function selectedChapter() {
@@ -484,6 +610,9 @@
               <button class="tts-btn" type="button" data-speak="${esc(item.en)}" ${hasTts ? "" : "disabled"} aria-label="${item.no}번 영어문장 듣기" title="영어문장 듣기">
                 <i data-lucide="volume-2"></i>
               </button>
+              <button class="tts-btn note-btn ${hasNote(item.no) ? "has-note" : ""}" type="button" data-open-note="${item.no}" aria-label="${item.no}번 문장 메모" title="메모">
+                <i data-lucide="notebook-pen"></i>
+              </button>
               <button class="tts-btn hide-english-btn ${isSentenceHidden(item.no) ? "is-active" : ""}" type="button" data-toggle-sentence="${item.no}" aria-label="${item.no}번 영어문장 ${isSentenceHidden(item.no) ? "보이기" : "가리기"}" title="영어문장 ${isSentenceHidden(item.no) ? "보이기" : "가리기"}">
                 <i data-lucide="${isSentenceHidden(item.no) ? "eye-off" : "eye"}"></i>
               </button>
@@ -493,6 +622,47 @@
         `).join("");
 
         updateEyeButton();
+      }
+
+      function openNote(number) {
+        const sentence = sentences.find((item) => item.no === number);
+        if (!sentence) return;
+        state.noteNumber = number;
+        els.noteContext.textContent = `${number}번 · ${sentence.en}`;
+        els.noteInput.value = state.notes[number] || "";
+        els.noteDelete.disabled = !hasNote(number);
+        els.noteDialog.showModal();
+        requestAnimationFrame(() => els.noteInput.focus());
+      }
+
+      function closeNote() {
+        if (els.noteDialog.open) els.noteDialog.close();
+        state.noteNumber = null;
+      }
+
+      function saveNote() {
+        const number = state.noteNumber;
+        if (!number) return;
+        const note = els.noteInput.value.trim();
+        if (note) {
+          state.notes[number] = note;
+        } else {
+          delete state.notes[number];
+        }
+        persistNotes();
+        render();
+        els.status.textContent = `${number}번 메모를 저장했습니다.`;
+        closeNote();
+      }
+
+      function deleteNote() {
+        const number = state.noteNumber;
+        if (!number) return;
+        delete state.notes[number];
+        persistNotes();
+        render();
+        els.status.textContent = `${number}번 메모를 삭제했습니다.`;
+        closeNote();
       }
 
       els.toggle.addEventListener("click", () => {
@@ -534,7 +704,20 @@
         if (event.key === "Enter") els.jumpButton.click();
       });
 
+      els.noteClose.addEventListener("click", closeNote);
+      els.noteSave.addEventListener("click", saveNote);
+      els.noteDelete.addEventListener("click", deleteNote);
+      els.noteDialog.addEventListener("close", () => {
+        state.noteNumber = null;
+      });
+
       document.addEventListener("click", (event) => {
+        const noteButton = event.target.closest("[data-open-note]");
+        if (noteButton) {
+          openNote(Number(noteButton.dataset.openNote));
+          return;
+        }
+
         const hideButton = event.target.closest("[data-toggle-sentence]");
         if (hideButton) {
           const number = Number(hideButton.dataset.toggleSentence);
