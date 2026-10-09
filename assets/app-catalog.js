@@ -363,6 +363,39 @@ const apps = [
     tags: ["music", "chord", "keyboard"],
   },
   {
+    title: "하모니 스쿨",
+    description: "소리로 배우는 화성학 입문 앱입니다. 음정·스케일부터 코드, 2-5-1, 텐션까지 58개 레슨과 귀 훈련, 복습, 코드 진행 놀이터를 제공합니다.",
+    i18n: {
+      ko: {
+        title: "하모니 스쿨",
+        description: "소리로 배우는 화성학 입문 앱입니다. 음정·스케일부터 코드, 2-5-1, 텐션까지 58개 레슨과 귀 훈련, 복습, 코드 진행 놀이터를 제공합니다.",
+      },
+      en: {
+        title: "Harmony School",
+        description: "A beginner-friendly harmony course learned by ear: 58 lessons from intervals and scales to chords, ii-V-I and tensions, with ear training, spaced review, and a chord progression playground. (Korean-language app)",
+      },
+      ja: {
+        title: "ハーモニースクール",
+        description: "耳で学ぶ和声学の入門アプリです。音程・スケールからコード、2-5-1、テンションまでの58レッスンに、聴音練習、復習、コード進行プレイグラウンドを備えています。（韓国語のアプリです）",
+      },
+      zh: {
+        title: "和声学校",
+        description: "通过听觉学习和声学的入门应用。从音程、音阶到和弦、2-5-1和张力音，共58节课，含听音练习、间隔复习和和弦进行游乐场。（应用界面为韩语）",
+      },
+      es: {
+        title: "Escuela de Armonía",
+        description: "Un curso de armonía para principiantes que se aprende de oído: 58 lecciones desde intervalos y escalas hasta acordes, 2-5-1 y tensiones, con entrenamiento auditivo, repaso espaciado y un laboratorio de progresiones de acordes. (App en coreano)",
+      },
+    },
+    category: "music",
+    categoryLabel: "음악",
+    thumbnail: "harmony-school",
+    app_url: "apps/harmony-school/index.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["music", "harmony", "theory", "ear-training", "chord"],
+  },
+  {
     title: "명상 사운드",
     description: "수딩 사운드를 겹쳐 믹싱하고 BGM을 함께 재생하는 명상용 오디오 플레이어입니다.",
     i18n: {
