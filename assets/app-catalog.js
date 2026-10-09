@@ -330,39 +330,6 @@ const apps = [
     tags: ["mythology", "greek", "genealogy", "svg"],
   },
   {
-    title: "Harmony",
-    description: "코드를 선택하면 건반 위에서 눌린 음을 보여주고 실제 화음으로 들려주는 미니 신시사이저입니다.",
-    i18n: {
-      ko: {
-        title: "Harmony",
-        description: "코드를 선택하면 건반 위에서 눌린 음을 보여주고 실제 화음으로 들려주는 미니 신시사이저입니다.",
-      },
-      en: {
-        title: "Harmony",
-        description: "A mini synthesizer that shows selected chord tones on a keyboard and plays the actual harmony.",
-      },
-      ja: {
-        title: "Harmony",
-        description: "コードを選ぶと鍵盤上で押された音を表示し、実際の和音を鳴らすミニシンセです。",
-      },
-      zh: {
-        title: "Harmony",
-        description: "一个迷你合成器，选择和弦后会在键盘上显示按下的音并播放实际和声。",
-      },
-      es: {
-        title: "Harmony",
-        description: "Un minisintetizador que muestra las notas del acorde en el teclado y reproduce la armonía real.",
-      },
-    },
-    category: "music",
-    categoryLabel: "음악",
-    thumbnail: "harmony",
-    app_url: "apps/harmony/index.html",
-    status: "ready",
-    statusLabel: "실행 가능",
-    tags: ["music", "chord", "keyboard"],
-  },
-  {
     title: "하모니 스쿨",
     description: "소리로 배우는 화성학 입문 앱입니다. 음정·스케일부터 코드, 2-5-1, 텐션까지 58개 레슨과 귀 훈련, 복습, 코드 진행 놀이터를 제공합니다.",
     i18n: {

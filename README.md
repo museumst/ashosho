@@ -32,7 +32,7 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 - `apps/joseon/index.html`: 조선왕조 가계도
 - `apps/vocabulary/index.html`: 나의 단어장
 - `apps/greekmyth/index.html`: 그리스 신화 계보
-- `apps/harmony/index.html`: Harmony
+- `apps/harmony-school/index.html`: 하모니 스쿨
 - `apps/meditation/index.html`: 명상 사운드
 - `apps/leadership/index.html`: 나의 리더십 유형
 - `apps/connect4/CONNET4PRO.html`: 커넥트 4
