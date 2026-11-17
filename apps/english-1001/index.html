@@ -11,6 +11,14 @@
         padding: 16px;
       }
 
+      .access-panel {
+        width: min(460px, 100%);
+      }
+
+      .access-panel h1 {
+        max-width: none;
+      }
+
       .sentence-panel {
         width: min(860px, 100%);
       }
@@ -381,7 +389,14 @@
     </style>
   </head>
   <body class="mini-app sentence-app">
-    <main class="mini-app-panel sentence-panel">
+    <section class="mini-app-panel access-panel" id="access-panel" aria-live="polite">
+      <p class="eyebrow">Private</p>
+      <h1>1001영어문장</h1>
+      <p class="sentence-meta" id="access-message">관리자 계정으로 로그인하면 이용할 수 있습니다.</p>
+      <button class="primary-button" id="access-login" type="button">Google로 로그인</button>
+    </section>
+
+    <main class="mini-app-panel sentence-panel" id="sentence-content" hidden>
       <header class="sentence-head">
         <div>
           <p class="eyebrow">Study</p>
@@ -412,7 +427,7 @@
       </nav>
     </main>
 
-    <dialog class="note-dialog" id="note-dialog" aria-labelledby="note-dialog-title">
+    <dialog class="note-dialog" id="note-dialog" aria-labelledby="note-dialog-title" hidden>
       <div class="note-dialog-body">
         <header class="note-dialog-head">
           <div>
@@ -435,6 +450,43 @@
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="sentences.js?v=20261002-1001-patterns"></script>
+    <script type="module">
+      import { loginWithGoogle, onAuthChange } from "../../assets/firebase-auth-default.js?v=20261118-admin-apps";
+
+      const ADMIN_EMAIL = "museumst@gmail.com";
+      const accessPanel = document.querySelector("#access-panel");
+      const accessMessage = document.querySelector("#access-message");
+      const accessLogin = document.querySelector("#access-login");
+      const sentenceContent = document.querySelector("#sentence-content");
+      const noteDialog = document.querySelector("#note-dialog");
+
+      accessLogin.addEventListener("click", async () => {
+        accessLogin.disabled = true;
+        try {
+          await loginWithGoogle();
+        } catch {
+          accessMessage.textContent = "로그인에 실패했습니다. 다시 시도해 주세요.";
+          accessLogin.disabled = false;
+        }
+      });
+
+      onAuthChange((user) => {
+        const allowed = user?.email === ADMIN_EMAIL;
+        accessPanel.hidden = allowed;
+        sentenceContent.hidden = !allowed;
+        noteDialog.hidden = !allowed;
+        accessLogin.disabled = false;
+        if (!allowed) {
+          accessMessage.textContent = user
+            ? "이 계정에는 접근 권한이 없습니다."
+            : "관리자 계정으로 로그인하면 이용할 수 있습니다.";
+          window.speechSynthesis?.cancel();
+        }
+      }, () => {
+        accessMessage.textContent = "로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.";
+        accessLogin.disabled = false;
+      });
+    </script>
     <script>
       const PAGE_SIZE = 10;
       const STORAGE_HIDE_KEY = "ashosho-english-1001-hide-english";

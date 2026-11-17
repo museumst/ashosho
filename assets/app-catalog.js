@@ -159,11 +159,46 @@ const apps = [
     },
     category: "study",
     categoryLabel: "학습",
+    adminOnly: true,
     thumbnail: "english-1001",
     app_url: "apps/english-1001/index.html",
     status: "ready",
     statusLabel: "실행 가능",
     tags: ["english", "sentences", "study", "tts"],
+  },
+  {
+    title: "사진 업로드",
+    description: "Photography 갤러리에 사진과 촬영 정보를 등록하는 관리자 페이지입니다.",
+    i18n: {
+      ko: {
+        title: "사진 업로드",
+        description: "Photography 갤러리에 사진과 촬영 정보를 등록하는 관리자 페이지입니다.",
+      },
+      en: {
+        title: "Photo Upload",
+        description: "An administrator page for adding photos and capture details to Photography.",
+      },
+      ja: {
+        title: "写真アップロード",
+        description: "Photographyギャラリーに写真と撮影情報を登録する管理者ページです。",
+      },
+      zh: {
+        title: "上传照片",
+        description: "向 Photography 图库添加照片和拍摄信息的管理员页面。",
+      },
+      es: {
+        title: "Subir fotos",
+        description: "Una página de administración para añadir fotos y datos de captura a Photography.",
+      },
+    },
+    category: "photography",
+    categoryLabel: "사진",
+    adminOnly: true,
+    thumbnail: "photography-upload",
+    app_url: "apps/photography/upload.html",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["photography", "upload", "admin"],
   },
   {
     title: "그리스 신화 계보",
@@ -355,6 +390,7 @@ let selectedIndex = 0;
 let selectedView = "photography";
 let photographyOpen = false;
 let appsOpen = false;
+let isAdmin = false;
 let currentLanguage = localStorage.getItem("ashosho-language") || "ko";
 if (!uiText[currentLanguage]) currentLanguage = "ko";
 
@@ -414,10 +450,26 @@ function renderMenu() {
   boardMenu.classList.toggle("is-active", selectedView === "board");
 }
 
+function isAppVisible(app) {
+  return app.menuVisible !== false && (!app.adminOnly || isAdmin);
+}
+
+function ensureSelectedAppIsVisible() {
+  if (isAppVisible(apps[selectedIndex])) return;
+  selectedIndex = apps.findIndex(isAppVisible);
+}
+
+function setAdminAccess(isAllowed) {
+  isAdmin = isAllowed;
+  ensureSelectedAppIsVisible();
+  renderList();
+  if (selectedView === "apps") renderDetail();
+}
+
 function renderList() {
   appNameList.innerHTML = apps
     .map((app, index) => {
-      if (app.menuVisible === false) return "";
+      if (!isAppVisible(app)) return "";
       const localizedApp = getLocalizedApp(app);
       return `
         <button
@@ -533,6 +585,9 @@ appsMenu.addEventListener("click", () => {
 
 photographySearch.addEventListener("input", syncPhotographySearch);
 photographyFrame.addEventListener("load", syncPhotographySearch);
+window.addEventListener("grayrockclub-auth-change", (event) => {
+  setAdminAccess(Boolean(event.detail?.isAdmin));
+});
 
 languageSelect.value = currentLanguage;
 languageSelect.addEventListener("change", () => {

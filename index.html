@@ -105,7 +105,7 @@
       </section>
     </main>
 
-    <script src="assets/app-catalog.js?v=20261118-photography-search"></script>
+    <script src="assets/app-catalog.js?v=20261118-admin-apps"></script>
     <script type="module">
       import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth-default.js?v=20260607';
 
@@ -115,6 +115,13 @@
       const authAvatar = document.getElementById('auth-avatar');
       const authName   = document.getElementById('auth-name');
       const authError  = document.getElementById('auth-error');
+      const ADMIN_EMAIL = 'museumst@gmail.com';
+
+      function publishAuthState(user) {
+        window.dispatchEvent(new CustomEvent('grayrockclub-auth-change', {
+          detail: { isAdmin: user?.email === ADMIN_EMAIL }
+        }));
+      }
 
       function setAuthError(message = '') {
         authError.textContent = message;
@@ -175,9 +182,11 @@
         } else {
           renderSignedOut();
         }
+        publishAuthState(user);
       }, error => {
         setBusy(false);
         renderSignedOut();
+        publishAuthState(null);
         setAuthError(getLoginErrorMessage(error));
       });
 
