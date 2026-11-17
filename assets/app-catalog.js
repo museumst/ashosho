@@ -92,6 +92,7 @@ const apps = [
     },
     category: "study",
     categoryLabel: "학습",
+    menuVisible: false,
     thumbnail: "joseon",
     app_url: "apps/joseon/index.html",
     status: "ready",
@@ -191,6 +192,7 @@ const apps = [
     },
     category: "study",
     categoryLabel: "학습",
+    menuVisible: false,
     thumbnail: "greekmyth",
     app_url: "apps/greekmyth/index.html",
     status: "ready",
@@ -415,6 +417,7 @@ function renderMenu() {
 function renderList() {
   appNameList.innerHTML = apps
     .map((app, index) => {
+      if (app.menuVisible === false) return "";
       const localizedApp = getLocalizedApp(app);
       return `
         <button
