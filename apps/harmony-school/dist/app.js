@@ -3337,11 +3337,36 @@ C \uBA54\uC774\uC800\uC5D0\uC11C A \uB9C8\uC774\uB108(\uB098\uB780\uD55C\uC870)\
     // 복습 카드: { [문제id]: { box, due, seen, miss } }
     settings: { ...defaults.settings, ...loaded?.settings || {} }
   };
+  var cloudReady = false;
+  var cloudUserId = null;
+  var cloudSave = null;
+  var cloudSaveTimer = null;
+  function applyProgress(progress) {
+    state.playground = progress?.playground || null;
+    state.lessons = progress?.lessons || {};
+    state.cards = progress?.cards || {};
+    Object.assign(state.settings, defaults.settings, progress?.settings || {});
+  }
+  function scheduleCloudSave() {
+    if (!cloudReady || !cloudSave) return;
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer = setTimeout(() => {
+      const progress = JSON.parse(JSON.stringify({
+        version: 1,
+        playground: state.playground,
+        lessons: state.lessons,
+        cards: state.cards,
+        settings: state.settings
+      }));
+      cloudSave("harmony-school/progress", progress).catch(() => {});
+    }, 400);
+  }
   var save = () => {
     try {
       localStorage.setItem(KEY, JSON.stringify(state));
     } catch {
     }
+    scheduleCloudSave();
   };
   var PASS_PERCENT = PASS;
   var settings = state.settings;
@@ -5169,4 +5194,20 @@ ${S.prog.map((c) => c.num).join(" \u2013 ")}`;
   loadLang("ko");
   window.addEventListener("hashchange", route);
   route();
+  import("../../../assets/firebase-auth-default.js?v=20261118-harmony-progress").then(({ onAuthChange, loadCloud, saveCloud }) => {
+    cloudSave = saveCloud;
+    onAuthChange(async (user) => {
+      cloudReady = false;
+      cloudUserId = user?.uid || null;
+      if (!user) return;
+
+      const progress = await loadCloud("harmony-school/progress").catch(() => null);
+      if (cloudUserId !== user.uid) return;
+
+      applyProgress(progress);
+      cloudReady = true;
+      save();
+      window.dispatchEvent(new Event("hashchange"));
+    });
+  }).catch(() => {});
 })();
