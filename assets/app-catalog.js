@@ -504,7 +504,7 @@ function renderDetail() {
 function selectApp(index) {
   selectedIndex = index;
   selectedView = "apps";
-  setAppsOpen(false);
+  setAppsOpen(true);
   renderMenu();
   renderList();
   renderDetail();
