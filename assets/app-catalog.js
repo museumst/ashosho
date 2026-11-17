@@ -296,67 +296,6 @@ const apps = [
     statusLabel: "실행 가능",
     tags: ["leadership", "goleman", "quiz", "personality"],
   },
-  {
-    title: "커넥트 4",
-    description: "두 명이 번갈아 돌을 놓아 먼저 4개를 연속으로 연결하면 이기는 전략 보드 게임입니다.",
-    i18n: {
-      ko: {
-        title: "커넥트 4",
-        description: "두 명이 번갈아 돌을 놓아 먼저 4개를 연속으로 연결하면 이기는 전략 보드 게임입니다.",
-      },
-      en: {
-        title: "Connect 4",
-        description: "A two-player strategy game where you drop discs to connect four in a row before your opponent.",
-      },
-      ja: {
-        title: "コネクト4",
-        description: "2人で交互に石を置き、先に4つ並べた方が勝つ戦略ボードゲームです。",
-      },
-      zh: {
-        title: "四子棋",
-        description: "两人轮流投入棋子，先连成四个的一方获胜的策略棋盘游戏。",
-      },
-      es: {
-        title: "Conecta 4",
-        description: "Juego de estrategia para dos jugadores donde debes conectar cuatro fichas seguidas antes que tu rival.",
-      },
-    },
-    app_url: "apps/connect4/CONNET4PRO.html",
-    status: "ready",
-    statusLabel: "실행 가능",
-    tags: ["game", "connect4", "strategy", "board"],
-  },
-  {
-    title: "게시판",
-    description: "사이트 개선 건의사항이나 오류를 제보하는 게시판입니다.",
-    i18n: {
-      ko: {
-        title: "게시판",
-        description: "사이트 개선 건의사항이나 오류를 제보하는 게시판입니다.",
-      },
-      en: {
-        title: "게시판",
-        description: "Leave suggestions for improvement or report bugs you've found.",
-      },
-      ja: {
-        title: "게시판",
-        description: "サイトへのご意見や不具合の報告はこちらからどうぞ。",
-      },
-      zh: {
-        title: "게시판",
-        description: "欢迎提交改进建议或报告您发现的错误。",
-      },
-      es: {
-        title: "게시판",
-        description: "Deja sugerencias de mejora o reporta errores que hayas encontrado.",
-      },
-    },
-    app_url: "apps/feedback/index.html",
-    status: "ready",
-    statusLabel: "실행 가능",
-    tags: ["feedback", "board"],
-    color: "#ff9900",
-  },
 ];
 
 const uiText = {
@@ -407,14 +346,67 @@ const uiText = {
   },
 };
 
+const sections = {
+  photography: {
+    ko: {
+      title: "Photography",
+      description: "사진 섹션은 준비 중입니다.",
+    },
+    en: {
+      title: "Photography",
+      description: "The photography section is coming soon.",
+    },
+    ja: {
+      title: "Photography",
+      description: "写真セクションは準備中です。",
+    },
+    zh: {
+      title: "Photography",
+      description: "摄影专区正在准备中。",
+    },
+    es: {
+      title: "Photography",
+      description: "La sección de fotografía estará disponible pronto.",
+    },
+  },
+  board: {
+    ko: {
+      title: "Board",
+      description: "공지와 글을 위한 게시판을 준비 중입니다.",
+    },
+    en: {
+      title: "Board",
+      description: "A board for notices and posts is coming soon.",
+    },
+    ja: {
+      title: "Board",
+      description: "お知らせと投稿のための掲示板を準備中です。",
+    },
+    zh: {
+      title: "Board",
+      description: "公告和文章发布板块正在准备中。",
+    },
+    es: {
+      title: "Board",
+      description: "Un tablón para avisos y publicaciones estará disponible pronto.",
+    },
+  },
+};
+
 const appNameList = document.querySelector("#app-name-list");
 const detailTitle = document.querySelector("#detail-title");
 const detailDescription = document.querySelector("#detail-description");
 const goLink = document.querySelector("#go-link");
 const languageSelect = document.querySelector("#language-select");
 const languageLabel = document.querySelector("#language-label");
+const photographyMenu = document.querySelector("#photography-menu");
+const appsMenu = document.querySelector("#apps-menu");
+const appsAccordion = document.querySelector("#apps-accordion");
+const boardMenu = document.querySelector("#board-menu");
 
 let selectedIndex = 0;
+let selectedView = "photography";
+let appsOpen = false;
 let currentLanguage = localStorage.getItem("ashosho-language") || "ko";
 if (!uiText[currentLanguage]) currentLanguage = "ko";
 
@@ -431,6 +423,10 @@ function getLocalizedApp(app) {
   };
 }
 
+function getSection(section) {
+  return sections[section]?.[currentLanguage] || sections[section]?.ko;
+}
+
 function applyLanguage() {
   const text = getText();
 
@@ -438,7 +434,18 @@ function applyLanguage() {
   languageLabel.textContent = text.language;
   languageSelect.setAttribute("aria-label", text.language);
   appNameList.setAttribute("aria-label", text.menuLabel);
-  appNameList.closest(".app-list-pane")?.setAttribute("aria-label", text.menuLabel);
+}
+
+function setAppsOpen(isOpen) {
+  appsOpen = isOpen;
+  appsAccordion.hidden = !isOpen;
+  appsMenu.setAttribute("aria-expanded", String(isOpen));
+}
+
+function renderMenu() {
+  photographyMenu.classList.toggle("is-active", selectedView === "photography");
+  appsMenu.classList.toggle("is-active", selectedView === "apps");
+  boardMenu.classList.toggle("is-active", selectedView === "board");
 }
 
 function renderList() {
@@ -461,6 +468,17 @@ function renderList() {
 }
 
 function renderDetail() {
+  if (selectedView !== "apps") {
+    const section = getSection(selectedView);
+    detailTitle.textContent = section.title;
+    detailDescription.textContent = section.description;
+    detailDescription.hidden = !section.description;
+    goLink.hidden = true;
+    goLink.removeAttribute("href");
+    goLink.removeAttribute("aria-disabled");
+    return;
+  }
+
   const app = getLocalizedApp(apps[selectedIndex]);
   const text = getText();
   const isReady = app.status === "ready" && app.app_url;
@@ -468,6 +486,7 @@ function renderDetail() {
   detailTitle.textContent = app.title;
   detailDescription.textContent = app.description;
   detailDescription.hidden = !app.description;
+  goLink.hidden = false;
 
   if (isReady) {
     goLink.textContent = "go";
@@ -484,7 +503,17 @@ function renderDetail() {
 
 function selectApp(index) {
   selectedIndex = index;
+  selectedView = "apps";
+  setAppsOpen(false);
+  renderMenu();
   renderList();
+  renderDetail();
+}
+
+function selectSection(section) {
+  selectedView = section;
+  setAppsOpen(false);
+  renderMenu();
   renderDetail();
 }
 
@@ -494,15 +523,27 @@ appNameList.addEventListener("click", (event) => {
   selectApp(Number(button.dataset.index));
 });
 
+photographyMenu.addEventListener("click", () => selectSection("photography"));
+boardMenu.addEventListener("click", () => selectSection("board"));
+appsMenu.addEventListener("click", () => {
+  selectedView = "apps";
+  setAppsOpen(!appsOpen);
+  renderMenu();
+  renderDetail();
+});
+
 languageSelect.value = currentLanguage;
 languageSelect.addEventListener("change", () => {
   currentLanguage = languageSelect.value;
   localStorage.setItem("ashosho-language", currentLanguage);
   applyLanguage();
+  renderMenu();
   renderList();
   renderDetail();
 });
 
 applyLanguage();
+setAppsOpen(false);
+renderMenu();
 renderList();
 renderDetail();

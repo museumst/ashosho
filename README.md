@@ -32,7 +32,6 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 - `apps/greekmyth/index.html`: 그리스 신화 계보
 - `apps/harmony-school/index.html`: 하모니 스쿨
 - `apps/leadership/index.html`: 나의 리더십 유형
-- `apps/connect4/CONNET4PRO.html`: 커넥트 4
 
 메인 포털에 노출되는 앱 정보는 `assets/app-catalog.js`의 `apps` 배열이 기준입니다.
 

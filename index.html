@@ -12,7 +12,7 @@
   </head>
   <body>
     <main class="app-shell">
-      <section class="app-list-pane" aria-label="앱 목록">
+      <section class="app-list-pane" aria-label="메인 메뉴">
 
         <!-- 로그인 영역 -->
         <div class="auth-panel" id="auth-panel">
@@ -49,7 +49,27 @@
           </select>
         </label>
 
-        <nav class="app-name-list" id="app-name-list" aria-label="앱 목록"></nav>
+        <nav class="site-menu" aria-label="메인 메뉴">
+          <button class="site-menu-button is-active" id="photography-menu" type="button">
+            Photography
+          </button>
+          <button
+            class="site-menu-button apps-menu-button"
+            id="apps-menu"
+            type="button"
+            aria-expanded="false"
+            aria-controls="apps-accordion"
+          >
+            Apps
+            <span class="menu-disclosure" aria-hidden="true"></span>
+          </button>
+          <div class="apps-accordion" id="apps-accordion" hidden>
+            <div class="app-name-list" id="app-name-list" aria-label="Apps"></div>
+          </div>
+          <button class="site-menu-button" id="board-menu" type="button">
+            Board
+          </button>
+        </nav>
       </section>
 
       <section class="app-detail-pane" id="app-detail-pane" aria-live="polite">
@@ -61,7 +81,7 @@
       </section>
     </main>
 
-    <script src="assets/app-catalog.js?v=20260607-vocabulary-search-row"></script>
+    <script src="assets/app-catalog.js?v=20261117-apps-menu"></script>
     <script type="module">
       import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth-default.js?v=20260607';
 
