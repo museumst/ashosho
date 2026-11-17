@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Photography | grayrockclub</title>
+    <link rel="stylesheet" href="photography.css?v=20261117" />
+  </head>
+  <body>
+    <main class="photo-page">
+      <header class="photo-header">
+        <a class="photo-brand" href="../../index.html">grayrockclub</a>
+        <div class="photo-header-actions">
+          <a class="photo-link-button" id="upload-link" href="upload.html" hidden>업로드</a>
+          <span class="photo-auth-name" id="auth-name" hidden></span>
+        </div>
+      </header>
+
+      <h1 class="photo-page-title">Photography</h1>
+      <form class="photo-search" role="search">
+        <label for="photo-search" class="photo-message" hidden>사진 검색</label>
+        <input id="photo-search" type="search" placeholder="날짜, 장소, 태그 검색" autocomplete="off" aria-label="사진 검색" />
+      </form>
+      <section class="photo-grid" id="photo-grid" aria-live="polite">
+        <p class="photo-message photo-empty">사진을 불러오는 중입니다.</p>
+      </section>
+    </main>
+
+    <dialog class="photo-lightbox" id="photo-lightbox" aria-label="사진 크게 보기">
+      <button class="photo-lightbox-close" id="lightbox-close" type="button">닫기</button>
+      <figure class="photo-lightbox-figure">
+        <img id="lightbox-image" alt="" />
+        <figcaption id="lightbox-caption"></figcaption>
+      </figure>
+    </dialog>
+
+    <script type="module" src="gallery.js?v=20261117"></script>
+  </body>
+</html>

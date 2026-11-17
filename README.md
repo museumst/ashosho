@@ -32,6 +32,8 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 - `apps/greekmyth/index.html`: 그리스 신화 계보
 - `apps/harmony-school/index.html`: 하모니 스쿨
 - `apps/leadership/index.html`: 나의 리더십 유형
+- `apps/photography/index.html`: Photography 공개 갤러리
+- `apps/photography/upload.html`: Photography 관리자 업로드
 
 메인 포털에 노출되는 앱 정보는 `assets/app-catalog.js`의 `apps` 배열이 기준입니다.
 
@@ -66,6 +68,7 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 - Firestore 저장 경로는 보통 `users/{uid}/...` 구조를 따릅니다.
 - 로그인 사용자 데이터와 로그아웃/익명 로컬 데이터가 섞이지 않도록 저장 키를 분리해야 합니다.
 - Firebase helper 파일을 직접 바꿀 때는 모바일 로그인과 GitHub Pages 배포 환경을 함께 확인하세요.
+- Photography는 `photos` Firestore 컬렉션과 `photography/` Storage 경로를 사용합니다. Firebase 콘솔에서 사진 전용 보안 규칙을 적용해야 업로드가 열립니다.
 
 ## 작업 시 주의사항
 

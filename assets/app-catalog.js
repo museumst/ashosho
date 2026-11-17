@@ -348,25 +348,26 @@ const uiText = {
 
 const sections = {
   photography: {
+    appUrl: "apps/photography/index.html",
     ko: {
       title: "Photography",
-      description: "사진 섹션은 준비 중입니다.",
+      description: "촬영 시간과 장소로 사진을 찾아볼 수 있는 아카이브입니다.",
     },
     en: {
       title: "Photography",
-      description: "The photography section is coming soon.",
+      description: "A photo archive searchable by capture time and location.",
     },
     ja: {
       title: "Photography",
-      description: "写真セクションは準備中です。",
+      description: "撮影日時と場所から写真を探せるアーカイブです。",
     },
     zh: {
       title: "Photography",
-      description: "摄影专区正在准备中。",
+      description: "可按拍摄时间和地点搜索的照片档案。",
     },
     es: {
       title: "Photography",
-      description: "La sección de fotografía estará disponible pronto.",
+      description: "Un archivo de fotos que puedes buscar por fecha y lugar.",
     },
   },
   board: {
@@ -424,7 +425,9 @@ function getLocalizedApp(app) {
 }
 
 function getSection(section) {
-  return sections[section]?.[currentLanguage] || sections[section]?.ko;
+  const definition = sections[section];
+  const localized = definition?.[currentLanguage] || definition?.ko;
+  return { ...definition, ...localized };
 }
 
 function applyLanguage() {
@@ -468,19 +471,29 @@ function renderList() {
 }
 
 function renderDetail() {
+  const text = getText();
+
   if (selectedView !== "apps") {
     const section = getSection(selectedView);
+    const isReady = Boolean(section.appUrl);
     detailTitle.textContent = section.title;
     detailDescription.textContent = section.description;
     detailDescription.hidden = !section.description;
-    goLink.hidden = true;
-    goLink.removeAttribute("href");
-    goLink.removeAttribute("aria-disabled");
+    goLink.hidden = !isReady;
+
+    if (isReady) {
+      goLink.textContent = "go";
+      goLink.href = section.appUrl;
+      goLink.setAttribute("aria-label", text.openAria(section.title));
+      goLink.removeAttribute("aria-disabled");
+    } else {
+      goLink.removeAttribute("href");
+      goLink.removeAttribute("aria-disabled");
+    }
     return;
   }
 
   const app = getLocalizedApp(apps[selectedIndex]);
-  const text = getText();
   const isReady = app.status === "ready" && app.app_url;
 
   detailTitle.textContent = app.title;

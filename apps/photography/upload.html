@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>사진 업로드 | grayrockclub</title>
+    <link rel="stylesheet" href="photography.css?v=20261117" />
+  </head>
+  <body>
+    <main class="photo-page">
+      <header class="photo-header">
+        <a class="photo-back" href="index.html">Photography</a>
+        <div class="photo-auth">
+          <span class="photo-auth-name" id="auth-name" hidden></span>
+          <button class="photo-button" id="login-button" type="button" hidden>Google로 로그인</button>
+          <button class="photo-button" id="logout-button" type="button" hidden>로그아웃</button>
+        </div>
+      </header>
+
+      <section class="photo-upload-panel">
+        <h1>사진 업로드</h1>
+        <p class="photo-message" id="access-message">로그인 상태를 확인하는 중입니다.</p>
+
+        <form class="photo-form" id="upload-form" hidden>
+          <div class="photo-field">
+            <label for="photo-file">사진 파일</label>
+            <input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+          </div>
+          <div class="photo-field">
+            <label for="taken-at">촬영 일시</label>
+            <input id="taken-at" type="datetime-local" required />
+          </div>
+          <div class="photo-field">
+            <label for="place">장소</label>
+            <input id="place" type="text" maxlength="80" placeholder="예: 부산, 해운대" required />
+          </div>
+          <div class="photo-field">
+            <label for="tags">태그</label>
+            <input id="tags" type="text" maxlength="160" placeholder="쉼표로 구분: 바다, 여행, 필름" />
+          </div>
+          <button class="photo-button photo-submit" id="submit-button" type="submit">업로드</button>
+          <p class="photo-status" id="upload-status" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <script type="module" src="upload.js?v=20261117"></script>
+  </body>
+</html>
