@@ -14,5 +14,10 @@ service cloud.firestore {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
+
+    match /boardPosts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
   }
 }

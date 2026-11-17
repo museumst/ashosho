@@ -347,6 +347,7 @@ const sections = {
     },
   },
   board: {
+    appUrl: "apps/board/index.html",
     ko: {
       title: "Board",
       description: "공지와 글을 위한 게시판을 준비 중입니다.",
@@ -376,6 +377,7 @@ const detailTitle = document.querySelector("#detail-title");
 const detailDescription = document.querySelector("#detail-description");
 const goLink = document.querySelector("#go-link");
 const photographyFrame = document.querySelector("#photography-frame");
+const boardFrame = document.querySelector("#board-frame");
 const languageSelect = document.querySelector("#language-select");
 const languageLabel = document.querySelector("#language-label");
 const photographyMenu = document.querySelector("#photography-menu");
@@ -490,14 +492,26 @@ function renderDetail() {
   const text = getText();
 
   const isPhotography = selectedView === "photography";
-  detailCopy.hidden = isPhotography;
+  const isBoard = selectedView === "board";
+  detailCopy.hidden = isPhotography || isBoard;
   photographyFrame.hidden = !isPhotography;
-  document.querySelector("#app-detail-pane").classList.toggle("is-photography", isPhotography);
+  boardFrame.hidden = !isBoard;
+  const detailPane = document.querySelector("#app-detail-pane");
+  detailPane.classList.toggle("is-photography", isPhotography);
+  detailPane.classList.toggle("is-board", isBoard);
 
   if (isPhotography) {
     goLink.hidden = true;
     if (!photographyFrame.getAttribute("src")) {
       photographyFrame.src = "apps/photography/index.html?embed=1";
+    }
+    return;
+  }
+
+  if (isBoard) {
+    goLink.hidden = true;
+    if (!boardFrame.getAttribute("src")) {
+      boardFrame.src = "apps/board/index.html?embed=1";
     }
     return;
   }

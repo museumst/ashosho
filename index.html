@@ -8,7 +8,7 @@
       name="description"
       content="학습, 도구, 게임을 위한 작은 웹 앱을 모아 둔 포털"
     />
-    <link rel="stylesheet" href="assets/styles.css?v=20261118-photography-search" />
+    <link rel="stylesheet" href="assets/styles.css?v=20261118-board" />
   </head>
   <body>
     <main class="app-shell">
@@ -102,10 +102,11 @@
           title="Photography"
           hidden
         ></iframe>
+        <iframe class="board-frame" id="board-frame" title="Board" hidden></iframe>
       </section>
     </main>
 
-    <script src="assets/app-catalog.js?v=20261118-admin-apps"></script>
+    <script src="assets/app-catalog.js?v=20261118-board"></script>
     <script type="module">
       import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth-default.js?v=20260607';
 

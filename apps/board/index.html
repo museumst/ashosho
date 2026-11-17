@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Board | grayrockclub</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <link rel="stylesheet" href="board.css?v=20261118" />
+  </head>
+  <body>
+    <main class="board-page" aria-label="Board">
+      <header class="board-header">
+        <a class="board-brand" href="../../index.html">grayrockclub</a>
+        <button class="board-button" id="board-login" type="button">Google로 로그인</button>
+      </header>
+
+      <section class="board-composer" id="board-composer" aria-label="새 글 작성" hidden>
+        <div id="board-editor"></div>
+        <div class="board-draft-images" id="board-draft-images"></div>
+        <div class="board-composer-actions">
+          <label class="board-image-button">
+            이미지 추가
+            <input id="board-image-input" type="file" accept="image/*" multiple hidden />
+          </label>
+          <p class="board-status" id="board-status" aria-live="polite"></p>
+          <div class="board-submit-actions">
+            <button class="board-button" id="board-cancel" type="button" hidden>취소</button>
+            <button class="board-button board-button-primary" id="board-save" type="button">게시</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="board-feed" id="board-feed" aria-live="polite">
+        <p class="board-message">글을 불러오는 중입니다.</p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+    <script type="module" src="board.js?v=20261118"></script>
+  </body>
+</html>
