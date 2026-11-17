@@ -33,39 +33,6 @@ const apps = [
     tags: ["puzzle", "game", "logic"],
   },
   {
-    title: "3x3 Sliding Puzzle",
-    description: "",
-    i18n: {
-      ko: {
-        title: "3x3 슬라이딩 퍼즐",
-        description: "",
-      },
-      en: {
-        title: "3x3 Sliding Puzzle",
-        description: "",
-      },
-      ja: {
-        title: "3x3 スライドパズル",
-        description: "",
-      },
-      zh: {
-        title: "3x3 滑块拼图",
-        description: "",
-      },
-      es: {
-        title: "Puzzle Deslizante 3x3",
-        description: "",
-      },
-    },
-    category: "game",
-    categoryLabel: "게임",
-    thumbnail: "puzzle",
-    app_url: "apps/puzzle-3x3/index.html",
-    status: "ready",
-    statusLabel: "실행 가능",
-    tags: ["puzzle", "game", "logic"],
-  },
-  {
     title: "세계지도",
     description: "지구본을 돌려가며 나라를 찾는 세계지도 퀴즈입니다. 일반 모드에서는 나라이름이 표시되고, 퀴즈 모드에서는 이름이 사라져 클릭으로 맞춰야 합니다.",
     i18n: {
@@ -262,39 +229,6 @@ const apps = [
     status: "ready",
     statusLabel: "실행 가능",
     tags: ["music", "harmony", "theory", "ear-training", "chord"],
-  },
-  {
-    title: "나의 리더십 유형",
-    description: "다니엘 골먼의 6대 리더십 프레임워크를 기반으로 당신의 고유한 업무 성향과 리더십 DNA를 정밀 해독합니다.",
-    i18n: {
-      ko: {
-        title: "나의 리더십 유형",
-        description: "다니엘 골먼의 6대 리더십 프레임워크를 기반으로 당신의 고유한 업무 성향과 리더십 DNA를 정밀 해독합니다.",
-      },
-      en: {
-        title: "Leadership Style Decoder",
-        description: "Decode your unique leadership DNA based on Daniel Goleman's six leadership styles framework.",
-      },
-      ja: {
-        title: "リーダーシップスタイル診断",
-        description: "ダニエル・ゴールマンの6つのリーダーシップスタイルに基づき、あなたの固有のリーダーシップDNAを解析します。",
-      },
-      zh: {
-        title: "领导力风格测评",
-        description: "基于丹尼尔·戈尔曼的六种领导力框架，精准解码您独特的工作风格与领导力DNA。",
-      },
-      es: {
-        title: "Decodificador de Liderazgo",
-        description: "Descifra tu ADN de liderazgo único basado en los seis estilos de liderazgo de Daniel Goleman.",
-      },
-    },
-    category: "tool",
-    categoryLabel: "도구",
-    thumbnail: "leadership",
-    app_url: "apps/leadership/index.html",
-    status: "ready",
-    statusLabel: "실행 가능",
-    tags: ["leadership", "goleman", "quiz", "personality"],
   },
 ];
 

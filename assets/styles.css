@@ -661,11 +661,6 @@ h1 {
   border-radius: 10px;
 }
 
-.tile-grid[data-grid-size="3"] {
-  /* 3x3 퍼즐 보드에서만 열 개수를 3개로 변경 */
-  grid-template-columns: repeat(3, minmax(64px, 1fr));
-}
-
 .tile-grid + .primary-button {
   /* 퍼즐의 NEW 버튼을 퍼즐 보드와 같은 폭으로 맞춤 */
   width: 100%;

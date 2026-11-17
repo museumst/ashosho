@@ -25,13 +25,11 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 ## 현재 앱 목록
 
 - `apps/puzzle/index.html`: 4x4 슬라이딩 퍼즐
-- `apps/puzzle-3x3/index.html`: 3x3 슬라이딩 퍼즐
 - `apps/globe/index.html`: 세계지도
 - `apps/joseon/index.html`: 조선왕조 가계도
 - `apps/vocabulary/index.html`: 나의 단어장
 - `apps/greekmyth/index.html`: 그리스 신화 계보
 - `apps/harmony-school/index.html`: 하모니 스쿨
-- `apps/leadership/index.html`: 나의 리더십 유형
 - `apps/photography/index.html`: Photography 공개 갤러리
 - `apps/photography/upload.html`: Photography 관리자 업로드
 
