@@ -93,6 +93,11 @@ async function loadPhotos() {
 }
 
 searchInput.addEventListener("input", renderPhotos);
+window.addEventListener("message", (event) => {
+  if (event.origin !== window.location.origin || event.data?.type !== "photography-search") return;
+  searchInput.value = typeof event.data.value === "string" ? event.data.value : "";
+  renderPhotos();
+});
 lightboxClose.addEventListener("click", () => lightbox.close());
 lightbox.addEventListener("click", (event) => {
   if (event.target === lightbox) lightbox.close();

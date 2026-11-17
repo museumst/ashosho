@@ -207,9 +207,7 @@ button, input { font: inherit; }
 }
 
 .is-embedded .photo-search {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 26px;
+  display: none;
 }
 
 .photo-upload-panel {
@@ -260,5 +258,4 @@ button, input { font: inherit; }
   .photo-caption { opacity: 1; }
   .photo-upload-panel { padding: 18px; }
   .is-embedded .photo-page { padding: 24px; }
-  .is-embedded .photo-search input { width: 100%; }
 }

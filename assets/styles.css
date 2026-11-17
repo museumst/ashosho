@@ -214,12 +214,43 @@ h1 {
   transition: transform 0.15s ease;
 }
 
-.apps-menu-button[aria-expanded="true"] .menu-disclosure {
+.site-menu-button[aria-expanded="true"] .menu-disclosure {
   transform: rotate(225deg) translate(-2px, -2px);
 }
 
-.apps-accordion {
+.apps-accordion,
+.photography-accordion {
   overflow: hidden;
+}
+
+.photography-search-control {
+  padding-left: 16px;
+}
+
+.photography-search-control input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.photography-search-control input:focus {
+  border-color: var(--accent);
+  outline: 2px solid rgba(15, 118, 110, 0.15);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .app-name-list {

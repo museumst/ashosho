@@ -303,6 +303,7 @@ const uiText = {
     htmlLang: "ko",
     language: "언어",
     menuLabel: "앱 목록",
+    photoSearch: "날짜, 장소, 태그 검색",
     open: "열기",
     soon: "준비중",
     openAria: (title) => `${title} 열기`,
@@ -312,6 +313,7 @@ const uiText = {
     htmlLang: "en",
     language: "Language",
     menuLabel: "Apps",
+    photoSearch: "Search date, place, tags",
     open: "open",
     soon: "soon",
     openAria: (title) => `Open ${title}`,
@@ -321,6 +323,7 @@ const uiText = {
     htmlLang: "ja",
     language: "言語",
     menuLabel: "アプリ一覧",
+    photoSearch: "日付、場所、タグを検索",
     open: "開く",
     soon: "準備中",
     openAria: (title) => `${title}を開く`,
@@ -330,6 +333,7 @@ const uiText = {
     htmlLang: "zh-Hans",
     language: "语言",
     menuLabel: "应用列表",
+    photoSearch: "搜索日期、地点、标签",
     open: "打开",
     soon: "即将推出",
     openAria: (title) => `打开${title}`,
@@ -339,6 +343,7 @@ const uiText = {
     htmlLang: "es",
     language: "Idioma",
     menuLabel: "Aplicaciones",
+    photoSearch: "Buscar fecha, lugar, etiquetas",
     open: "abrir",
     soon: "pronto",
     openAria: (title) => `Abrir ${title}`,
@@ -403,12 +408,16 @@ const photographyFrame = document.querySelector("#photography-frame");
 const languageSelect = document.querySelector("#language-select");
 const languageLabel = document.querySelector("#language-label");
 const photographyMenu = document.querySelector("#photography-menu");
+const photographyAccordion = document.querySelector("#photography-accordion");
+const photographySearch = document.querySelector("#photography-search");
+const photographySearchLabel = document.querySelector("#photography-search-label");
 const appsMenu = document.querySelector("#apps-menu");
 const appsAccordion = document.querySelector("#apps-accordion");
 const boardMenu = document.querySelector("#board-menu");
 
 let selectedIndex = 0;
 let selectedView = "photography";
+let photographyOpen = false;
 let appsOpen = false;
 let currentLanguage = localStorage.getItem("ashosho-language") || "ko";
 if (!uiText[currentLanguage]) currentLanguage = "ko";
@@ -439,12 +448,28 @@ function applyLanguage() {
   languageLabel.textContent = text.language;
   languageSelect.setAttribute("aria-label", text.language);
   appNameList.setAttribute("aria-label", text.menuLabel);
+  photographySearchLabel.textContent = text.photoSearch;
+  photographySearch.placeholder = text.photoSearch;
+  photographySearch.setAttribute("aria-label", text.photoSearch);
 }
 
 function setAppsOpen(isOpen) {
   appsOpen = isOpen;
   appsAccordion.hidden = !isOpen;
   appsMenu.setAttribute("aria-expanded", String(isOpen));
+}
+
+function setPhotographyOpen(isOpen) {
+  photographyOpen = isOpen;
+  photographyAccordion.hidden = !isOpen;
+  photographyMenu.setAttribute("aria-expanded", String(isOpen));
+}
+
+function syncPhotographySearch() {
+  photographyFrame.contentWindow?.postMessage(
+    { type: "photography-search", value: photographySearch.value },
+    window.location.origin,
+  );
 }
 
 function renderMenu() {
@@ -532,6 +557,7 @@ function renderDetail() {
 function selectApp(index) {
   selectedIndex = index;
   selectedView = "apps";
+  setPhotographyOpen(false);
   setAppsOpen(true);
   renderMenu();
   renderList();
@@ -540,6 +566,7 @@ function selectApp(index) {
 
 function selectSection(section) {
   selectedView = section;
+  setPhotographyOpen(false);
   setAppsOpen(false);
   renderMenu();
   renderDetail();
@@ -551,14 +578,24 @@ appNameList.addEventListener("click", (event) => {
   selectApp(Number(button.dataset.index));
 });
 
-photographyMenu.addEventListener("click", () => selectSection("photography"));
+photographyMenu.addEventListener("click", () => {
+  selectedView = "photography";
+  setAppsOpen(false);
+  setPhotographyOpen(!photographyOpen);
+  renderMenu();
+  renderDetail();
+});
 boardMenu.addEventListener("click", () => selectSection("board"));
 appsMenu.addEventListener("click", () => {
   selectedView = "apps";
+  setPhotographyOpen(false);
   setAppsOpen(!appsOpen);
   renderMenu();
   renderDetail();
 });
+
+photographySearch.addEventListener("input", syncPhotographySearch);
+photographyFrame.addEventListener("load", syncPhotographySearch);
 
 languageSelect.value = currentLanguage;
 languageSelect.addEventListener("change", () => {
@@ -572,6 +609,7 @@ languageSelect.addEventListener("change", () => {
 
 applyLanguage();
 setAppsOpen(false);
+setPhotographyOpen(false);
 renderMenu();
 renderList();
 renderDetail();
