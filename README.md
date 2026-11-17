@@ -24,8 +24,6 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 
 ## 현재 앱 목록
 
-- `apps/periodic_table/index.html`: 원소주기율표
-- `apps/lotto/index.html`: 로또번호 생성기
 - `apps/puzzle/index.html`: 4x4 슬라이딩 퍼즐
 - `apps/puzzle-3x3/index.html`: 3x3 슬라이딩 퍼즐
 - `apps/globe/index.html`: 세계지도
@@ -33,7 +31,6 @@ GitHub Pages로 배포되는 정적 미니 앱 모음입니다. 새 앱을 만�
 - `apps/vocabulary/index.html`: 나의 단어장
 - `apps/greekmyth/index.html`: 그리스 신화 계보
 - `apps/harmony-school/index.html`: 하모니 스쿨
-- `apps/meditation/index.html`: 명상 사운드
 - `apps/leadership/index.html`: 나의 리더십 유형
 - `apps/connect4/CONNET4PRO.html`: 커넥트 4
 
