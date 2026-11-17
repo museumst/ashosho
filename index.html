@@ -8,7 +8,7 @@
       name="description"
       content="학습, 도구, 게임을 위한 작은 웹 앱을 모아 둔 포털"
     />
-    <link rel="stylesheet" href="assets/styles.css?v=20260606-auth-ui" />
+    <link rel="stylesheet" href="assets/styles.css?v=20261118-photography-embed" />
   </head>
   <body>
     <main class="app-shell">
@@ -73,15 +73,21 @@
       </section>
 
       <section class="app-detail-pane" id="app-detail-pane" aria-live="polite">
-        <div class="detail-copy">
+        <div class="detail-copy" id="detail-copy">
           <h2 id="detail-title"></h2>
           <p id="detail-description"></p>
         </div>
         <a class="go-link" id="go-link">go</a>
+        <iframe
+          class="photography-frame"
+          id="photography-frame"
+          title="Photography"
+          hidden
+        ></iframe>
       </section>
     </main>
 
-    <script src="assets/app-catalog.js?v=20261117-apps-menu-open"></script>
+    <script src="assets/app-catalog.js?v=20261118-photography-embed"></script>
     <script type="module">
       import { loginWithGoogle, logout, onAuthChange } from './assets/firebase-auth-default.js?v=20260607';
 

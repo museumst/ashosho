@@ -2,6 +2,7 @@ import { collection, getDocs, orderBy, query } from "https://www.gstatic.com/fir
 import { db, onAuthChange } from "../../assets/firebase-auth-default.js?v=20261117-photography";
 
 const ADMIN_EMAIL = "museumst@gmail.com";
+const isEmbedded = new URLSearchParams(window.location.search).has("embed");
 const photoGrid = document.querySelector("#photo-grid");
 const searchInput = document.querySelector("#photo-search");
 const uploadLink = document.querySelector("#upload-link");
@@ -9,6 +10,8 @@ const authName = document.querySelector("#auth-name");
 const lightbox = document.querySelector("#photo-lightbox");
 const lightboxImage = document.querySelector("#lightbox-image");
 const lightboxCaption = document.querySelector("#lightbox-caption");
+
+document.documentElement.classList.toggle("is-embedded", isEmbedded);
 const lightboxClose = document.querySelector("#lightbox-close");
 
 let photos = [];

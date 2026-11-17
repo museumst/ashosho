@@ -395,9 +395,11 @@ const sections = {
 };
 
 const appNameList = document.querySelector("#app-name-list");
+const detailCopy = document.querySelector("#detail-copy");
 const detailTitle = document.querySelector("#detail-title");
 const detailDescription = document.querySelector("#detail-description");
 const goLink = document.querySelector("#go-link");
+const photographyFrame = document.querySelector("#photography-frame");
 const languageSelect = document.querySelector("#language-select");
 const languageLabel = document.querySelector("#language-label");
 const photographyMenu = document.querySelector("#photography-menu");
@@ -472,6 +474,19 @@ function renderList() {
 
 function renderDetail() {
   const text = getText();
+
+  const isPhotography = selectedView === "photography";
+  detailCopy.hidden = isPhotography;
+  photographyFrame.hidden = !isPhotography;
+  document.querySelector("#app-detail-pane").classList.toggle("is-photography", isPhotography);
+
+  if (isPhotography) {
+    goLink.hidden = true;
+    if (!photographyFrame.getAttribute("src")) {
+      photographyFrame.src = "apps/photography/index.html?embed=1";
+    }
+    return;
+  }
 
   if (selectedView !== "apps") {
     const section = getSection(selectedView);

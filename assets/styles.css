@@ -266,6 +266,19 @@ h1 {
   background: rgba(255, 255, 255, 0.72);
 }
 
+.app-detail-pane.is-photography {
+  display: block;
+  padding: 0;
+  background: #afb4ae;
+}
+
+.photography-frame {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  border: 0;
+}
+
 .detail-copy {
   /* 오른쪽 상세영역 안의 제목/설명 텍스트 묶음 */
   width: 100%;
