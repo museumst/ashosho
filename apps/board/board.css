@@ -75,14 +75,15 @@ button, input { font: inherit; }
 }
 
 .board-button-primary {
-  border-color: var(--board-accent);
-  background: var(--board-accent);
+  border-color: #202124;
+  background: #202124;
   color: #fff;
 }
 
 .board-button-primary:hover,
 .board-button-primary:focus-visible {
-  background: #0a5d57;
+  border-color: #000;
+  background: #000;
   color: #fff;
 }
 
