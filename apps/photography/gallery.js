@@ -7,14 +7,18 @@ const photoGrid = document.querySelector("#photo-grid");
 const searchInput = document.querySelector("#photo-search");
 const uploadLink = document.querySelector("#upload-link");
 const authName = document.querySelector("#auth-name");
-const lightbox = document.querySelector("#photo-lightbox");
-const lightboxImage = document.querySelector("#lightbox-image");
-const lightboxCaption = document.querySelector("#lightbox-caption");
+const slider = document.querySelector("#photo-slider");
+const sliderImage = document.querySelector("#slider-image");
+const sliderCaption = document.querySelector("#slider-caption");
+const sliderClose = document.querySelector("#slider-close");
+const sliderPrev = document.querySelector("#slider-prev");
+const sliderNext = document.querySelector("#slider-next");
 
 document.documentElement.classList.toggle("is-embedded", isEmbedded);
-const lightboxClose = document.querySelector("#lightbox-close");
 
 let photos = [];
+let visiblePhotos = [];
+let currentSlideIndex = 0;
 
 function normalize(value = "") {
   return value.toLocaleLowerCase("ko-KR").replace(/[\s._/-]/g, "");
@@ -37,15 +41,31 @@ function matchesSearch(photo, searchValue) {
   return terms.every((term) => text.includes(term));
 }
 
-function openLightbox(photo) {
-  lightboxImage.src = photo.imageUrl;
-  lightboxImage.alt = photoCaption(photo);
-  lightboxCaption.textContent = photoCaption(photo);
-  lightbox.showModal();
+function renderSlide() {
+  const photo = visiblePhotos[currentSlideIndex];
+  if (!photo) return;
+  sliderImage.src = photo.imageUrl;
+  sliderImage.alt = photoCaption(photo);
+  sliderCaption.textContent = photoCaption(photo);
+  sliderPrev.disabled = currentSlideIndex === 0;
+  sliderNext.disabled = currentSlideIndex === visiblePhotos.length - 1;
+}
+
+function openSlider(index) {
+  currentSlideIndex = index;
+  renderSlide();
+  slider.showModal();
+}
+
+function moveSlide(direction) {
+  const nextIndex = currentSlideIndex + direction;
+  if (nextIndex < 0 || nextIndex >= visiblePhotos.length) return;
+  currentSlideIndex = nextIndex;
+  renderSlide();
 }
 
 function renderPhotos() {
-  const visiblePhotos = photos.filter((photo) => matchesSearch(photo, searchInput.value));
+  visiblePhotos = photos.filter((photo) => matchesSearch(photo, searchInput.value));
   photoGrid.replaceChildren();
 
   if (!visiblePhotos.length) {
@@ -56,7 +76,7 @@ function renderPhotos() {
     return;
   }
 
-  visiblePhotos.forEach((photo) => {
+  visiblePhotos.forEach((photo, index) => {
     const card = document.createElement("button");
     card.className = "photo-card";
     card.type = "button";
@@ -67,16 +87,8 @@ function renderPhotos() {
     image.alt = photoCaption(photo);
     image.loading = "lazy";
 
-    const caption = document.createElement("span");
-    caption.className = "photo-caption";
-    const time = document.createElement("time");
-    time.dateTime = photo.takenAt || "";
-    time.textContent = formatTakenAt(photo.takenAt);
-    const place = document.createElement("span");
-    place.textContent = photo.place || "";
-    caption.append(time, place);
-    card.append(image, caption);
-    card.addEventListener("click", () => openLightbox(photo));
+    card.append(image);
+    card.addEventListener("click", () => openSlider(index));
     photoGrid.append(card);
   });
 }
@@ -98,9 +110,22 @@ window.addEventListener("message", (event) => {
   searchInput.value = typeof event.data.value === "string" ? event.data.value : "";
   renderPhotos();
 });
-lightboxClose.addEventListener("click", () => lightbox.close());
-lightbox.addEventListener("click", (event) => {
-  if (event.target === lightbox) lightbox.close();
+sliderClose.addEventListener("click", () => slider.close());
+sliderPrev.addEventListener("click", () => moveSlide(-1));
+sliderNext.addEventListener("click", () => moveSlide(1));
+slider.addEventListener("click", (event) => {
+  if (event.target === slider) slider.close();
+});
+document.addEventListener("keydown", (event) => {
+  if (!slider.open) return;
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    moveSlide(-1);
+  }
+  if (event.key === "ArrowRight") {
+    event.preventDefault();
+    moveSlide(1);
+  }
 });
 
 onAuthChange((user) => {

@@ -26,14 +26,16 @@
       </section>
     </main>
 
-    <dialog class="photo-lightbox" id="photo-lightbox" aria-label="사진 크게 보기">
-      <button class="photo-lightbox-close" id="lightbox-close" type="button">닫기</button>
-      <figure class="photo-lightbox-figure">
-        <img id="lightbox-image" alt="" />
-        <figcaption id="lightbox-caption"></figcaption>
+    <dialog class="photo-slider" id="photo-slider" aria-label="사진 슬라이드">
+      <button class="photo-slider-close" id="slider-close" type="button" aria-label="사진 슬라이드 닫기">×</button>
+      <button class="photo-slider-arrow photo-slider-prev" id="slider-prev" type="button" aria-label="이전 사진">←</button>
+      <figure class="photo-slider-figure">
+        <img id="slider-image" alt="" />
+        <figcaption id="slider-caption"></figcaption>
       </figure>
+      <button class="photo-slider-arrow photo-slider-next" id="slider-next" type="button" aria-label="다음 사진">→</button>
     </dialog>
 
-    <script type="module" src="gallery.js?v=20261118-embed"></script>
+    <script type="module" src="gallery.js?v=20261118-slider"></script>
   </body>
 </html>
