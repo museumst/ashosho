@@ -309,10 +309,6 @@ const uiText = {
     menuLabel: "앱 목록",
     sidebar: ["메뉴 펼치기", "메뉴 접기"],
     photoSearch: "날짜, 장소, 태그 검색",
-    open: "열기",
-    soon: "준비중",
-    openAria: (title) => `${title} 열기`,
-    soonAria: (title) => `${title} 준비중`,
   },
   en: {
     htmlLang: "en",
@@ -320,10 +316,6 @@ const uiText = {
     menuLabel: "Apps",
     sidebar: ["Expand menu", "Collapse menu"],
     photoSearch: "Search date, place, tags",
-    open: "open",
-    soon: "soon",
-    openAria: (title) => `Open ${title}`,
-    soonAria: (title) => `${title} is coming soon`,
   },
   ja: {
     htmlLang: "ja",
@@ -331,10 +323,6 @@ const uiText = {
     menuLabel: "アプリ一覧",
     sidebar: ["メニューを開く", "メニューを閉じる"],
     photoSearch: "日付、場所、タグを検索",
-    open: "開く",
-    soon: "準備中",
-    openAria: (title) => `${title}を開く`,
-    soonAria: (title) => `${title}は準備中です`,
   },
   zh: {
     htmlLang: "zh-Hans",
@@ -342,10 +330,6 @@ const uiText = {
     menuLabel: "应用列表",
     sidebar: ["展开菜单", "收起菜单"],
     photoSearch: "搜索日期、地点、标签",
-    open: "打开",
-    soon: "即将推出",
-    openAria: (title) => `打开${title}`,
-    soonAria: (title) => `${title}即将推出`,
   },
   es: {
     htmlLang: "es",
@@ -353,59 +337,6 @@ const uiText = {
     menuLabel: "Aplicaciones",
     sidebar: ["Mostrar menú", "Ocultar menú"],
     photoSearch: "Buscar fecha, lugar, etiquetas",
-    open: "abrir",
-    soon: "pronto",
-    openAria: (title) => `Abrir ${title}`,
-    soonAria: (title) => `${title} estará disponible pronto`,
-  },
-};
-
-const sections = {
-  photography: {
-    appUrl: "apps/photography/index.html",
-    ko: {
-      title: "Photography",
-      description: "촬영 시간과 장소로 사진을 찾아볼 수 있는 아카이브입니다.",
-    },
-    en: {
-      title: "Photography",
-      description: "A photo archive searchable by capture time and location.",
-    },
-    ja: {
-      title: "Photography",
-      description: "撮影日時と場所から写真を探せるアーカイブです。",
-    },
-    zh: {
-      title: "Photography",
-      description: "可按拍摄时间和地点搜索的照片档案。",
-    },
-    es: {
-      title: "Photography",
-      description: "Un archivo de fotos que puedes buscar por fecha y lugar.",
-    },
-  },
-  board: {
-    appUrl: "apps/board/index.html",
-    ko: {
-      title: "Board",
-      description: "공지와 글을 위한 게시판을 준비 중입니다.",
-    },
-    en: {
-      title: "Board",
-      description: "A board for notices and posts is coming soon.",
-    },
-    ja: {
-      title: "Board",
-      description: "お知らせと投稿のための掲示板を準備中です。",
-    },
-    zh: {
-      title: "Board",
-      description: "公告和文章发布板块正在准备中。",
-    },
-    es: {
-      title: "Board",
-      description: "Un tablón para avisos y publicaciones estará disponible pronto.",
-    },
   },
 };
 
@@ -416,10 +347,6 @@ const sidebarToggle = document.querySelector("#sidebar-toggle");
 const sidebarContent = document.querySelector("#sidebar-content");
 const sidebarCloseIcon = document.querySelector("#sidebar-close-icon");
 const sidebarOpenIcon = document.querySelector("#sidebar-open-icon");
-const detailCopy = document.querySelector("#detail-copy");
-const detailTitle = document.querySelector("#detail-title");
-const detailDescription = document.querySelector("#detail-description");
-const goLink = document.querySelector("#go-link");
 const photographyFrame = document.querySelector("#photography-frame");
 const boardFrame = document.querySelector("#board-frame");
 const languageSelect = document.querySelector("#language-select");
@@ -432,13 +359,12 @@ const appsMenu = document.querySelector("#apps-menu");
 const appsAccordion = document.querySelector("#apps-accordion");
 const boardMenu = document.querySelector("#board-menu");
 
-let selectedIndex = 0;
+let selectedIndex = -1;
 let selectedView = "photography";
 let photographyOpen = false;
 let appsOpen = false;
 let isAdmin = false;
 let authChecked = false;
-let running = false;
 let runningFrame;
 let currentLanguage = localStorage.getItem("ashosho-language") || "ko";
 if (!uiText[currentLanguage]) currentLanguage = "ko";
@@ -465,41 +391,27 @@ function appRoute(appUrl) {
   return url;
 }
 
-function leaveApp() {
-  if (new URLSearchParams(window.location.search).has("app")) history.pushState(null, "", appRoute());
-  running = false;
-}
-
 function syncAppRoute() {
   const appUrl = new URLSearchParams(window.location.search).get("app");
   const index = apps.findIndex((app) => app.app_url === appUrl && app.status === "ready" && app.menuVisible !== false);
-  running = index !== -1 && isAppVisible(apps[index]);
-  if (running) {
-    selectedIndex = index;
+  selectedIndex = isAppVisible(apps[index]) ? index : -1;
+  if (selectedIndex !== -1) {
     selectedView = "apps";
     setPhotographyOpen(false);
     setAppsOpen(true);
-  } else if (appUrl && (index === -1 || authChecked)) {
-    history.replaceState(null, "", appRoute());
+  } else {
+    selectedView = history.state?.section === "board" ? "board" : "photography";
+    if (appUrl && (index === -1 || authChecked)) {
+      history.replaceState(history.state, "", appRoute());
+    }
   }
   renderMenu();
   renderList();
   renderDetail();
 }
 
-function getLocalizedApp(app) {
-  const localized = app.i18n?.[currentLanguage] || app.i18n?.ko || app;
-  return {
-    ...app,
-    title: localized.title || app.title,
-    description: localized.description ?? app.description,
-  };
-}
-
-function getSection(section) {
-  const definition = sections[section];
-  const localized = definition?.[currentLanguage] || definition?.ko;
-  return { ...definition, ...localized };
+function getAppTitle(app) {
+  return app.i18n?.[currentLanguage]?.title || app.i18n?.ko?.title || app.title;
 }
 
 function applyLanguage() {
@@ -544,15 +456,9 @@ function isAppVisible(app) {
   return Boolean(app && app.menuVisible !== false && (!app.adminOnly || isAdmin));
 }
 
-function ensureSelectedAppIsVisible() {
-  if (isAppVisible(apps[selectedIndex])) return;
-  selectedIndex = apps.findIndex(isAppVisible);
-}
-
 function setAdminAccess(isAllowed) {
   isAdmin = isAllowed;
   authChecked = true;
-  ensureSelectedAppIsVisible();
   syncAppRoute();
 }
 
@@ -560,16 +466,16 @@ function renderList() {
   appNameList.innerHTML = apps
     .map((app, index) => {
       if (!isAppVisible(app)) return "";
-      const localizedApp = getLocalizedApp(app);
       return `
         <button
           class="app-name-button ${index === selectedIndex ? "is-active" : ""}"
           type="button"
           data-index="${index}"
           aria-current="${index === selectedIndex ? "true" : "false"}"
+          ${app.status !== "ready" || !app.app_url ? "disabled" : ""}
           ${app.color ? `style="color:${app.color}"` : ""}
         >
-          ${localizedApp.title}
+          ${getAppTitle(app)}
         </button>
       `;
     })
@@ -577,40 +483,30 @@ function renderList() {
 }
 
 function renderDetail() {
-  const text = getText();
-
   const isPhotography = selectedView === "photography";
   const isBoard = selectedView === "board";
-  const isRunningApp = selectedView === "apps" && running;
-  detailCopy.hidden = isPhotography || isBoard || isRunningApp;
   photographyFrame.hidden = !isPhotography;
   boardFrame.hidden = !isBoard;
   detailPane.classList.toggle("is-photography", isPhotography);
   detailPane.classList.toggle("is-board", isBoard);
-  detailPane.classList.toggle("is-running-app", isRunningApp);
-
-  const runningApp = isRunningApp ? getLocalizedApp(apps[selectedIndex]) : null;
+  const runningApp = apps[selectedIndex];
   if (runningFrame && runningFrame.getAttribute("src") !== runningApp?.app_url) {
     if (runningFrame.getAttribute("src") === "apps/photography/upload.html") photographyFrame.removeAttribute("src");
     runningFrame.remove();
     runningFrame = undefined;
   }
   if (runningApp) {
-    goLink.hidden = true;
     if (!runningFrame) {
       runningFrame = document.createElement("iframe");
       runningFrame.className = "running-app-frame";
-      runningFrame.title = runningApp.title;
       runningFrame.src = runningApp.app_url;
       detailPane.append(runningFrame);
-    } else {
-      runningFrame.title = runningApp.title;
     }
+    runningFrame.title = getAppTitle(runningApp);
     return;
   }
 
   if (isPhotography) {
-    goLink.hidden = true;
     if (!photographyFrame.getAttribute("src")) {
       photographyFrame.src = "apps/photography/index.html?embed=1";
     }
@@ -618,73 +514,29 @@ function renderDetail() {
   }
 
   if (isBoard) {
-    goLink.hidden = true;
     if (!boardFrame.getAttribute("src")) {
       boardFrame.src = "apps/board/index.html?embed=1";
     }
-    return;
-  }
-
-  if (selectedView !== "apps") {
-    const section = getSection(selectedView);
-    const isReady = Boolean(section.appUrl);
-    detailTitle.textContent = section.title;
-    detailDescription.textContent = section.description;
-    detailDescription.hidden = !section.description;
-    goLink.hidden = !isReady;
-
-    if (isReady) {
-      goLink.textContent = "go";
-      goLink.href = section.appUrl;
-      goLink.setAttribute("aria-label", text.openAria(section.title));
-      goLink.removeAttribute("aria-disabled");
-    } else {
-      goLink.removeAttribute("href");
-      goLink.removeAttribute("aria-disabled");
-    }
-    return;
-  }
-
-  const app = getLocalizedApp(apps[selectedIndex]);
-  const isReady = app.status === "ready" && app.app_url;
-
-  detailTitle.textContent = app.title;
-  detailDescription.textContent = app.description;
-  detailDescription.hidden = !app.description;
-  goLink.hidden = false;
-
-  if (isReady) {
-    goLink.textContent = "go";
-    goLink.href = appRoute(app.app_url).href;
-    goLink.setAttribute("aria-label", text.openAria(app.title));
-    goLink.removeAttribute("aria-disabled");
-  } else {
-    goLink.textContent = "soon";
-    goLink.removeAttribute("href");
-    goLink.setAttribute("aria-label", text.soonAria(app.title));
-    goLink.setAttribute("aria-disabled", "true");
   }
 }
 
 function selectApp(index) {
-  if (running && index === selectedIndex) return;
-  leaveApp();
-  selectedIndex = index;
-  selectedView = "apps";
-  setPhotographyOpen(false);
-  setAppsOpen(true);
-  renderMenu();
-  renderList();
-  renderDetail();
+  const app = apps[index];
+  if (index === selectedIndex || !isAppVisible(app) || app.status !== "ready" || !app.app_url) return;
+  history.pushState(null, "", appRoute(app.app_url));
+  syncAppRoute();
+  runningFrame?.focus();
 }
 
 function selectSection(section) {
-  leaveApp();
-  selectedView = section;
-  setPhotographyOpen(false);
+  if (new URLSearchParams(window.location.search).has("app")) {
+    history.pushState({ section }, "", appRoute());
+  } else {
+    history.replaceState({ section }, "", appRoute());
+  }
+  setPhotographyOpen(section === "photography" && !photographyOpen);
   setAppsOpen(false);
-  renderMenu();
-  renderDetail();
+  syncAppRoute();
 }
 
 appNameList.addEventListener("click", (event) => {
@@ -693,32 +545,13 @@ appNameList.addEventListener("click", (event) => {
   selectApp(Number(button.dataset.index));
 });
 
-photographyMenu.addEventListener("click", () => {
-  leaveApp();
-  selectedView = "photography";
-  setAppsOpen(false);
-  setPhotographyOpen(!photographyOpen);
-  renderMenu();
-  renderDetail();
-});
+photographyMenu.addEventListener("click", () => selectSection("photography"));
 boardMenu.addEventListener("click", () => selectSection("board"));
 appsMenu.addEventListener("click", () => {
-  if (selectedView !== "apps") leaveApp();
-  selectedView = "apps";
   setPhotographyOpen(false);
   setAppsOpen(!appsOpen);
-  renderMenu();
-  renderDetail();
 });
 
-goLink.addEventListener("click", (event) => {
-  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  if (!goLink.hasAttribute("href")) return;
-  event.preventDefault();
-  history.pushState(null, "", goLink.href);
-  syncAppRoute();
-  runningFrame?.focus();
-});
 window.addEventListener("popstate", syncAppRoute);
 
 sidebarToggle.addEventListener("click", () => {

@@ -333,23 +333,10 @@ h1 {
 }
 
 .app-detail-pane {
-  /* 오른쪽 상세영역: 선택한 앱 제목과 go 링크가 들어가는 영역 */
-  display: flex;
+  /* 오른쪽 영역: 선택한 화면이 들어가는 영역 */
   position: relative;
   min-height: 0;
-  overflow: auto;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 28px;
-  padding: clamp(28px, 6vw, 84px);
   background: rgba(255, 255, 255, 0.72);
-}
-
-.app-detail-pane.is-photography,
-.app-detail-pane.is-board,
-.app-detail-pane.is-running-app {
-  display: block;
-  padding: 0;
 }
 
 .app-detail-pane.is-photography {
@@ -369,55 +356,6 @@ h1 {
   width: 100%;
   height: 100%;
   border: 0;
-}
-
-.detail-copy {
-  /* 오른쪽 상세영역 안의 제목/설명 텍스트 묶음 */
-  width: 100%;
-}
-
-#detail-title {
-  /* 오른쪽 상세영역의 앱 제목 */
-  margin: 0;
-  font-size: clamp(2.6rem, 7vw, 7.2rem);
-  line-height: 0.98;
-  letter-spacing: 0;
-}
-
-#detail-description {
-  /* 오른쪽 상세영역의 앱 설명 */
-  margin: 28px 0 0;
-  color: var(--muted);
-  font-size: clamp(1.1rem, 2vw, 1.7rem);
-  line-height: 1.65;
-}
-
-.go-link {
-  /* 오른쪽 상세영역의 큰 실행 링크 */
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  max-width: 100%;
-  color: var(--text);
-  font-size: clamp(5.5rem, 18vw, 16rem);
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 0.78;
-  text-decoration: none;
-}
-
-.go-link:hover,
-.go-link:focus-visible {
-  color: var(--accent-strong);
-  outline: none;
-  text-decoration: underline;
-  text-decoration-thickness: 8px;
-  text-underline-offset: 16px;
-}
-
-.go-link[aria-disabled="true"] {
-  pointer-events: none;
-  color: #a3aaad;
 }
 
 .empty-state {
@@ -820,17 +758,7 @@ h1 {
 }
 
 @media (max-width: 620px) {
-  /* 작은 모바일 화면에서 좌우 여백과 go 크기를 조정 */
   .language-control {
     max-width: none;
-  }
-
-  .app-list-pane,
-  .app-detail-pane {
-    padding: 24px;
-  }
-
-  .go-link {
-    font-size: clamp(5rem, 34vw, 9rem);
   }
 }
