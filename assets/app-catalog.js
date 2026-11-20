@@ -341,6 +341,7 @@ const uiText = {
 };
 
 const appNameList = document.querySelector("#app-name-list");
+const adminAppList = document.querySelector("#admin-app-list");
 const appShell = document.querySelector(".app-shell");
 const detailPane = document.querySelector("#app-detail-pane");
 const sidebarToggle = document.querySelector("#sidebar-toggle");
@@ -398,7 +399,7 @@ function syncAppRoute() {
   if (selectedIndex !== -1) {
     selectedView = "apps";
     setPhotographyOpen(false);
-    setAppsOpen(true);
+    if (!apps[selectedIndex].adminOnly) setAppsOpen(true);
   } else {
     selectedView = history.state?.section === "board" ? "board" : "photography";
     if (appUrl && (index === -1 || authChecked)) {
@@ -448,7 +449,7 @@ function syncPhotographySearch() {
 
 function renderMenu() {
   photographyMenu.classList.toggle("is-active", selectedView === "photography");
-  appsMenu.classList.toggle("is-active", selectedView === "apps");
+  appsMenu.classList.toggle("is-active", selectedView === "apps" && !apps[selectedIndex]?.adminOnly);
   boardMenu.classList.toggle("is-active", selectedView === "board");
 }
 
@@ -462,10 +463,10 @@ function setAdminAccess(isAllowed) {
   syncAppRoute();
 }
 
-function renderList() {
-  appNameList.innerHTML = apps
+function renderAppList(list, adminOnly) {
+  list.innerHTML = apps
     .map((app, index) => {
-      if (!isAppVisible(app)) return "";
+      if (Boolean(app.adminOnly) !== adminOnly || !isAppVisible(app)) return "";
       return `
         <button
           class="app-name-button ${index === selectedIndex ? "is-active" : ""}"
@@ -480,6 +481,12 @@ function renderList() {
       `;
     })
     .join("");
+}
+
+function renderList() {
+  renderAppList(appNameList, false);
+  renderAppList(adminAppList, true);
+  adminAppList.hidden = !isAdmin;
 }
 
 function renderDetail() {
@@ -539,7 +546,7 @@ function selectSection(section) {
   syncAppRoute();
 }
 
-appNameList.addEventListener("click", (event) => {
+appNameList.closest(".site-menu").addEventListener("click", (event) => {
   const button = event.target.closest(".app-name-button");
   if (!button) return;
   selectApp(Number(button.dataset.index));
