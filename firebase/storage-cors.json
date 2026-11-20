@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://grayrockclub.com", "https://www.grayrockclub.com", "https://museumst.github.io"],
+    "method": ["GET"],
+    "responseHeader": ["Authorization", "Content-Type", "X-Firebase-AppCheck", "X-Firebase-Storage-Version", "X-Goog-Upload-Protocol"],
+    "maxAgeSeconds": 3600
+  }
+]
