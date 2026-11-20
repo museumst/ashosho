@@ -47,6 +47,7 @@ input {
 }
 
 .app-shell {
+  --sidebar-motion: 220ms ease-out;
   /* 메인 포털의 좌우 2분할 레이아웃 */
   display: grid;
   /* 첫 번째 값이 메뉴영역 폭, 두 번째 값이 오른쪽 상세영역 폭 */
@@ -63,7 +64,6 @@ input {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 24px;
   justify-content: flex-start;
   border-right: 1px solid var(--line);
   padding: 24px;
@@ -73,9 +73,18 @@ input {
 }
 
 .sidebar-content {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: clip;
+}
+
+.sidebar-links {
   display: flex;
+  min-width: 0;
+  min-height: 0;
   flex-direction: column;
   gap: 24px;
+  padding-top: 24px;
   overflow-wrap: anywhere;
 }
 
@@ -97,6 +106,13 @@ input {
 .sidebar-toggle:has(svg) .sidebar-icon-fallback { display: none; }
 .app-shell.is-sidebar-collapsed { grid-template-columns: 64px minmax(0, 1fr); }
 .app-shell.is-sidebar-collapsed .app-list-pane { padding: 16px 9px; }
+.app-shell.is-sidebar-collapsed .sidebar-content { grid-template-rows: minmax(0, 0fr); opacity: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .app-shell.is-sidebar-interactive { transition: grid-template-columns var(--sidebar-motion); }
+  .is-sidebar-interactive .app-list-pane { transition: padding var(--sidebar-motion); }
+  .is-sidebar-interactive .sidebar-content { transition: grid-template-rows var(--sidebar-motion), opacity 140ms ease-out; }
+}
 
 .eyebrow {
   margin: 0 0 10px;

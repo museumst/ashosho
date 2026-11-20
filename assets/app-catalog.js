@@ -448,7 +448,7 @@ function getText() {
 }
 
 function renderSidebar() {
-  const isOpen = !sidebarContent.hidden;
+  const isOpen = !sidebarContent.inert;
   const label = getText().sidebar[Number(isOpen)];
   appShell.classList.toggle("is-sidebar-collapsed", !isOpen);
   sidebarToggle.setAttribute("aria-expanded", String(isOpen));
@@ -722,8 +722,9 @@ goLink.addEventListener("click", (event) => {
 window.addEventListener("popstate", syncAppRoute);
 
 sidebarToggle.addEventListener("click", () => {
-  sidebarContent.hidden = !sidebarContent.hidden;
-  localStorage.setItem("ashosho-sidebar-collapsed", String(sidebarContent.hidden));
+  appShell.classList.add("is-sidebar-interactive");
+  sidebarContent.inert = !sidebarContent.inert;
+  localStorage.setItem("ashosho-sidebar-collapsed", String(sidebarContent.inert));
   renderSidebar();
 });
 
@@ -743,7 +744,7 @@ languageSelect.addEventListener("change", () => {
   renderDetail();
 });
 
-sidebarContent.hidden = localStorage.getItem("ashosho-sidebar-collapsed") === "true";
+sidebarContent.inert = localStorage.getItem("ashosho-sidebar-collapsed") === "true";
 window.lucide?.createIcons();
 applyLanguage();
 setAppsOpen(false);
