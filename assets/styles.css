@@ -50,11 +50,10 @@ input {
   /* 메인 포털의 좌우 2분할 레이아웃 */
   display: grid;
   /* 첫 번째 값이 메뉴영역 폭, 두 번째 값이 오른쪽 상세영역 폭 */
-  grid-template-columns: minmax(180px, min(16vw, 300px)) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: clamp(240px, 22vw, 360px) minmax(0, 1fr);
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 0;
 }
@@ -62,8 +61,7 @@ input {
 .app-list-pane {
   /* 왼쪽 메뉴영역: 앱 이름 목록이 들어가는 영역 */
   display: flex;
-  min-height: 0;
-  overflow: hidden;
+  min-width: 0;
   flex-direction: column;
   gap: 24px;
   justify-content: flex-start;
@@ -76,10 +74,9 @@ input {
 
 .sidebar-content {
   display: flex;
-  min-height: 0;
-  overflow: auto;
   flex-direction: column;
   gap: 24px;
+  overflow-wrap: anywhere;
 }
 
 .sidebar-toggle {
@@ -87,16 +84,16 @@ input {
   flex: 0 0 44px;
   width: 44px;
   place-items: center;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 8px;
-  background: var(--surface);
-  color: var(--text);
+  background: transparent;
+  color: var(--muted);
   cursor: pointer;
 }
 
-.sidebar-toggle:hover { color: var(--accent); border-color: var(--accent); }
-.sidebar-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.sidebar-toggle svg { display: block; width: 20px; height: 20px; }
+.sidebar-toggle:hover { background: rgba(15, 118, 110, 0.08); color: var(--accent-strong); }
+.sidebar-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.sidebar-toggle svg { display: block; width: 24px; height: 24px; }
 .sidebar-toggle:has(svg) .sidebar-icon-fallback { display: none; }
 .app-shell.is-sidebar-collapsed { grid-template-columns: 64px minmax(0, 1fr); }
 .app-shell.is-sidebar-collapsed .app-list-pane { padding: 16px 9px; }
@@ -133,8 +130,9 @@ input {
 }
 .auth-profile-link {
   display: flex; align-items: center; gap: 8px;
+  min-width: 0; max-width: 100%;
   text-decoration: none !important; border-radius: 6px;
-  padding: 2px 4px; margin: -2px -4px;
+  padding: 2px 4px;
   transition: background .15s; line-height: 1;
 }
 .auth-profile-link:hover { background: var(--surface-strong); }
@@ -164,6 +162,7 @@ input {
 
 .language-control {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   width: 100%;
   max-width: 220px;
@@ -238,6 +237,7 @@ h1 {
   width: 8px;
   height: 8px;
   flex: 0 0 auto;
+  margin-inline-end: 3px;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   transform: rotate(45deg) translate(-2px, -2px);
@@ -319,6 +319,7 @@ h1 {
 .app-detail-pane {
   /* 오른쪽 상세영역: 선택한 앱 제목과 go 링크가 들어가는 영역 */
   display: flex;
+  position: relative;
   min-height: 0;
   overflow: auto;
   flex-direction: column;
@@ -347,6 +348,8 @@ h1 {
 .board-frame,
 .running-app-frame {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
@@ -784,14 +787,16 @@ h1 {
   .app-shell,
   .app-shell.is-sidebar-collapsed {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(65vh, 1fr);
+    grid-template-rows: auto minmax(65dvh, 1fr);
   }
 
   .app-list-pane {
-    max-height: 45dvh;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
+
+  .sidebar-toggle svg { transform: rotate(90deg); }
 
   .app-name-list {
     margin-top: 0;
