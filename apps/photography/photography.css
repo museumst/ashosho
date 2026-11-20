@@ -106,13 +106,12 @@ button, input { font: inherit; }
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
   gap: 14px;
 }
 
 .photo-card {
-  position: relative;
   display: block;
-  aspect-ratio: 4 / 5;
   overflow: hidden;
   border: 0;
   border-radius: 0;
@@ -122,9 +121,9 @@ button, input { font: inherit; }
 }
 
 .photo-card img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 
 .photo-card:focus-visible { outline: 3px solid var(--photo-accent); outline-offset: 3px; }
@@ -283,11 +282,14 @@ button, input { font: inherit; }
   padding: 12px 0;
   border-top: 1px solid var(--photo-line);
 }
-.photo-manage-row img { width: 72px; height: 64px; object-fit: cover; background: var(--photo-bg); }
+.photo-manage-row img { width: 72px; height: 64px; object-fit: contain; background: var(--photo-bg); }
 .photo-manage-meta { display: grid; gap: 3px; font-size: 0.85rem; overflow-wrap: anywhere; }
 .photo-manage-meta span { color: var(--photo-muted); }
 .photo-manage-actions { display: flex; gap: 4px; flex-wrap: wrap; }
 .photo-manage-actions button { min-height: 44px; padding-inline: 8px; }
+.photo-manage-actions button:has(svg) { width: 44px; padding: 0; }
+.photo-manage-actions svg { width: 18px; height: 18px; }
+.photo-manage-actions button:has(svg) .photo-icon-fallback { display: none; }
 .photo-manage-actions .is-danger { color: var(--photo-danger); }
 .photo-button:disabled { cursor: default; opacity: 0.6; }
 
@@ -305,7 +307,6 @@ button, input { font: inherit; }
   .photo-header-actions { flex-wrap: wrap; justify-content: flex-end; }
   .photo-auth-name { display: none; }
   .photo-grid { grid-template-columns: 1fr; gap: 12px; }
-  .photo-card { aspect-ratio: 4 / 5; }
   .photo-slider-figure { padding: 56px 56px 76px; }
   .photo-slider-prev { left: 4px; }
   .photo-slider-next { right: 4px; }

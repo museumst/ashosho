@@ -274,6 +274,7 @@ const uiText = {
     htmlLang: "ko",
     language: "언어",
     menuLabel: "앱 목록",
+    sidebar: ["메뉴 펼치기", "메뉴 접기"],
     photoSearch: "날짜, 장소, 태그 검색",
     open: "열기",
     soon: "준비중",
@@ -284,6 +285,7 @@ const uiText = {
     htmlLang: "en",
     language: "Language",
     menuLabel: "Apps",
+    sidebar: ["Expand menu", "Collapse menu"],
     photoSearch: "Search date, place, tags",
     open: "open",
     soon: "soon",
@@ -294,6 +296,7 @@ const uiText = {
     htmlLang: "ja",
     language: "言語",
     menuLabel: "アプリ一覧",
+    sidebar: ["メニューを開く", "メニューを閉じる"],
     photoSearch: "日付、場所、タグを検索",
     open: "開く",
     soon: "準備中",
@@ -304,6 +307,7 @@ const uiText = {
     htmlLang: "zh-Hans",
     language: "语言",
     menuLabel: "应用列表",
+    sidebar: ["展开菜单", "收起菜单"],
     photoSearch: "搜索日期、地点、标签",
     open: "打开",
     soon: "即将推出",
@@ -314,6 +318,7 @@ const uiText = {
     htmlLang: "es",
     language: "Idioma",
     menuLabel: "Aplicaciones",
+    sidebar: ["Mostrar menú", "Ocultar menú"],
     photoSearch: "Buscar fecha, lugar, etiquetas",
     open: "abrir",
     soon: "pronto",
@@ -372,6 +377,12 @@ const sections = {
 };
 
 const appNameList = document.querySelector("#app-name-list");
+const appShell = document.querySelector(".app-shell");
+const detailPane = document.querySelector("#app-detail-pane");
+const sidebarToggle = document.querySelector("#sidebar-toggle");
+const sidebarContent = document.querySelector("#sidebar-content");
+const sidebarCloseIcon = document.querySelector("#sidebar-close-icon");
+const sidebarOpenIcon = document.querySelector("#sidebar-open-icon");
 const detailCopy = document.querySelector("#detail-copy");
 const detailTitle = document.querySelector("#detail-title");
 const detailDescription = document.querySelector("#detail-description");
@@ -393,11 +404,54 @@ let selectedView = "photography";
 let photographyOpen = false;
 let appsOpen = false;
 let isAdmin = false;
+let authChecked = false;
+let running = false;
+let runningFrame;
 let currentLanguage = localStorage.getItem("ashosho-language") || "ko";
 if (!uiText[currentLanguage]) currentLanguage = "ko";
 
 function getText() {
   return uiText[currentLanguage] || uiText.ko;
+}
+
+function renderSidebar() {
+  const isOpen = !sidebarContent.hidden;
+  const label = getText().sidebar[Number(isOpen)];
+  appShell.classList.toggle("is-sidebar-collapsed", !isOpen);
+  sidebarToggle.setAttribute("aria-expanded", String(isOpen));
+  sidebarToggle.setAttribute("aria-label", label);
+  sidebarToggle.title = label;
+  sidebarCloseIcon.hidden = !isOpen;
+  sidebarOpenIcon.hidden = isOpen;
+}
+
+function appRoute(appUrl) {
+  const url = new URL(window.location.href);
+  if (appUrl) url.searchParams.set("app", appUrl);
+  else url.searchParams.delete("app");
+  return url;
+}
+
+function leaveApp() {
+  if (new URLSearchParams(window.location.search).has("app")) history.pushState(null, "", appRoute());
+  running = false;
+}
+
+function syncAppRoute() {
+  const appUrl = new URLSearchParams(window.location.search).get("app");
+  const index = apps.findIndex((app) => app.app_url === appUrl && app.status === "ready" && app.menuVisible !== false);
+  running = index !== -1 && isAppVisible(apps[index]);
+  if (running) {
+    selectedIndex = index;
+    selectedView = "apps";
+    setPhotographyOpen(false);
+    setAppsOpen(true);
+  } else if (appUrl && (index === -1 || authChecked)) {
+    history.replaceState(null, "", appRoute());
+  }
+  renderMenu();
+  renderList();
+  renderDetail();
 }
 
 function getLocalizedApp(app) {
@@ -425,6 +479,7 @@ function applyLanguage() {
   photographySearchLabel.textContent = text.photoSearch;
   photographySearch.placeholder = text.photoSearch;
   photographySearch.setAttribute("aria-label", text.photoSearch);
+  renderSidebar();
 }
 
 function setAppsOpen(isOpen) {
@@ -453,7 +508,7 @@ function renderMenu() {
 }
 
 function isAppVisible(app) {
-  return app.menuVisible !== false && (!app.adminOnly || isAdmin);
+  return Boolean(app && app.menuVisible !== false && (!app.adminOnly || isAdmin));
 }
 
 function ensureSelectedAppIsVisible() {
@@ -463,9 +518,9 @@ function ensureSelectedAppIsVisible() {
 
 function setAdminAccess(isAllowed) {
   isAdmin = isAllowed;
+  authChecked = true;
   ensureSelectedAppIsVisible();
-  renderList();
-  if (selectedView === "apps") renderDetail();
+  syncAppRoute();
 }
 
 function renderList() {
@@ -493,12 +548,33 @@ function renderDetail() {
 
   const isPhotography = selectedView === "photography";
   const isBoard = selectedView === "board";
-  detailCopy.hidden = isPhotography || isBoard;
+  const isRunningApp = selectedView === "apps" && running;
+  detailCopy.hidden = isPhotography || isBoard || isRunningApp;
   photographyFrame.hidden = !isPhotography;
   boardFrame.hidden = !isBoard;
-  const detailPane = document.querySelector("#app-detail-pane");
   detailPane.classList.toggle("is-photography", isPhotography);
   detailPane.classList.toggle("is-board", isBoard);
+  detailPane.classList.toggle("is-running-app", isRunningApp);
+
+  const runningApp = isRunningApp ? getLocalizedApp(apps[selectedIndex]) : null;
+  if (runningFrame && runningFrame.getAttribute("src") !== runningApp?.app_url) {
+    if (runningFrame.getAttribute("src") === "apps/photography/upload.html") photographyFrame.removeAttribute("src");
+    runningFrame.remove();
+    runningFrame = undefined;
+  }
+  if (runningApp) {
+    goLink.hidden = true;
+    if (!runningFrame) {
+      runningFrame = document.createElement("iframe");
+      runningFrame.className = "running-app-frame";
+      runningFrame.title = runningApp.title;
+      runningFrame.src = runningApp.app_url;
+      detailPane.append(runningFrame);
+    } else {
+      runningFrame.title = runningApp.title;
+    }
+    return;
+  }
 
   if (isPhotography) {
     goLink.hidden = true;
@@ -546,7 +622,7 @@ function renderDetail() {
 
   if (isReady) {
     goLink.textContent = "go";
-    goLink.href = app.app_url;
+    goLink.href = appRoute(app.app_url).href;
     goLink.setAttribute("aria-label", text.openAria(app.title));
     goLink.removeAttribute("aria-disabled");
   } else {
@@ -558,6 +634,8 @@ function renderDetail() {
 }
 
 function selectApp(index) {
+  if (running && index === selectedIndex) return;
+  leaveApp();
   selectedIndex = index;
   selectedView = "apps";
   setPhotographyOpen(false);
@@ -568,6 +646,7 @@ function selectApp(index) {
 }
 
 function selectSection(section) {
+  leaveApp();
   selectedView = section;
   setPhotographyOpen(false);
   setAppsOpen(false);
@@ -582,6 +661,7 @@ appNameList.addEventListener("click", (event) => {
 });
 
 photographyMenu.addEventListener("click", () => {
+  leaveApp();
   selectedView = "photography";
   setAppsOpen(false);
   setPhotographyOpen(!photographyOpen);
@@ -590,11 +670,28 @@ photographyMenu.addEventListener("click", () => {
 });
 boardMenu.addEventListener("click", () => selectSection("board"));
 appsMenu.addEventListener("click", () => {
+  if (selectedView !== "apps") leaveApp();
   selectedView = "apps";
   setPhotographyOpen(false);
   setAppsOpen(!appsOpen);
   renderMenu();
   renderDetail();
+});
+
+goLink.addEventListener("click", (event) => {
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  if (!goLink.hasAttribute("href")) return;
+  event.preventDefault();
+  history.pushState(null, "", goLink.href);
+  syncAppRoute();
+  runningFrame?.focus();
+});
+window.addEventListener("popstate", syncAppRoute);
+
+sidebarToggle.addEventListener("click", () => {
+  sidebarContent.hidden = !sidebarContent.hidden;
+  localStorage.setItem("ashosho-sidebar-collapsed", String(sidebarContent.hidden));
+  renderSidebar();
 });
 
 photographySearch.addEventListener("input", syncPhotographySearch);
@@ -613,9 +710,9 @@ languageSelect.addEventListener("change", () => {
   renderDetail();
 });
 
+sidebarContent.hidden = localStorage.getItem("ashosho-sidebar-collapsed") === "true";
+window.lucide?.createIcons();
 applyLanguage();
 setAppsOpen(false);
 setPhotographyOpen(false);
-renderMenu();
-renderList();
-renderDetail();
+syncAppRoute();

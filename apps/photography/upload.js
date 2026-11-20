@@ -22,6 +22,11 @@ const managePane = document.querySelector("#manage-pane");
 const manageList = document.querySelector("#photo-manage-list");
 const manageStatus = document.querySelector("#manage-status");
 const replaceFile = document.querySelector("#replace-file");
+const backLink = document.querySelector(".photo-back");
+if (window.parent !== window) {
+  backLink.href = "../../index.html";
+  backLink.target = "_top";
+}
 const previewUrls = new Set();
 let selectedTab = uploadTab;
 let replacement;
@@ -214,11 +219,21 @@ function renderManagedPhoto(photo) {
 
   const actions = document.createElement("div");
   actions.className = "photo-manage-actions";
-  function addAction(text, handler, danger = false) {
+  function addAction(text, handler, icon) {
     const button = document.createElement("button");
-    button.className = danger ? "photo-button is-danger" : "photo-button";
+    button.className = icon === "trash-2" ? "photo-button is-danger" : "photo-button";
     button.type = "button";
-    button.textContent = text;
+    button.title = text;
+    const fallback = document.createElement("span");
+    fallback.className = "photo-icon-fallback";
+    fallback.textContent = text;
+    button.append(fallback);
+    if (icon) {
+      const glyph = document.createElement("i");
+      glyph.dataset.lucide = icon;
+      glyph.setAttribute("aria-hidden", "true");
+      button.prepend(glyph);
+    }
     button.setAttribute("aria-label", `${text}: ${label}`);
     button.disabled = busy;
     button.addEventListener("click", handler);
@@ -231,14 +246,14 @@ function renderManagedPhoto(photo) {
       replacement = photo;
       replaceFile.value = "";
       replaceFile.click();
-    });
+    }, "image-up");
     addAction(photo.hidden ? "다시 공개" : "가리기", () => {
       if (!photo.hidden && !window.confirm(`${label}\n이 사진을 가리고 기존 사진 링크를 끊을까요?`)) return;
       runManagement(() => changePhotoVisibility(photo), photo.hidden ? "다시 공개했습니다." : "사진을 가리고 기존 링크를 차단했습니다.");
-    });
+    }, photo.hidden ? "eye" : "eye-off");
     addAction("삭제", () => {
       if (window.confirm(`${label}\n원본과 썸네일을 삭제할까요?`)) runManagement(() => deletePhoto(photo), "사진을 삭제했습니다.");
-    }, true);
+    }, "trash-2");
   }
   row.append(image, meta, actions);
   manageList.append(row);
@@ -256,6 +271,7 @@ async function loadManageList(keepStatus = false) {
     if (version !== loadVersion || !isAdmin()) return;
     clearManageList();
     photos.forEach(renderManagedPhoto);
+    window.lucide?.createIcons();
     if (!keepStatus) setStatus(photos.length ? "" : "아직 등록된 사진이 없습니다.", false, manageStatus);
   } catch (error) {
     if (version !== loadVersion) return;
