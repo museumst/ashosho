@@ -389,11 +389,15 @@
     </style>
   </head>
   <body class="mini-app sentence-app">
-    <section class="mini-app-panel access-panel" id="access-panel" aria-live="polite">
+    <section class="mini-app-panel access-panel" id="access-panel" aria-live="polite" hidden>
       <p class="eyebrow">Private</p>
       <h1>1001영어문장</h1>
       <p class="sentence-meta" id="access-message">관리자 계정으로 로그인하면 이용할 수 있습니다.</p>
       <button class="primary-button" id="access-login" type="button">Google로 로그인</button>
+      <label id="access-import" hidden>
+        내 계정에 원본 백업 가져오기
+        <input id="original-file" type="file" accept=".json,application/json" />
+      </label>
     </section>
 
     <main class="mini-app-panel sentence-panel" id="sentence-content" hidden>
@@ -413,7 +417,7 @@
       <div class="sentence-tools">
         <select class="chapter-select" id="chapter-select" aria-label="학습 범위 선택"></select>
         <input class="sentence-search" id="search-input" type="search" placeholder="문장 검색" />
-        <input class="jump-input" id="jump-input" type="number" min="1" max="1001" placeholder="번호" aria-label="문장 번호" />
+        <input class="jump-input" id="jump-input" type="number" min="1" placeholder="번호" aria-label="문장 번호" />
         <button class="plain-btn" type="button" id="jump-button">이동</button>
       </div>
 
@@ -427,7 +431,7 @@
       </nav>
     </main>
 
-    <dialog class="note-dialog" id="note-dialog" aria-labelledby="note-dialog-title" hidden>
+    <dialog class="note-dialog" id="note-dialog" aria-labelledby="note-dialog-title">
       <div class="note-dialog-body">
         <header class="note-dialog-head">
           <div>
@@ -449,51 +453,16 @@
     </dialog>
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script src="sentences.js?v=20261002-1001-patterns"></script>
-    <script type="module">
-      import { loginWithGoogle, onAuthChange } from "../../assets/firebase-auth-default.js?v=20261118-admin-apps";
-
-      const ADMIN_EMAIL = "museumst@gmail.com";
-      const accessPanel = document.querySelector("#access-panel");
-      const accessMessage = document.querySelector("#access-message");
-      const accessLogin = document.querySelector("#access-login");
-      const sentenceContent = document.querySelector("#sentence-content");
-      const noteDialog = document.querySelector("#note-dialog");
-
-      accessLogin.addEventListener("click", async () => {
-        accessLogin.disabled = true;
-        try {
-          await loginWithGoogle();
-        } catch {
-          accessMessage.textContent = "로그인에 실패했습니다. 다시 시도해 주세요.";
-          accessLogin.disabled = false;
-        }
-      });
-
-      onAuthChange((user) => {
-        const allowed = user?.email === ADMIN_EMAIL;
-        accessPanel.hidden = allowed;
-        sentenceContent.hidden = !allowed;
-        noteDialog.hidden = !allowed;
-        accessLogin.disabled = false;
-        if (!allowed) {
-          accessMessage.textContent = user
-            ? "이 계정에는 접근 권한이 없습니다."
-            : "관리자 계정으로 로그인하면 이용할 수 있습니다.";
-          window.speechSynthesis?.cancel();
-        }
-      }, () => {
-        accessMessage.textContent = "로그인 상태를 확인하지 못했습니다. 다시 시도해 주세요.";
-        accessLogin.disabled = false;
-      });
-    </script>
     <script>
       const PAGE_SIZE = 10;
-      const STORAGE_HIDE_KEY = "ashosho-english-1001-hide-english";
-      const STORAGE_NOTES_KEY = "ashosho-english-1001-notes";
+      const isPractice = new URLSearchParams(location.search).get("set") === "practice";
+      const storagePrefix = isPractice ? "ashosho-english-practice" : "ashosho-english-1001";
+      const STORAGE_HIDE_KEY = `${storagePrefix}-hide-english`;
+      const STORAGE_NOTES_KEY = `${storagePrefix}-notes`;
       const hasTts = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
-      const sentences = Array.isArray(window.ENGLISH_1001_SENTENCES) ? window.ENGLISH_1001_SENTENCES : [];
-      const chapters = [
+      let sentences = [];
+      let chapters = [];
+      const chapterDefinitions = [
         { id: 1, title: "동사와 문장의 기본 구조", start: 1 },
         { id: 2, title: "주어의 이해", start: 72 },
         { id: 3, title: "목적어의 이해", start: 129 },
@@ -510,10 +479,7 @@
         { id: 14, title: "전명구를 동반하는 동사구", start: 801 },
         { id: 15, title: "비교구문", start: 849 },
         { id: 16, title: "특수구문", start: 912 }
-      ].map((chapter, index, allChapters) => ({
-        ...chapter,
-        end: (allChapters[index + 1]?.start || sentences.length + 1) - 1
-      }));
+      ];
 
       const state = {
         query: "",
@@ -527,6 +493,12 @@
       };
 
       const els = {
+        content: document.querySelector("#sentence-content"),
+        access: document.querySelector("#access-panel"),
+        accessMessage: document.querySelector("#access-message"),
+        accessLogin: document.querySelector("#access-login"),
+        accessImport: document.querySelector("#access-import"),
+        originalFile: document.querySelector("#original-file"),
         meta: document.querySelector("#sentence-meta"),
         toggle: document.querySelector("#toggle-english"),
         chapter: document.querySelector("#chapter-select"),
@@ -604,8 +576,10 @@
       function loadVoices() {
         ttsVoices = window.speechSynthesis.getVoices();
       }
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
+      if (hasTts) {
+        loadVoices();
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
 
       function pickVoice() {
         const voices = ttsVoices.length ? ttsVoices : window.speechSynthesis.getVoices();
@@ -676,7 +650,7 @@
           <article class="sentence-card ${isSentenceHidden(item.no) ? "is-hidden" : ""}" id="sentence-${item.no}">
             <span class="card-number">${item.no}</span>
             <div class="english-line">
-              <p class="english-text">${esc(item.en)}${item.pattern ? ` <span class="pattern-badge">(${item.pattern})</span>` : ''}</p>
+              <p class="english-text">${esc(item.en)}${item.pattern ? ` <span class="pattern-badge">(${esc(item.pattern)})</span>` : ""}</p>
               <button class="tts-btn" type="button" data-speak="${esc(item.en)}" ${hasTts ? "" : "disabled"} aria-label="${item.no}번 영어문장 듣기" title="영어문장 듣기">
                 <i data-lucide="volume-2"></i>
               </button>
@@ -757,7 +731,7 @@
       els.jumpButton.addEventListener("click", () => {
         const number = Number(els.jumpInput.value);
         if (!Number.isInteger(number) || number < 1 || number > sentences.length) {
-          els.status.textContent = "1부터 1001 사이의 번호를 입력하세요.";
+          els.status.textContent = `1부터 ${sentences.length} 사이의 번호를 입력하세요.`;
           return;
         }
         const chapter = chapters.find((item) => number >= item.start && number <= item.end) || null;
@@ -820,8 +794,123 @@
         els.cardList.scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
-      renderChapterOptions();
-      render();
+      function showCollection(rows, starts) {
+        sentences = rows;
+        chapters = chapterDefinitions.map((chapter, index) => ({
+          ...chapter,
+          start: starts[index],
+          end: (starts[index + 1] ?? sentences.length + 1) - 1
+        }));
+        els.jumpInput.max = sentences.length;
+        renderChapterOptions();
+        render();
+        els.access.hidden = true;
+        els.content.hidden = false;
+      }
+
+      async function showPractice() {
+        const title = "영어문장 1000";
+        document.title = title;
+        els.content.querySelector("h1").textContent = title;
+        els.access.querySelector("h1").textContent = title;
+        els.access.querySelector(".eyebrow").textContent = "Study";
+        els.accessLogin.hidden = true;
+        const { default: text } = await import("./practice.js?v=20261121");
+        const starts = [];
+        const rows = [];
+        text.trim().split("\n\n").forEach((section, chapter) => {
+          starts.push(rows.length + 1);
+          section.split("\n").forEach((line, index) => {
+            const [en, ko] = line.split("|");
+            rows.push({ no: rows.length + 1, en, ko, pattern: chapter === 0 ? Math.floor(index / 20) + 1 : null });
+          });
+        });
+        showCollection(rows, starts);
+      }
+
+      function isOriginalCollection(rows) {
+        return Array.isArray(rows) && rows.length === 1001 && rows.every((row, index) =>
+          row?.no === index + 1 && typeof row.en === "string" && row.en.trim() &&
+          typeof row.ko === "string" && (row.pattern == null || [1, 2, 3, 4, 5].includes(row.pattern))
+        );
+      }
+
+      async function showPrivate() {
+        const adminEmail = "museumst@gmail.com";
+        const cloudPath = "englishSentences/original";
+        const { currentUser, loginWithGoogle, loadCloud, onAuthChange, saveCloud } = await import("../../assets/firebase-auth-default.js?v=20261118-admin-apps");
+        const originalStarts = chapterDefinitions.map((chapter) => chapter.start);
+        els.access.hidden = false;
+
+        els.accessLogin.addEventListener("click", async () => {
+          els.accessLogin.disabled = true;
+          try {
+            await loginWithGoogle();
+          } catch {
+            els.accessMessage.textContent = "로그인에 실패했습니다. 다시 시도해 주세요.";
+          } finally {
+            els.accessLogin.disabled = false;
+          }
+        });
+
+        els.originalFile.addEventListener("change", async () => {
+          const file = els.originalFile.files[0];
+          const user = currentUser();
+          if (!file || user?.email !== adminEmail || !user.emailVerified) return;
+          els.originalFile.disabled = true;
+          try {
+            if (file.size > 1024 * 1024) throw new Error("Invalid backup size");
+            const rows = JSON.parse(await file.text());
+            if (!isOriginalCollection(rows)) throw new Error("Invalid backup format");
+            if (currentUser()?.uid !== user.uid) return;
+            const saved = await saveCloud(cloudPath, { rows: rows.map(({ no, en, ko, pattern }) => ({ no, en, ko, pattern: pattern ?? null })) });
+            if (saved && currentUser()?.uid === user.uid) showCollection(rows, originalStarts);
+          } catch {
+            els.accessMessage.textContent = "백업을 가져오지 못했습니다. 원본 JSON 파일과 연결 상태를 확인해 주세요.";
+          } finally {
+            els.originalFile.value = "";
+            els.originalFile.disabled = false;
+          }
+        });
+
+        onAuthChange(async (user) => {
+          closeNote();
+          window.speechSynthesis?.cancel();
+          sentences = [];
+          els.cardList.replaceChildren();
+          els.noteContext.textContent = "";
+          els.noteInput.value = "";
+          els.content.hidden = true;
+          els.access.hidden = false;
+          els.accessImport.hidden = true;
+          const allowed = user?.email === adminEmail && user.emailVerified;
+          els.accessLogin.hidden = Boolean(allowed);
+          if (!allowed) {
+            els.accessMessage.textContent = user ? "이 계정에는 접근 권한이 없습니다." : "관리자 계정으로 로그인하면 이용할 수 있습니다.";
+            return;
+          }
+          els.accessMessage.textContent = "원본 문장을 불러오는 중입니다.";
+          try {
+            const data = await loadCloud(cloudPath);
+            if (currentUser()?.uid !== user.uid) return;
+            if (isOriginalCollection(data?.rows)) {
+              showCollection(data.rows, originalStarts);
+              return;
+            }
+            els.accessMessage.textContent = "처음 한 번 원본 백업 JSON을 선택해 주세요.";
+            els.accessImport.hidden = false;
+          } catch {
+            if (currentUser()?.uid === user.uid) showLoadError();
+          }
+        }, showLoadError);
+      }
+
+      function showLoadError() {
+        els.access.hidden = false;
+        els.accessMessage.textContent = "문장을 불러오지 못했습니다. 페이지를 새로고침해 주세요.";
+      }
+
+      (isPractice ? showPractice() : showPrivate()).catch(showLoadError);
     </script>
   </body>
 </html>

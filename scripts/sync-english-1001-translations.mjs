@@ -1,19 +1,12 @@
 import fs from "node:fs";
-import vm from "node:vm";
 
-const [csvPath] = process.argv.slice(2);
+const [csvPath, backupPath] = process.argv.slice(2);
 
-if (!csvPath) {
-  throw new Error("Usage: node scripts/sync-english-1001-translations.mjs /path/to/translations.csv");
+if (!csvPath || !backupPath) {
+  throw new Error("Usage: node scripts/sync-english-1001-translations.mjs /path/to/translations.csv /path/to/private-backup.json");
 }
 
-const targetPath = new URL("../apps/english-1001/sentences.js", import.meta.url);
-const source = fs.readFileSync(targetPath, "utf8");
-const context = { window: {} };
-vm.createContext(context);
-vm.runInContext(source, context);
-
-const sentences = context.window.ENGLISH_1001_SENTENCES;
+const sentences = JSON.parse(fs.readFileSync(backupPath, "utf8"));
 if (!Array.isArray(sentences) || sentences.length !== 1001) {
   throw new Error("Expected 1001 source sentences.");
 }
@@ -75,11 +68,5 @@ const merged = sentences.map((sentence) => {
   return { ...sentence, ko: translation };
 });
 
-const output = [
-  "// English sentences from the user-provided PDF with Korean translations from the user-provided CSV.",
-  `window.ENGLISH_1001_SENTENCES = ${JSON.stringify(merged, null, 2)};`,
-  ""
-].join("\n");
-
-fs.writeFileSync(targetPath, output, "utf8");
-console.log(`Merged ${merged.length} Korean translations into ${targetPath.pathname}`);
+fs.writeFileSync(backupPath, `${JSON.stringify(merged, null, 2)}\n`, "utf8");
+console.log(`Merged ${merged.length} Korean translations into ${backupPath}`);

@@ -133,6 +133,39 @@ const apps = [
     tags: ["vocabulary", "study", "quiz", "tts"],
   },
   {
+    title: "영어문장 1000",
+    description: "일상 영어 문장 1,000개와 한국어 해석을 16개 문법 챕터로 공부합니다.",
+    i18n: {
+      ko: {
+        title: "영어문장 1000",
+        description: "일상 영어 문장 1,000개와 한국어 해석을 16개 문법 챕터로 공부합니다.",
+      },
+      en: {
+        title: "1,000 English Practice Sentences",
+        description: "Study 1,000 everyday English sentences with Korean translations in 16 grammar chapters.",
+      },
+      ja: {
+        title: "英語練習文1000",
+        description: "韓国語訳付きの日常英語1,000文を、16の文法チャプターで学べます。",
+      },
+      zh: {
+        title: "英语练习句1000",
+        description: "通过16个语法章节学习1,000个附韩语译文的日常英语句子。",
+      },
+      es: {
+        title: "1000 frases para practicar inglés",
+        description: "Estudia 1000 frases cotidianas con traducción al coreano en 16 capítulos de gramática.",
+      },
+    },
+    category: "study",
+    categoryLabel: "학습",
+    thumbnail: "english-1001",
+    app_url: "apps/english-1001/index.html?set=practice",
+    status: "ready",
+    statusLabel: "실행 가능",
+    tags: ["english", "sentences", "study", "tts"],
+  },
+  {
     title: "1001영어문장",
     description: "영어 문장 1001개를 카드로 보고, TTS로 들으며, 영문 가리기 모드로 복습하는 학습 앱입니다.",
     i18n: {
