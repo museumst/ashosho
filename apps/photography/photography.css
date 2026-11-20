@@ -107,7 +107,7 @@ button, input { font: inherit; }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
-  gap: 14px;
+  gap: clamp(24px, 3.2vw, 80px);
 }
 
 .photo-card {
@@ -306,7 +306,7 @@ button, input { font: inherit; }
   .photo-header { align-items: flex-start; margin-bottom: 36px; }
   .photo-header-actions { flex-wrap: wrap; justify-content: flex-end; }
   .photo-auth-name { display: none; }
-  .photo-grid { grid-template-columns: 1fr; gap: 12px; }
+  .photo-grid { grid-template-columns: 1fr; }
   .photo-slider-figure { padding: 56px 56px 76px; }
   .photo-slider-prev { left: 4px; }
   .photo-slider-next { right: 4px; }
