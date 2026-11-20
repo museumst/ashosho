@@ -100,12 +100,12 @@ input {
   cursor: pointer;
 }
 
-.sidebar-toggle:hover { background: rgba(15, 118, 110, 0.08); color: var(--accent-strong); }
+.sidebar-toggle:hover { color: var(--accent-strong); }
 .sidebar-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .sidebar-toggle svg { display: block; width: 24px; height: 24px; }
 .sidebar-toggle:has(svg) .sidebar-icon-fallback { display: none; }
-.app-shell.is-sidebar-collapsed { grid-template-columns: 64px minmax(0, 1fr); }
-.app-shell.is-sidebar-collapsed .app-list-pane { padding: 16px 9px; }
+.app-shell.is-sidebar-collapsed { grid-template-columns: 72px minmax(0, 1fr); }
+.app-shell.is-sidebar-collapsed .app-list-pane { padding-inline-end: 0; }
 .app-shell.is-sidebar-collapsed .sidebar-content { grid-template-rows: minmax(0, 0fr); opacity: 0; }
 
 @media (prefers-reduced-motion: no-preference) {
