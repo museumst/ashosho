@@ -755,6 +755,20 @@ h1 {
   .app-name-list {
     margin-top: 0;
   }
+
+  .app-detail-pane.is-mobile-flow {
+    min-height: max(100dvh, var(--mobile-frame-height, 0px));
+  }
+
+  html:has(.app-detail-pane.is-mobile-modal) {
+    overflow: hidden;
+  }
+
+  .app-detail-pane.is-mobile-modal > iframe:not([hidden]) {
+    position: fixed;
+    height: 100dvh;
+    z-index: 10;
+  }
 }
 
 @media (max-width: 620px) {
