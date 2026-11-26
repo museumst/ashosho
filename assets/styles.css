@@ -737,12 +737,17 @@ h1 {
 }
 
 @media (max-width: 860px) {
+  html:has(.app-shell) {
+    overscroll-behavior-x: none;
+  }
+
   /* 태블릿/모바일에서는 메뉴영역과 상세영역을 위아래로 배치 */
   .app-shell,
   .app-shell.is-sidebar-collapsed {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(65vh, 1fr);
     grid-template-rows: auto minmax(65dvh, 1fr);
+    overflow-x: clip;
   }
 
   .app-list-pane {
@@ -774,5 +779,10 @@ h1 {
 @media (max-width: 620px) {
   .language-control {
     max-width: none;
+  }
+
+  .app-shell .language-control select,
+  .app-shell .photography-search-control input {
+    font-size: 1rem;
   }
 }
