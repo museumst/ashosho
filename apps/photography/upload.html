@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>사진 업로드 | grayrockclub</title>
-    <link rel="stylesheet" href="photography.css?v=20261121-photo-ratio" />
+    <link rel="stylesheet" href="photography.css?v=20261126-photo-drop" />
   </head>
   <body>
     <main class="photo-page">
@@ -29,12 +29,37 @@
           <form class="photo-form" id="upload-form">
             <div class="photo-field">
               <label for="photo-file">사진 파일</label>
-              <input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+              <div class="photo-drop-zone" id="photo-drop-zone">
+                <span id="photo-drop-label">사진 끌어놓기</span>
+                <input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-describedby="photo-drop-label" required />
+              </div>
             </div>
-            <div class="photo-field">
-              <label for="taken-at">촬영 일시</label>
-              <input id="taken-at" type="datetime-local" required />
-            </div>
+            <fieldset class="photo-date">
+              <legend>촬영 날짜</legend>
+              <div class="photo-date-parts">
+                <div class="photo-field">
+                  <label for="taken-year">연도</label>
+                  <input id="taken-year" type="number" inputmode="numeric" min="1" max="9999" step="1" required />
+                </div>
+                <div class="photo-field">
+                  <label for="taken-month">월</label>
+                  <select id="taken-month" required>
+                    <option value="01">1월</option>
+                    <option value="02">2월</option>
+                    <option value="03">3월</option>
+                    <option value="04">4월</option>
+                    <option value="05">5월</option>
+                    <option value="06">6월</option>
+                    <option value="07">7월</option>
+                    <option value="08">8월</option>
+                    <option value="09">9월</option>
+                    <option value="10">10월</option>
+                    <option value="11">11월</option>
+                    <option value="12">12월</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
             <div class="photo-field">
               <label for="place">장소</label>
               <input id="place" type="text" maxlength="80" placeholder="예: 부산, 해운대" required />
@@ -57,6 +82,6 @@
     </main>
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
-    <script type="module" src="upload.js?v=20261121-photo-icons"></script>
+    <script type="module" src="upload.js?v=20261126-photo-drop"></script>
   </body>
 </html>

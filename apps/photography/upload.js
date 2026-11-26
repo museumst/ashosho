@@ -8,7 +8,9 @@ const authName = document.querySelector("#auth-name");
 const accessMessage = document.querySelector("#access-message");
 const uploadForm = document.querySelector("#upload-form");
 const fileInput = document.querySelector("#photo-file");
-const takenAtInput = document.querySelector("#taken-at");
+const photoDropZone = document.querySelector("#photo-drop-zone");
+const takenYear = document.querySelector("#taken-year");
+const takenMonth = document.querySelector("#taken-month");
 const placeInput = document.querySelector("#place");
 const tagsInput = document.querySelector("#tags");
 const submitButton = document.querySelector("#submit-button");
@@ -48,8 +50,8 @@ function validImage(file) {
 
 function setDefaultTakenAt() {
   const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  takenAtInput.value = now.toISOString().slice(0, 16);
+  takenYear.value = now.getFullYear();
+  takenMonth.value = String(now.getMonth() + 1).padStart(2, "0");
 }
 
 function parseTags(value) {
@@ -116,7 +118,7 @@ function updateAccess(user) {
 async function uploadPhoto(event) {
   event.preventDefault();
   const file = fileInput.files[0];
-  if (!isAdmin() || !file) return;
+  if (!isAdmin() || !file || submitButton.disabled) return;
 
   if (!validImage(file)) {
     setStatus("15MB 미만의 JPEG, PNG, WebP 또는 GIF 파일을 선택하세요.", true);
@@ -124,7 +126,13 @@ async function uploadPhoto(event) {
   }
 
   const place = placeInput.value.trim();
-  const takenAt = takenAtInput.value;
+  const year = takenYear.valueAsNumber;
+  const month = takenMonth.value;
+  if (!Number.isInteger(year) || year < 1 || year > 9999 || !/^(0[1-9]|1[0-2])$/.test(month)) {
+    setStatus("올바른 촬영 연도와 월을 선택하세요.", true);
+    return;
+  }
+  const takenAt = `${String(year).padStart(4, "0")}-${month}`;
   const tags = parseTags(tagsInput.value);
   submitButton.disabled = true;
   setStatus("업로드를 시작합니다.");
@@ -311,6 +319,36 @@ function showAuthError(error) {
 
 loginButton.addEventListener("click", () => loginWithGoogle().catch(showAuthError));
 logoutButton.addEventListener("click", () => logout().catch(showAuthError));
+photoDropZone.addEventListener("dragover", (event) => {
+  if (!event.dataTransfer.types.includes("Files")) return;
+  event.preventDefault();
+  const allowed = isAdmin() && !submitButton.disabled;
+  event.dataTransfer.dropEffect = allowed ? "copy" : "none";
+  photoDropZone.classList.toggle("is-dragging", allowed);
+});
+photoDropZone.addEventListener("dragleave", (event) => {
+  if (!photoDropZone.contains(event.relatedTarget)) photoDropZone.classList.remove("is-dragging");
+});
+photoDropZone.addEventListener("drop", (event) => {
+  event.preventDefault();
+  photoDropZone.classList.remove("is-dragging");
+  if (!isAdmin() || submitButton.disabled) return;
+  const files = event.dataTransfer.files;
+  if (!files.length) return;
+  if (files.length !== 1) {
+    setStatus("사진은 한 번에 한 장만 선택할 수 있습니다.", true);
+    return;
+  }
+  if (!validImage(files[0])) {
+    setStatus("15MB 미만의 JPEG, PNG, WebP 또는 GIF 파일을 선택하세요.", true);
+    return;
+  }
+  fileInput.files = files;
+  setStatus("사진을 선택했습니다.");
+});
+fileInput.addEventListener("change", () => {
+  if (!submitButton.disabled) setStatus();
+});
 uploadForm.addEventListener("submit", uploadPhoto);
 onAuthChange((user) => {
   authStatus.hidden = true;

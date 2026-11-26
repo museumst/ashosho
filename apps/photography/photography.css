@@ -247,19 +247,36 @@ button, input { font: inherit; }
 
 .photo-form { display: grid; gap: 18px; margin-top: 32px; }
 .photo-field { display: grid; gap: 8px; }
-.photo-field label { color: var(--photo-muted); font-size: 0.82rem; font-weight: 800; }
+.photo-field label, .photo-date legend { color: var(--photo-muted); font-size: 0.82rem; font-weight: 800; }
 
-.photo-field input {
+.photo-field input, .photo-field select {
   width: 100%;
+  min-width: 0;
   min-height: 44px;
   border: 1px solid var(--photo-line);
   border-radius: 8px;
   padding: 0 12px;
   background: #fff;
   color: var(--photo-text);
+  font: inherit;
 }
 
-.photo-field input:focus { border-color: var(--photo-accent); outline: 2px solid rgba(15, 118, 110, 0.15); }
+.photo-field input:focus, .photo-field select:focus { border-color: var(--photo-accent); outline: 2px solid rgba(15, 118, 110, 0.15); }
+.photo-date { min-width: 0; margin: 0; padding: 0; border: 0; }
+.photo-date legend { padding: 0; margin-bottom: 8px; }
+.photo-date-parts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.photo-drop-zone {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px dashed var(--photo-line);
+  border-radius: 8px;
+  background: var(--photo-bg);
+  color: var(--photo-muted);
+  font-size: 0.85rem;
+}
+.photo-drop-zone.is-dragging { border-color: var(--photo-accent); background: #e9f5f2; color: var(--photo-accent); }
+.photo-drop-zone input[type="file"] { padding: 8px 12px; }
 .photo-submit { justify-self: end; border-color: var(--photo-accent); background: var(--photo-accent); color: #fff; }
 .photo-submit:hover, .photo-submit:focus-visible { background: #0a5d57; color: #fff; }
 .photo-submit:disabled { cursor: progress; opacity: 0.65; }
